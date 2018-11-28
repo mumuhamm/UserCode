@@ -181,13 +181,13 @@ def cDataEmulBX(canvas):
 
 
 def plotAll(canvas) :
-#  cDataEmulPhi(canvas)
-#  cDataEmulEta(canvas)
-#  cDataEmulNotAgree(canvas)
+  cDataEmulPhi(canvas)
+  cDataEmulEta(canvas)
+  cDataEmulNotAgree(canvas)
   cDataEmulIssue(canvas)
-#  cDataEmulHistory(canvas)
-#  cDataEmulPt(canvas)
+  cDataEmulHistory(canvas)
+  cDataEmulPt(canvas)
   cDataEmulCompare(canvas)
-#  cDataEmulDistribution(canvas)
+  cDataEmulDistribution(canvas)
   cDataEmulBX(canvas)
   return

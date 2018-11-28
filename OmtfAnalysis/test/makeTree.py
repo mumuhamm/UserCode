@@ -7,7 +7,7 @@ import os
 
 process = cms.Process('OmtfTree')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #
 # For processing single files insert lines with 'file:/PATH/FILE.root'
@@ -47,7 +47,12 @@ fileNames = cms.untracked.vstring(
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/FA0FC587-BBB2-E811-AC15-FA163E3593E9.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/F62761E9-BDB2-E811-A8C8-FA163E82E6AC.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/20D62E93-BEB2-E811-B27D-02163E01A109.root',
- '/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/F076FDEF-99AE-E811-B313-FA163EDAE846.root'
+# '/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/F076FDEF-99AE-E811-B313-FA163EDAE846.root'
+#'/store/express/Run2018D/ExpressCosmics/FEVT/Express-v1/000/323/100/00000/0BB884B8-B797-2A46-BCD5-66CC96E3DCB5.root'
+#'/store/express/Run2018D/ExpressCosmics/FEVT/Express-v1/000/323/155/00000/76C54B9A-90D5-CB48-9D89-525671C1B304.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/014/00000/D0C532C0-46AF-E811-9A6C-FA163E5578E8.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/014/00000/AACFC51C-3CAF-E811-8A45-FA163ECEF8A9.root'
+'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/322/222/00000/FE245209-64B0-E811-B754-FA163E498C7B.root'
                                   ),
 #skipEvents =  cms.untracked.uint32(504)
 #skipEvents =  cms.untracked.uint32(267)
@@ -176,7 +181,7 @@ process.omtfEmulator.srcRPC = cms.InputTag('omtfStage2Digis')
 #process.omtfEmulator.dropRPCPrimitives = cms.bool(False)
 #process.omtfEmulator.dropDTPrimitives = cms.bool(False)
 #process.omtfEmulator.dropCSCPrimitives = cms.bool(False)
-process.omtfEmulator.dumpResultToXML = cms.bool(True)
+#process.omtfEmulator.dumpResultToXML = cms.bool(True)
 process.omtfEmulator.bxMin = cms.int32(-3)
 process.omtfEmulator.bxMax = cms.int32(4)
 
@@ -290,13 +295,15 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   ),
 
   closestTrackFinder = cms.PSet(
-    trackColl = cms.InputTag("generalTracks")
+    trackColl = cms.InputTag("generalTracks"),
+    warnNoColl = cms.untracked.bool(True)
   ),
 
   onlyBestMuEvents = cms.bool(False),
   bestMuonFinder = cms.PSet(
     muonColl = cms.InputTag("muons"),
     beamSpot = cms.InputTag("offlineBeamSpot"),
+    warnNoColl = cms.untracked.bool(True),
     requireInnerTrack = cms.bool(True),
     requireOuterTrack = cms.bool(False),
     requireGlobalTrack = cms.bool(False),
@@ -327,6 +334,7 @@ import TrackingTools.TrackRefitter.globalMuonTrajectories_cff
 process.refittedMuons = TrackingTools.TrackRefitter.globalMuonTrajectories_cff.globalMuons.clone()
 
 process.OmtfTree = cms.Path(process.refittedMuons*process.omtfTree)
+#process.OmtfTree = cms.Path(process.omtfTree)
 process.schedule.append(process.OmtfTree)
 
 #print process.dumpPython();

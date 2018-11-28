@@ -18,7 +18,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
-#    "omtfTree.root",
+#     "omtfTree.root"
 #    "../jobs/crab_0_180821_131836/omtfTree.root",
 #    "../jobs/crab_0_180821_132521/omtfTree.root"
 #    "../jobs/crab_0_180903_103036_SingleMu_EMU4/omtfTree.root"
@@ -29,11 +29,12 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
 #     "../jobs/crab_0_180912_221657_FW5_EMU6/omtfTree.root"
 #    "../jobs/crab_0_180913_215833_FW5_EMU65ix/omtfTree.root"
 #    "../jobs/crab_0_180913_220815_FW5_EMU6fix/omtfTree.root"
-#   "../jobs/crab_0_180914_192445_version5/omtfTree.root"
-#    "../jobs/crab_0_180914_211610_version6/omtfTree.root"
 #    "../jobs/crab_0_180917_174559_version4/omtfTree.root"
- "../jobs/crab_0_180917_204344/omtfTree.root"
-# "/afs/cern.ch/work/k/konec/CMSSW_10_2_1.ana/src/UserCode/OmtfAnalysis/jobs/crab_0_180903_103036_SingleMu_EMU4/omtfTree.root"
+#   "../jobs/crab_0_180914_192445_version5/omtfTree.root"
+    "../jobs/crab_0_180914_211610_version6/omtfTree.root"
+# "../jobs/crab_0_180917_204344/omtfTree.root"
+#     "../jobs/crab_0_180921_111625_jet/omtfTree.root"
+#    "../jobs/crab_0_180923_023430_exV5/omtfTree.root"
   ),
   filterByAnaEvent = cms.bool(True),
   anaEvent = cms.PSet(
@@ -95,18 +96,20 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
 
   filterByAnaMenu = cms.bool(False),
   anaMenu = cms.PSet( #OR of conditions for L1 and separately for HLT
-    acceptL1_OtherThanMu             = cms.bool(True),
-    acceptL1_Mu                      = cms.bool(True),
-    acceptL1_Names                   = cms.vstring("L1_ZeroBias","L1_ZeroBias_copy",
-                                                   "L1_IsolatedBunch","L1_FirstCollisionInOrbit"),
-    acceptHLT_OtherThanMuPhysics     = cms.bool(False),
-    acceptHLT_L1                     = cms.bool(False),
-    acceptHLT_Physics                = cms.bool(False),
-    acceptHLT_Mu                     = cms.bool(False),
+    acceptL1_OtherThanMu             = cms.bool(False),
+    acceptL1_Mu                      = cms.bool(False),
+#    acceptL1_Names                   = cms.vstring("L1_ZeroBias","L1_ZeroBias_copy"),
+    acceptL1_Names                   = cms.vstring(
+      "L1_IsolatedBunch","L1_FirstCollisionInOrbit","L1_FirstCollisionInTrain"
+    ),
+#   vetoL1_Names                     = cms.vstring("L1_IsolatedBunch","L1_FirstCollisionInOrbit"),
+    vetoL1_Names                     = cms.vstring(),
+    acceptHLT_OtherThanMuPhysics     = cms.bool(True),
+    acceptHLT_L1                     = cms.bool(True),
+    acceptHLT_Physics                = cms.bool(True),
+    acceptHLT_Mu                     = cms.bool(True),
     acceptHLT_ZeroBias               = cms.bool(True),
-    acceptHLT_Names                  = cms.vstring(
-        "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
-        ),
+    acceptHLT_Names                  = cms.vstring("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ"),
   ),
 
   anaDataEmul =  cms.PSet(bxMin=cms.int32(-3),bxMax=cms.int32(4)),
@@ -114,6 +117,7 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   anaTime = cms.PSet(),
   anaSynch = cms.PSet(),
   anaDiMu = cms.PSet(),
+  anaL1Distribution = cms.PSet(),
 )
 
 process.p = cms.Path(process.omtfAnalysis)

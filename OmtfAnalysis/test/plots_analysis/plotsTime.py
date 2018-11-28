@@ -41,6 +41,92 @@ def cTimeMtfs(canvas, what1, what2, what3):
   c.Update()
   return
 
+def cTimeMtf(canvas, what):
+  c = TCanvas("cTimeMtf" + what, "cTimeMTF" + what, 1100, 500)
+  canvas.Add(c)
+  c.Divide(2)
+
+  pad1 = c.cd(1)
+  pad1.SetLogy()
+  hTime_A = gROOT.FindObject("hTime" + what+"_A").Clone("hTime" + what+"_A")
+  integral = max(1.,hTime_A.Integral())
+  hTime_A.Scale(1./integral)
+  hTime_A.SetMaximum(1.2)
+#  hTime_A.SetMinimum(1./integral/1.2)
+  hTime_A.SetMinimum(5.e-5)
+  hTime_A.SetStats(0)
+  hTime_A.SetTitle(what)
+  hTime_A.SetLineColor(8)
+  t=TLatex(); t.SetNDC(1); t.SetTextSize(0.04); t.SetTextColor(8)
+  entries="#Ev: {0:1.3E}".format(integral)
+  hTime_A.DrawCopy('hist ')
+  t.DrawLatex(0.68, 0.91, entries)
+
+
+  hTime_M = gROOT.FindObject("hTime" + what+"_M").Clone("hTime" + what+"_M")
+  hTime_M.Scale(1./integral)
+  hTime_M.SetLineColor(9)
+  hTime_M.SetFillColor(9)
+  hTime_M.SetFillStyle(3545)
+  hTime_M.DrawCopy('hist same')
+
+
+  hTime_W = gROOT.FindObject("hTime" + what+"_W").Clone("hTime" + what+"_W")
+  hTime_W.Scale(1./integral)
+  hTime_W.SetLineColor(46)
+  hTime_W.SetFillColor(46)
+  hTime_W.SetFillStyle(3554)
+  hTime_W.DrawCopy('hist same')
+
+  legend1 = TLegend(0.9, max(5.e-2,1./integral), 2.2, 0.9,"","") #,what+","+entries,"")
+  legend1.AddEntry(hTime_A, 'All Q')
+  legend1.AddEntry(hTime_M, '#mu, All Q')
+  legend1.AddEntry(hTime_W,  'wrong #mu, All Q')
+  legend1.Draw()
+  canvas.Add(legend1)
+
+ 
+  pad2 = c.cd(2)
+  pad2.SetLogy()
+
+  hTime_Q = gROOT.FindObject("hTime" + what+"_Q").Clone("hTime" + what+"_Q")
+  integral = max(1.,hTime_Q.Integral())
+  hTime_Q.SetStats(0)
+  hTime_Q.Scale(1./integral)
+  hTime_Q.SetTitle(what+"_Q")
+  hTime_Q.SetLineColor(8)
+  hTime_Q.SetMaximum(1.2)
+  hTime_Q.SetMinimum(5.e-5)
+  hTime_Q.DrawCopy('hist')
+  t=TLatex(); t.SetNDC(1); t.SetTextSize(0.04); t.SetTextColor(8)
+  entries="#Ev: {0:1.3E}".format(integral)
+  t.DrawLatex(0.68, 0.91, entries)
+
+  hTime_QM = gROOT.FindObject("hTime" + what+"_QM").Clone("hTime" + what+"_QM")
+  hTime_QM.Scale(1./integral)
+  hTime_QM.SetLineColor(9)
+  hTime_QM.SetFillColor(9)
+  hTime_QM.SetFillStyle(3545)
+  hTime_QM.DrawCopy('hist same')
+
+  hTime_QW = gROOT.FindObject("hTime" + what+"_QW").Clone("hTime" + what+"_QW")
+  hTime_QW.Scale(1./integral)
+  hTime_QW.SetLineColor(46)
+  hTime_QW.SetFillColor(46)
+  hTime_QW.SetFillStyle(3554)
+  hTime_QW.DrawCopy('hist e same')
+
+  legend = TLegend(0.9, max(5.e-2,1./integral), 2.2, 0.9,"","") #,what+","+entries,"")
+  legend.AddEntry(hTime_Q, 'Q #geq 12')
+  legend.AddEntry(hTime_QM, '#mu, Q #geq 12')
+  legend.AddEntry(hTime_QW, 'wrong #mu, Q #geq 12')
+  legend.Draw()
+  canvas.Add(legend)
+
+  c.Update()
+  return
+
+
 def cTimeMtfsCorr(canvas,what=''):
   c = TCanvas("cTimeMtfsCorr"+what,"cTimeMTFsCorr"+what,1200,400)
   canvas.Add(c)
@@ -88,12 +174,16 @@ def cTimeTrackBX(canvas) :
   return
 
 def plotAll(canvas) :
-  cTimeMtfsCorr(canvas)
-  cTimeMtfs(canvas,'BmtfAll','OmtfAll','EmtfAll')
-  cTimeMtfs(canvas,'BmtfQ','OmtfQ','EmtfQ')
-  cTimeMtfs(canvas,'Bmtf','Omtf','Emtf')
-  cTimeMtfs(canvas,'OmtfAll','OmtfQ','Omtf')
-  cTimeMtfs(canvas,'OmtfAll_E','OmtfQ_E','Omtf_E')
+#  cTimeMtfsCorr(canvas)
+#  cTimeMtfs(canvas,'Bmtf_A','Omtf_A','Emtf_A')
+#  cTimeMtfs(canvas,'Bmtf_Q','Omtf_Q','Emtf_Q')
+#  cTimeMtfs(canvas,'Bmtf_M','Omtf_M','Emtf_M')
+#  cTimeMtfs(canvas,'Bmtf_QM','Omtf_QM','Emtf_QM')
+#  cTimeMtfs(canvas,'Bmtf_W','Omtf_W','Emtf_W')
+#  cTimeMtfs(canvas,'Bmtf_QW','Omtf_QW','Emtf_QW')
+  cTimeMtf(canvas,'Bmtf')
+  cTimeMtf(canvas,'Omtf')
+  cTimeMtf(canvas,'Emtf')
 #  cTimeTrackPt(canvas)
 #  cTimeTrackBX(canvas)
   return

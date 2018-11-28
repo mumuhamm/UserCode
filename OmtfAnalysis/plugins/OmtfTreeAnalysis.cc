@@ -33,6 +33,7 @@
 #include "UserCode/OmtfAnalysis/interface/AnaSynch.h"
 #include "UserCode/OmtfAnalysis/interface/ConverterRPCRawSynchroSynchroCountsObj.h"
 #include "UserCode/OmtfAnalysis/interface/AnaDiMu.h"
+#include "UserCode/OmtfAnalysis/interface/AnaL1Distribution.h"
 
 OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
   : theConfig(cfg),
@@ -44,7 +45,8 @@ OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
     theAnaSecMu(0), 
     theAnaTime(0),
     theAnaSynch(0),
-    theAnaDiMu(0)
+    theAnaDiMu(0),
+    theAnaL1Dist(0)
 { 
   if (theConfig.exists("anaEvent")) theAnaEvent = new   AnaEvent(cfg.getParameter<edm::ParameterSet>("anaEvent") );
   if (theConfig.exists("anaMuonDistribution")) theAnaMuonDistribution = new AnaMuonDistribution( cfg.getParameter<edm::ParameterSet>("anaMuonDistribution"));
@@ -55,6 +57,7 @@ OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
   if (theConfig.exists("anaTime")) theAnaTime = new AnaTime(cfg.getParameter<edm::ParameterSet>("anaTime"));
   if (theConfig.exists("anaSynch")) theAnaSynch = new AnaSynch();
   if (theConfig.exists("anaDiMu")) theAnaDiMu= new AnaDiMu(cfg.getParameter<edm::ParameterSet>("anaDiMu"));
+  if (theConfig.exists("anaL1Distribution")) theAnaL1Dist = new AnaL1Distribution( cfg.getParameter<edm::ParameterSet>("anaL1Distribution"));
 }
 
 void OmtfTreeAnalysis::beginJob()
@@ -70,6 +73,7 @@ void OmtfTreeAnalysis::beginJob()
   if (theAnaTime)             theAnaTime->init(theHistos);
   if (theAnaSynch)            theAnaSynch->init(theHistos);
   if (theAnaSecMu)            theAnaSecMu->init(theHistos);
+  if (theAnaL1Dist)           theAnaL1Dist->init(theHistos);
 
 }
 
@@ -198,6 +202,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
 
     if (theAnaDataEmul)    theAnaDataEmul->debug = false; 
     if (theAnaDiMu)   theAnaDiMu->run( event, muonColl, l1ObjColl);
+    if (theAnaL1Dist) theAnaL1Dist->run( event, muonColl, closestTrack, l1ObjColl);
   }
 }
 
@@ -223,5 +228,6 @@ void OmtfTreeAnalysis::endJob()
   delete theAnaTime;
   delete theAnaSynch;
   delete theAnaDiMu;
+  delete theAnaL1Dist;
 
 }
