@@ -19,22 +19,11 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
 #     "omtfTree.root"
-#    "../jobs/crab_0_180821_131836/omtfTree.root",
-#    "../jobs/crab_0_180821_132521/omtfTree.root"
-#    "../jobs/crab_0_180903_103036_SingleMu_EMU4/omtfTree.root"
-#    "../jobs/crab_0_180822_121531/omtfTree.root"
-#    "../jobs/crab_0_180906_151620_SingleMu_EMU5Fix/omtfTree.root"
-#    "../jobs/crab_0_180906_192155_SingleMu_5Fix_L1VtxProp/omtfTree.root"
-#    "../jobs/crab_0_180912_221119_FW5_EMU5/omtfTree.root"
-#     "../jobs/crab_0_180912_221657_FW5_EMU6/omtfTree.root"
-#    "../jobs/crab_0_180913_215833_FW5_EMU65ix/omtfTree.root"
-#    "../jobs/crab_0_180913_220815_FW5_EMU6fix/omtfTree.root"
-#    "../jobs/crab_0_180917_174559_version4/omtfTree.root"
-#   "../jobs/crab_0_180914_192445_version5/omtfTree.root"
-    "../jobs/crab_0_180914_211610_version6/omtfTree.root"
-# "../jobs/crab_0_180917_204344/omtfTree.root"
-#     "../jobs/crab_0_180921_111625_jet/omtfTree.root"
-#    "../jobs/crab_0_180923_023430_exV5/omtfTree.root"
+#    "../jobs/v2_SM2018D/omtfTree.root"
+#   "../jobs/v3_SM2017F/omtfTree.root"
+#    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeB.root"
+#    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeE.root"
+    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeC.root"
   ),
   filterByAnaEvent = cms.bool(True),
   anaEvent = cms.PSet(
@@ -44,9 +33,9 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
 
   anaSecMuSel = cms.PSet(
     triggMuon = cms.PSet (
-##     requireCharge      = cms.int32(1),
-      requireEtaSign     = cms.int32(-1),
-##      requireOutsideOMTF  = cms.bool(True),
+#     requireCharge      = cms.int32(1),
+      requireEtaSign     = cms.int32(1),
+#      requireOutsideOMTF  = cms.bool(True),
       requireTight        = cms.bool(True),
       requireUnique       = cms.bool(True),
       requireHLT          = cms.bool(True),
@@ -59,9 +48,9 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
       minAccepL1Q         = cms.int32(12), 
     ),
     probeMuon = cms.PSet (
-##      requireCharge    = cms.int32(-1),
-      requireEtaSign   = cms.int32( 1),
-##      requireInsideOMTF = cms.bool(True),
+#     requireCharge    = cms.int32(-1),
+      requireEtaSign   = cms.int32(-1),
+#     requireInsideOMTF = cms.bool(True),
       requireUnique     = cms.bool(True),
       requireLoose      = cms.bool(True),
       requireMedium     = cms.bool(True),
@@ -73,11 +62,11 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
     ),
   ), 
 
-  filterByAnaMuonDistribution = cms.bool(False),
+  filterByAnaMuonDistribution = cms.bool(True),
   anaMuonDistribution = cms.PSet (
     requireUnique  = cms.bool(True),
     requireGlobal  = cms.bool(True),
-    requireInner   = cms.bool(False),
+    requireInner   = cms.bool(True),
     requireOuter   = cms.bool(False),
     requireLoose   = cms.bool(True),
     requireMedium  = cms.bool(True),
@@ -96,28 +85,29 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
 
   filterByAnaMenu = cms.bool(False),
   anaMenu = cms.PSet( #OR of conditions for L1 and separately for HLT
-    acceptL1_OtherThanMu             = cms.bool(False),
+    acceptL1_OtherThanMu             = cms.bool(True),
     acceptL1_Mu                      = cms.bool(False),
 #    acceptL1_Names                   = cms.vstring("L1_ZeroBias","L1_ZeroBias_copy"),
-    acceptL1_Names                   = cms.vstring(
-      "L1_IsolatedBunch","L1_FirstCollisionInOrbit","L1_FirstCollisionInTrain"
-    ),
+#    acceptL1_Names                   = cms.vstring(
+#      "L1_IsolatedBunch","L1_FirstCollisionInOrbit","L1_FirstCollisionInTrain"
+#    ),
 #   vetoL1_Names                     = cms.vstring("L1_IsolatedBunch","L1_FirstCollisionInOrbit"),
     vetoL1_Names                     = cms.vstring(),
-    acceptHLT_OtherThanMuPhysics     = cms.bool(True),
-    acceptHLT_L1                     = cms.bool(True),
-    acceptHLT_Physics                = cms.bool(True),
-    acceptHLT_Mu                     = cms.bool(True),
-    acceptHLT_ZeroBias               = cms.bool(True),
-    acceptHLT_Names                  = cms.vstring("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ"),
+    acceptHLT_OtherThanMuPhysics     = cms.bool(False),
+    acceptHLT_L1                     = cms.bool(False),
+    acceptHLT_Physics                = cms.bool(False),
+    acceptHLT_Mu                     = cms.bool(False),
+    acceptHLT_ZeroBias               = cms.bool(False),
+#    acceptHLT_Names                  = cms.vstring("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ"),
+    acceptHLT_Names                  = cms.vstring("HLT_Jet","HLT_HT","HLT_PFJet","HLT_PFHT"),
   ),
 
-  anaDataEmul =  cms.PSet(bxMin=cms.int32(-3),bxMax=cms.int32(4)),
-  anaEff =  cms.PSet(),     
-  anaTime = cms.PSet(),
-  anaSynch = cms.PSet(),
-  anaDiMu = cms.PSet(),
-  anaL1Distribution = cms.PSet(),
+#  anaDataEmul =  cms.PSet(bxMin=cms.int32(-3),bxMax=cms.int32(4)),
+   anaEff =  cms.PSet(),     
+#  anaTime = cms.PSet(),
+#  anaSynch = cms.PSet(),
+#  anaDiMu = cms.PSet(),
+#  anaL1Distribution = cms.PSet(),
 )
 
 process.p = cms.Path(process.omtfAnalysis)

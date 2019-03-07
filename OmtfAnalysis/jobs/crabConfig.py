@@ -2,26 +2,33 @@ from WMCore.Configuration import Configuration
 config = Configuration()
 
 config.section_("General")
-config.General.requestName = 'MKjob'
-config.General.workArea = 'v5'
+config.General.requestName = 'Run2017E'
+config.General.workArea = 'v4_SingleMuon-17Nov2017'
 config.General.transferLogs = True 
 config.General.transferOutputs = True 
 
 config.section_("Data")
 #config.Data.inputDataset = '/SingleMuon/Run2016H-ZMu-PromptReco-v2/RAW-RECO'
 #config.Data.inputDataset = '/SingleMuon/Run2016H-PromptReco-v2/AOD'
-config.Data.inputDataset = '/ExpressPhysics/Run2017A-Express-v1/FEVT'
+#config.Data.inputDataset = '/ExpressPhysics/Run2017A-Express-v1/FEVT'
+#config.Data.inputDataset = '/SingleMuon/Run2017F-ZMu-PromptReco-v1/RAW-RECO'
+#config.Data.inputDataset = '/SingleMuon/Run2018D-ZMu-PromptReco-v2/RAW-RECO'
+#config.Data.inputDataset = '/JetHT/Run2018D-JetHTJetPlusHOFilter-PromptReco-v2/RAW-RECO'
+#config.Data.inputDataset = '/JetHT/Run2017F-JetHTJetPlusHOFilter-09May2018-v1/RAW-RECO'
+config.Data.inputDataset = '/SingleMuon/Run2017E-ZMu-17Nov2017-v1/RAW-RECO'
 
-#config.Data.lumiMask='Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
-config.Data.lumiMask='JSON.txt'
+
+config.Data.lumiMask='Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+#config.Data.lumiMask='Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
 
 #config.Data.runRange = '282000-283000'
-config.Data.runRange = '295606'
+#config.Data.runRange = '295606'
 
 config.Data.useParent = False 
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'LumiBased'
-config.Data.unitsPerJob = 5 #number of files per jobs
+#config.Data.splitting = 'Automatic'
+config.Data.unitsPerJob = 200 #number of files per jobs
 config.Data.totalUnits =  -1 #number of event
 config.Data.outLFNDirBase = '/store/user/konec/test/'
 config.Data.publication = False 

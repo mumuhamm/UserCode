@@ -9,6 +9,7 @@ class TrajectoryStateOnSurface;
 
 class SynchroSelectorMuon : public SynchroSelector {
 public:
+   SynchroSelectorMuon(){}
    SynchroSelectorMuon(const edm::ParameterSet&, TObjArray& );
    SynchroSelectorMuon(const edm::ParameterSet&);
    void initHistos(TObjArray& histos);

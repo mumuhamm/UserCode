@@ -7,7 +7,6 @@ import os
 
 process = cms.Process('OmtfTree')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #
 # For processing single files insert lines with 'file:/PATH/FILE.root'
@@ -24,20 +23,18 @@ fileNames = cms.untracked.vstring(
 #'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/321/010/00000/0601C5EA-FF9A-E811-A8BA-FA163EB3A544.root',
 #'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/321/010/00000/06921998-039B-E811-AE79-FA163E400AA8.root' 
 #'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/321/879/00000/006B4D10-3EAA-E811-AEB0-FA163E6EDA8C.root'
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/887/00000/6C133D73-73AE-E811-8244-FA163E6C4BEA.root',
+#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/887/00000/6C133D73-73AE-E811-8244-FA163E6C4BEA.root'
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/16F0E3D6-96AE-E811-BEF2-FA163E3AE75B.root'
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/22972439-96AE-E811-88C2-FA163EF09AB5.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/869A40B6-86AE-E811-8BD9-02163E013AC9.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/9A7467B6-99AE-E811-8847-FA163EDE9AD6.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/5E9D84C4-95AE-E811-B271-FA163E13E714.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/887/00000/F666B1E2-75AE-E811-A074-FA163EB1A399.root'
-#
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/7E72017E-9CAE-E811-910A-FA163EAE6D9D.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/5022FC62-9AAE-E811-9A2C-FA163E7C6CDD.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/E0368CBD-97AE-E811-A96A-FA163E72908D.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/441CE6FB-92AE-E811-9C72-FA163E4CBFDB.root',
-
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/9E0C65F7-BFB2-E811-A781-FA163E76167C.root',
+#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/9E0C65F7-BFB2-E811-A781-FA163E76167C.root'
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/8E0346B2-B5B2-E811-8E3F-FA163EA1D1FE.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/7C6BA8C5-C1B2-E811-ACC1-FA163E9D9A3E.root',
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/0ADE0F3E-BEB2-E811-A837-02163E00AE1A.root',
@@ -52,11 +49,24 @@ fileNames = cms.untracked.vstring(
 #'/store/express/Run2018D/ExpressCosmics/FEVT/Express-v1/000/323/155/00000/76C54B9A-90D5-CB48-9D89-525671C1B304.root'
 #'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/014/00000/D0C532C0-46AF-E811-9A6C-FA163E5578E8.root'
 #'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/014/00000/AACFC51C-3CAF-E811-8A45-FA163ECEF8A9.root'
-'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/322/222/00000/FE245209-64B0-E811-B754-FA163E498C7B.root'
-                                  ),
-#skipEvents =  cms.untracked.uint32(504)
-#skipEvents =  cms.untracked.uint32(267)
-#skipEvents =  cms.untracked.uint32(547)
+#'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/322/222/00000/FE245209-64B0-E811-B754-FA163E498C7B.root'
+#'/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/475/00000/F293B678-6EA6-E811-905E-FA163E8560D0.root'
+#'/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/022/00000/0024C7ED-96AF-E811-B7D8-02163E018013.root'
+#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/457/00000/7C5A8E10-BEA5-E811-A56C-02163E014A17.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/348/00000/A8C88C19-40B4-E811-9F14-02163E019EAF.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/323/778/00000/5AD11DED-DA6E-5A4C-83FB-BD8F2905757F.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/323/778/00000/BEB7C02D-D2A8-9E42-B5B9-89007E5365D0.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/324/747/00000/8B681A49-D933-C14C-BEF2-FF0544463151.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/324/769/00000/D3102A05-3B1F-8B4F-AD4F-6F5C14BE0385.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/324/769/00000/A0DA06A1-647A-9F4C-8980-AD587C528742.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/119/00000/E6FB38F2-879E-E811-A4FD-FA163EDEAFA5.root'
+#'file:/afs/cern.ch/work/k/konec/data/runs/A8C88C19-40B4-E811-9F14-02163E019EAF.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/124/00000/9E9321CC-B19E-E811-BF42-FA163E4EAC94.root'
+#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/140/00000/00CAF0AF-5B9F-E811-9E6B-FA163EEA3181.root'
+#'file:/afs/cern.ch/work/k/konec/data/runs/00CAF0AF-5B9F-E811-9E6B-FA163EEA3181.root'
+'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/149/00000/0C567C00-D89F-E811-A83C-FA163E33F482.root'
+  ),
+#skipEvents =  cms.untracked.uint32(1067)
 )
 
 #
@@ -105,7 +115,8 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag.globaltag  = '92X_dataRun2_Prompt_v4'
 #process.GlobalTag.globaltag = '100X_dataRun2_v1'
 #process.GlobalTag.globaltag = '100X_dataRun2_Express_v3'
-process.GlobalTag.globaltag = '101X_dataRun2_Express_v8'
+#process.GlobalTag.globaltag = '101X_dataRun2_Express_v8'
+process.GlobalTag.globaltag = '103X_dataRun2_HLT_v1'
 
 #
 # message logger
@@ -169,7 +180,7 @@ process.omtfParamsSource = cms.ESSource( "EmptyESSource",
 )
 process.omtfParams = cms.ESProducer( "L1TMuonOverlapParamsESProducer",
      patternsXMLFiles = cms.VPSet( cms.PSet(patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_0x0003.xml")),),
-     configXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/hwToLogicLayer_0x0006.xml"),
+     configXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/hwToLogicLayer_0x0004.xml"),
 )
 
 import L1Trigger.L1TMuonOverlap.simOmtfDigis_cfi
@@ -181,9 +192,10 @@ process.omtfEmulator.srcRPC = cms.InputTag('omtfStage2Digis')
 #process.omtfEmulator.dropRPCPrimitives = cms.bool(False)
 #process.omtfEmulator.dropDTPrimitives = cms.bool(False)
 #process.omtfEmulator.dropCSCPrimitives = cms.bool(False)
-#process.omtfEmulator.dumpResultToXML = cms.bool(True)
 process.omtfEmulator.bxMin = cms.int32(-3)
 process.omtfEmulator.bxMax = cms.int32(4)
+#process.omtfEmulator.dumpResultToXML = cms.bool(True)
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 
 #process.omtfEmulator = cms.EDProducer("L1TMuonOverlapTrackProducer",
 ###  srcDTPh = cms.InputTag('simDtTriggerPrimitiveDigis'),
@@ -262,7 +274,7 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
 #      "HLT_Mu55_v", "HLT_IsoMu24_eta2p1_v", "HLT_IsoTkMu24_eta2p1_v"
 #    ),
     namesCheckHltMuMatch = cms.vstring(
-      "HLT_IsoMu20_v","HLT_IsoMu24_v","HLT_IsoMu27_v"
+      "HLT_IsoMu20_v","HLT_IsoMu24_v","HLT_IsoMu27_v","HLT_Mu50_v","HLT_Mu55_v"
     ),
   ),
 
@@ -299,7 +311,7 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     warnNoColl = cms.untracked.bool(True)
   ),
 
-  onlyBestMuEvents = cms.bool(False),
+  onlyBestMuEvents = cms.bool(True),
   bestMuonFinder = cms.PSet(
     muonColl = cms.InputTag("muons"),
     beamSpot = cms.InputTag("offlineBeamSpot"),
@@ -319,7 +331,7 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     cutPFIsoRel = cms.double(0.15),
     deltaPhiUnique = cms.double(1.0),
     deltaEtaUnique = cms.double(0.5),
-    minPtUnique = cms.double(2.0),
+    minPtUnique = cms.double(3.0),
     looseUnique = cms.bool(True)
   ),
 )

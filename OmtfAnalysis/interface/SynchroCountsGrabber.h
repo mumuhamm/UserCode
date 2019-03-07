@@ -23,6 +23,7 @@ class TObjArray;
 
 class SynchroCountsGrabber {
 public:
+   SynchroCountsGrabber() {}
    SynchroCountsGrabber(const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl);
    ~SynchroCountsGrabber();
    RPCRawSynchro::ProdItem counts(const edm::Event &ev, const edm::EventSetup &es);

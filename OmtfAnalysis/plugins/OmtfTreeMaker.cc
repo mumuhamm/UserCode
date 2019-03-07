@@ -148,11 +148,13 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   //
   // fill LinkSynchroAnalysis data
   //
+/*
   if (theMuon && theMuon->isGlobalMuon()) {
     theSynchroGrabber.setMuon(theMuon);
     RPCRawSynchro::ProdItem rawCounts  = theSynchroGrabber.counts(ev,es);
     synchroCounts->data = ConverterRPCRawSynchroSynchroCountsObj::toSynchroObj(rawCounts);
   }
+*/
 
   
 /*  if (l1ObjColl->selectByType(L1Obj::OMTF)) {
@@ -163,12 +165,14 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   }
 */
 
+/*
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
   if (omtfColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1Objs().front().etaValue(), 
                                                                     omtfColl.getL1Objs().front().phiValue());
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
+*/
 
   //
   // fill ntuple + cleanup
