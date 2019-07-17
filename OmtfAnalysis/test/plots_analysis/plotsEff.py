@@ -86,7 +86,7 @@ def cEffEta(canvas):
   return
 
 def cEffPt(canvas):
-  c = TCanvas('cEffPt','cEffPt',1200,400)
+  c = TCanvas('cEffPt','cEffPt',1600,500)
   canvas.Add(c)
   c.Divide(3)
 
@@ -109,18 +109,18 @@ def cEffPt(canvas):
     frame.GetXaxis().SetTitleOffset(1.4)
     frame.SetYTitle("efficiency") 
     frame.SetTitle(region)
-    frame.GetXaxis().SetRange(5,32)
+    frame.GetXaxis().SetRange(12,37)
 #    frame.GetXaxis().SetRange(5,27)
     frame.DrawCopy()
 
     one = TLine()
     one.SetLineStyle(2)
     one.SetLineColor(1)
-    one.DrawLine(5.,1.,490.,1.)
+    one.DrawLine(10.,1.,400.,1.)
 #   one.DrawLine(5.,1.,90.,1.)
 
 #   legend = TLegend(50, 0.05,690., 0.28,"","")
-    legend = TLegend(25, 0.05, 90., 0.28,"","")
+    legend = TLegend(105, 0.05,390., 0.28,"","")
     legend.SetName("lEffPt"+region)
     canvas.Add(legend)
 
@@ -132,7 +132,7 @@ def cEffPt(canvas):
       hn.Divide(hn,hDenom,1.,1.,'B')
       hn.SetLineColor(color)
       hn.DrawCopy('same ][ e')  
-      legend.AddEntry(hn,'p_{T}L1 #geq '+cut+" GeV")
+      legend.AddEntry(hn,'p_{T}L1 #geq '+cut+" GeV ")
 
     legend.Draw()
 
@@ -220,13 +220,13 @@ def cEffEtaVsEta(canvas):
   return
 
 def plotAll(canvas) :
-  cEffHistory(canvas)
-  cEffEtaOMTF(canvas)
-  cEffDelta(canvas)
-  cEffEtaVsEta(canvas)
-  cEffEtaAll(canvas)
+#  cEffHistory(canvas)
+#  cEffEtaOMTF(canvas)
+#  cEffDelta(canvas)
+#  cEffEtaVsEta(canvas)
+#  cEffEtaAll(canvas)
   cEffPt(canvas)
-  cEffEta(canvas)
-  cEffRunAver(canvas)
+#  cEffEta(canvas)
+#  cEffRunAver(canvas)
   return
 

@@ -26,6 +26,10 @@
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 #include "UserCode/OmtfAnalysis/interface/SynchroCountsGrabber.h"
+#include "SimDataFormats/Track/interface/SimTrack.h"
+#include "SimDataFormats/Track/interface/SimTrackContainer.h"
+#include "SimDataFormats/Vertex/interface/SimVertex.h"
+#include "SimDataFormats/Vertex/interface/SimVertexContainer.h"
 
 
 
@@ -72,6 +76,9 @@ private:
   L1ObjMaker theL1ObjMaker;
   SynchroCountsGrabber theSynchroGrabber;
   ClosestTrackFinder theClosestTrackFinder;
+
+  edm::EDGetTokenT<edm::SimTrackContainer> inputSim;
+  edm::EDGetTokenT<edm::SimVertexContainer> vertexSim;
 
 };
 #endif

@@ -1,4 +1,4 @@
-#!/cvmfs/cms.cern.ch/slc6_amd64_gcc700/cms/cmssw/CMSSW_10_2_1/external/slc6_amd64_gcc700/bin/python
+#!/cvmfs/cms.cern.ch/slc6_amd64_gcc700/cms/cmssw/CMSSW_10_5_0/external/slc6_amd64_gcc700/bin/python
 
 import sys
 import math
@@ -13,7 +13,7 @@ import plotsMenu
 import plotsSynch
 import plotsSecMuSel
 import plotsDiMu
-import plotsL1Dist
+#import plotsL1Dist
 
 print "Hello ROOT"
 fileName = "../omtfAnalysis.root"

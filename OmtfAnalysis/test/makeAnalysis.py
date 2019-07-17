@@ -18,12 +18,12 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
-#     "omtfTree.root"
+      "omtfTree.root"
 #    "../jobs/v2_SM2018D/omtfTree.root"
 #   "../jobs/v3_SM2017F/omtfTree.root"
 #    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeB.root"
 #    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeE.root"
-    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeC.root"
+#   "../jobs/v4_SingleMuon-17Nov2017/omtfTreeC.root"
   ),
   filterByAnaEvent = cms.bool(True),
   anaEvent = cms.PSet(
@@ -31,38 +31,38 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
 #   onlyRuns = cms.vuint32(299149),
   ),
 
-  anaSecMuSel = cms.PSet(
-    triggMuon = cms.PSet (
-#     requireCharge      = cms.int32(1),
-      requireEtaSign     = cms.int32(1),
-#      requireOutsideOMTF  = cms.bool(True),
-      requireTight        = cms.bool(True),
-      requireUnique       = cms.bool(True),
-      requireHLT          = cms.bool(True),
-      requireIsoForHLTIso = cms.bool(True),
-      minAcceptMuPtVal    = cms.double(20.),
-      minMatchStations    = cms.uint32(2),
-      maxMuEtaVal         = cms.double(2.4),
-      minAcceptL1PtVal    = cms.double(18.),
-      maxL1DeltaR         = cms.double(0.3),
-      minAccepL1Q         = cms.int32(12), 
-    ),
-    probeMuon = cms.PSet (
-#     requireCharge    = cms.int32(-1),
-      requireEtaSign   = cms.int32(-1),
-#     requireInsideOMTF = cms.bool(True),
-      requireUnique     = cms.bool(True),
-      requireLoose      = cms.bool(True),
-      requireMedium     = cms.bool(True),
-      requireTight      = cms.bool(False),
-      requireTkIso      = cms.bool(False),
-      requirePfIso      = cms.bool(False),
-      minTrgMuDeltaR    = cms.double(1.0),
-      maxMuEtaVal       = cms.double(2.4),
-    ),
-  ), 
+#  anaSecMuSel = cms.PSet(
+#    triggMuon = cms.PSet (
+##     requireCharge      = cms.int32(1),
+#      requireEtaSign     = cms.int32(1),
+##      requireOutsideOMTF  = cms.bool(True),
+#      requireTight        = cms.bool(True),
+#      requireUnique       = cms.bool(True),
+#      requireHLT          = cms.bool(True),
+#      requireIsoForHLTIso = cms.bool(True),
+#      minAcceptMuPtVal    = cms.double(20.),
+#      minMatchStations    = cms.uint32(2),
+#      maxMuEtaVal         = cms.double(2.4),
+#      minAcceptL1PtVal    = cms.double(18.),
+#      maxL1DeltaR         = cms.double(0.3),
+#      minAccepL1Q         = cms.int32(12), 
+#    ),
+#    probeMuon = cms.PSet (
+##     requireCharge    = cms.int32(-1),
+#      requireEtaSign   = cms.int32(-1),
+##     requireInsideOMTF = cms.bool(True),
+#      requireUnique     = cms.bool(True),
+#      requireLoose      = cms.bool(True),
+#      requireMedium     = cms.bool(True),
+#      requireTight      = cms.bool(False),
+#      requireTkIso      = cms.bool(False),
+#      requirePfIso      = cms.bool(False),
+#      minTrgMuDeltaR    = cms.double(1.0),
+#      maxMuEtaVal       = cms.double(2.4),
+#    ),
+#  ), 
 
-  filterByAnaMuonDistribution = cms.bool(True),
+  filterByAnaMuonDistribution = cms.bool(False),
   anaMuonDistribution = cms.PSet (
     requireUnique  = cms.bool(True),
     requireGlobal  = cms.bool(True),

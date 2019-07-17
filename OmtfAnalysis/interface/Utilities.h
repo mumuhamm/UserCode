@@ -34,7 +34,7 @@ class L1PtScale {
 public:
   static unsigned int ptCode(float ptValue);
   static float ptValue(unsigned int ptCode);
-  static const unsigned int nPtBins = 32;
+  static const unsigned int nPtBins = 38;
   static double ptBins[nPtBins + 1];
 };
 

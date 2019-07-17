@@ -38,7 +38,10 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
     theL1ObjMaker(cfg.getParameter<edm::ParameterSet>("l1ObjMaker"), consumesCollector()), 
     theSynchroGrabber(cfg.getParameter<edm::ParameterSet>("linkSynchroGrabber"), consumesCollector()),
     theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector())
-{ }
+{
+inputSim = consumes<edm::SimTrackContainer>(edm::InputTag("g4SimHits"));
+vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
+ }
   
 
 void OmtfTreeMaker::beginRun(const edm::Run &ru, const edm::EventSetup &es)
@@ -89,14 +92,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   //
   // initial filter. Optionally do not further use events without muon
   //
-  const reco::Muon * theMuon = theBestMuonFinder.result(ev,es);
-
-  if (theConfig.getParameter<bool>("onlyBestMuEvents") && (!theMuon) ) return;
-  theCounter++;
-
-  //
-  // fill event information
-  //
   event = new EventObj;
   event->bx = ev.bunchCrossing();
   event->orbit = ev.orbitNumber();
@@ -105,10 +100,22 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   event->run = ev.run();
   event->lumi = ev.luminosityBlock();
 
+/*
+  const reco::Muon * theMuon = theBestMuonFinder.result(ev,es);
+
+  if (theConfig.getParameter<bool>("onlyBestMuEvents") && (!theMuon) ) return;
+  theCounter++;
+
+  //
+  // fill event information
+  //
+
   //
   // create other objects structure
   //
   muonColl = new MuonObjColl (theBestMuonFinder.muons(ev,es));
+*/
+  muonColl = new MuonObjColl;
   l1ObjColl = new L1ObjColl;
 
   bitsL1 = new TriggerMenuResultObj();
@@ -118,7 +125,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
 
   closestTrack = new TrackObj();
 
-
+/*
   //
   // fill algoBits info
   //
@@ -137,6 +144,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   theMenuInspector.associateHLT(ev,es,muonColl);
 
 
+*/
   // get L1 candidates
   std::vector<L1Obj> l1Objs = theL1ObjMaker(ev);
   if (l1Objs.size()) {
@@ -157,13 +165,48 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
 */
 
   
-/*  if (l1ObjColl->selectByType(L1Obj::OMTF)) {
-  std::cout <<"#"<<theCounter<<" "<< *event << std::endl;
+
+  edm::Handle<edm::SimTrackContainer> simTk;
+  edm::Handle<edm::SimVertexContainer> simVx;
+  ev.getByToken(inputSim, simTk);
+  ev.getByToken(vertexSim, simVx);
+  std::vector<SimTrack> mySimTracks = *(simTk.product());
+  std::vector<SimVertex> mySimVertex = *(simVx.product());
+
+bool debug=1;
+if (debug) {
+  std::cout<<std::endl <<"#"<<theCounter<<" "<< *event << std::endl;
+  for (const auto & sv : mySimVertex) std::cout <<" vtx_id: "<<sv.vertexId()<<" position_perp: "<< sv.position().Rho() <<" pos :"<<sv.position()<< std::endl;
+}
+
+
+  for (std::vector<SimTrack>::const_iterator it=mySimTracks.begin(); it<mySimTracks.end(); it++) {
+    const SimTrack & track = *it;
+    if ( track.type() == -99) continue;
+    if ( track.vertIndex() != 0) continue;
+//    if ( track.vertIndex() >1) continue;
+//    if (mySimVertex[track.vertIndex()].position().rho() > 50.) continue;
+
+    //sucessful muon, add to count
+
+    double phi_sim = track.momentum().phi(); //momentum azimutal angle
+    double pt_sim = track.momentum().pt(); //transverse momentum
+    double eta_sim = track.momentum().eta(); //pseudorapidity
+    muonColl->data().push_back(MuonObj(pt_sim, eta_sim, phi_sim, track.type()/(-13)) ); 
+
+if (debug) std::cout << " pt_sim: " << pt_sim <<" eta_sim: "<<eta_sim<<" phi_sim: "<<phi_sim
+                 <<" vtx: "<<track.vertIndex()<<" type: "<<track.type() // 13 or -13 is a muon
+                 << "pos: "<<mySimVertex[track.vertIndex()].position().rho()
+                 << std::endl; 
+  }
+
+//
+  if (debug) { // || l1ObjColl->selectByType(L1Obj::OMTF_emu)) {
   std::cout << *muonColl << std::endl;
   std::cout << *l1ObjColl << std::endl;
   std::cout << std::endl;
   }
-*/
+//
 
 /*
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
