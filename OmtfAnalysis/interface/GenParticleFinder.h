@@ -30,6 +30,10 @@ public:
 
 
 private:
+
+  void getGenParticles(const edm::Event &ev);
+  void getTrackingParticles(const edm::Event &ev);
+  
   bool run(const edm::Event &ev, const edm::EventSetup &es);
 
 private:

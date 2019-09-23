@@ -15,15 +15,63 @@
 #include "TH1D.h"
 #include "TH2D.h"
 
+#include "SimDataFormats/TrackingAnalysis/interface/TrackingParticle.h"
+
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 GenParticlefinder::GenParticlefinder(const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl)
   : lastEvent(0), lastRun(0), theConfig(cfg), 
     theAllParticles(0), theGenPart(0)
 { 
 
-  edm::InputTag genCollTag =  theConfig.getParameter<edm::InputTag>("genColl");
-  cColl.consumes<reco::GenParticleCollection>(genCollTag);
+  if (theConfig.exists("genColl")){
+    edm::InputTag genCollTag =  theConfig.getParameter<edm::InputTag>("genColl");
+    cColl.consumes<reco::GenParticleCollection>(genCollTag);
+  }
 
+  if (theConfig.exists("trackingParticle")){
+    edm::InputTag trackingPartTag =  theConfig.getParameter<edm::InputTag>("trackingParticle");
+    cColl.consumes<TrackingParticleCollection>(trackingPartTag);
+  }  
+}
+
+void GenParticlefinder::getGenParticles(const edm::Event &ev){
+
+//get Muon
+  edm::Handle<reco::GenParticleCollection> genparticles;
+  edm::InputTag genCollTag =  theConfig.getParameter<edm::InputTag>("genColl");
+  ev.getByLabel( genCollTag, genparticles);
+  if (!genparticles.isValid()) return;
+  
+  
+  theAllParticles = genparticles->size();
+  
+  for (reco::GenParticleCollection::const_iterator im = genparticles->begin(); im != genparticles->end(); ++im) {
+    
+    
+    GenObj genObj(im->pt(),im->eta(),im->phi(),im->mass(),im->charge(),
+		  im->pdgId(),im->status(),0);
+    theGenObjs.push_back(genObj);
+  }  
+}
+
+void GenParticlefinder::getTrackingParticles(const edm::Event &ev){
+
+  edm::Handle<TrackingParticleCollection> trackingParticleHandle;
+  edm::InputTag trackingPartTag =  theConfig.getParameter<edm::InputTag>("trackingParticle");
+  ev.getByLabel(trackingPartTag, trackingParticleHandle);
+  if (!trackingParticleHandle.isValid()) return;
+
+  for (TrackingParticleCollection::const_iterator iTP = trackingParticleHandle->begin();
+       iTP!=trackingParticleHandle->end();++iTP){
+
+    if(iTP->eventId().bunchCrossing() != 0) continue;
+    if (abs(iTP->pdgId()) != 13) continue;
+    
+    GenObj genObj(iTP->pt(), iTP->eta(), iTP->phi(), iTP->mass(), iTP->charge(),
+		  iTP->pdgId(), iTP->status(),1);
+    theGenObjs.push_back(genObj);
+  }  
 }
 
 bool GenParticlefinder::run(const edm::Event &ev, const edm::EventSetup &es)
@@ -35,24 +83,10 @@ bool GenParticlefinder::run(const edm::Event &ev, const edm::EventSetup &es)
   theGenPart = 0;
   theGenObjs.clear();
 
-  //get Muon
-  edm::Handle<reco::GenParticleCollection> genparticles;
-  edm::InputTag genCollTag =  theConfig.getParameter<edm::InputTag>("genColl");
-  ev.getByLabel( genCollTag, genparticles);
-  if (!genparticles.isValid()) {
-    return false;
-  }
-  theAllParticles = genparticles->size();
-  
-  for (reco::GenParticleCollection::const_iterator im = genparticles->begin(); im != genparticles->end(); ++im) {
-    
-    
-    GenObj genObj(im->pt(),im->eta(),im->phi(),im->mass(),im->charge(),
-		  im->pdgId(),im->status(),0);
-    
-    theGenObjs.push_back(genObj);
-  }
-  
+
+  if(theConfig.exists("genColl")) getGenParticles(ev);
+  if(theConfig.exists("trackingParticle")) getTrackingParticles(ev);
+     
   //
   // sort resulting container by pT, in descending order
   //
