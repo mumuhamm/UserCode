@@ -47,7 +47,7 @@ vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
 void OmtfTreeMaker::beginRun(const edm::Run &ru, const edm::EventSetup &es)
 {
   std::cout <<" OmtfTreeMaker::beginRun CALLED" << std::endl; 
-  theMenuInspector.checkRun(ru,es);
+//  theMenuInspector.checkRun(ru,es);
 }
 
 void OmtfTreeMaker::beginJob()
@@ -165,7 +165,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
 */
 
   
-
+/*
   edm::Handle<edm::SimTrackContainer> simTk;
   edm::Handle<edm::SimVertexContainer> simVx;
   ev.getByToken(inputSim, simTk);
@@ -199,8 +199,10 @@ if (debug) std::cout << " pt_sim: " << pt_sim <<" eta_sim: "<<eta_sim<<" phi_sim
                  << "pos: "<<mySimVertex[track.vertIndex()].position().rho()
                  << std::endl; 
   }
+*/
 
 //
+bool debug=0;
   if (debug) { // || l1ObjColl->selectByType(L1Obj::OMTF_emu)) {
   std::cout << *muonColl << std::endl;
   std::cout << *l1ObjColl << std::endl;

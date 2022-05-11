@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 import os
 import sys
-import commands
+#import commands
 
 process = cms.Process("Analysis")
 process.source = cms.Source("EmptySource")
@@ -9,9 +9,13 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1))
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.Geometry.GeometryExtended2017Reco_cff')
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+#from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag.globaltag = '113X_dataRun3_Express_v2'
+
 
 
 
@@ -102,8 +106,8 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
     acceptHLT_Names                  = cms.vstring("HLT_Jet","HLT_HT","HLT_PFJet","HLT_PFHT"),
   ),
 
-#  anaDataEmul =  cms.PSet(bxMin=cms.int32(-3),bxMax=cms.int32(4)),
-   anaEff =  cms.PSet(),     
+   anaDataEmul =  cms.PSet(bxMin=cms.int32(-3),bxMax=cms.int32(4)),
+#  anaEff =  cms.PSet(),     
 #  anaTime = cms.PSet(),
 #  anaSynch = cms.PSet(),
 #  anaDiMu = cms.PSet(),

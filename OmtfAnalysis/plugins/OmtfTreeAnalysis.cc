@@ -140,7 +140,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
   for (int ev=0; ev<nentries; ev++) {
 
     chain.GetEntry(ev);
-//    std::cout <<"---------------------------------------#"<<ev<<", event: "<< *event << std::endl;
+    std::cout <<"---------------------------------------#"<<ev<<", event: "<< *event << std::endl;
 
     if (theAnaMenu) theAnaMenu->updateMenu(bitsL1->names, bitsHLT->names);
 
@@ -190,6 +190,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
     theAnaMenu->debug=false;
     theAnaEff->debug=false;
 */
+    if (theAnaDataEmul) theAnaDataEmul->debug = true; 
 
     //
     // Analyses
@@ -200,7 +201,6 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
     if (theAnaTime)     theAnaTime->run( event, muonColl, closestTrack, l1ObjColl);
     if (theAnaSynch)    theAnaSynch->run( event, &muon, ConverterRPCRawSynchroSynchroCountsObj::toRawSynchro( synchroCounts->data));
 
-    if (theAnaDataEmul)    theAnaDataEmul->debug = false; 
     if (theAnaDiMu)   theAnaDiMu->run( event, muonColl, l1ObjColl);
     if (theAnaL1Dist) theAnaL1Dist->run( event, muonColl, closestTrack, l1ObjColl);
   }

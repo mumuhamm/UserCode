@@ -275,6 +275,7 @@ void AnaDataEmul::run(EventObj* event, L1ObjColl * coll)
          hDataEmulNotAgreePhi->Fill( OmtfName(emul->iProcessor, emul->position), emul->phi ); 
       }
     
+//      if(layerComb==7) 
       if (debug && diff!=agree ) std::cout << "NOT agree("<<matchName(diff)<<"), dt: "<< dt <<", csc: "<< csc <<", rpcB: "<< hasRpcHitsB(hits)<<", rpcE: "<<hasRpcHitsE(hits) << std::endl <<*coll << std::endl; 
     
       if (unique) {
