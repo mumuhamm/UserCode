@@ -221,12 +221,12 @@ def cEffEtaVsEta(canvas):
 
 def plotAll(canvas) :
 #  cEffHistory(canvas)
-#  cEffEtaOMTF(canvas)
-#  cEffDelta(canvas)
-#  cEffEtaVsEta(canvas)
-#  cEffEtaAll(canvas)
+  cEffEtaOMTF(canvas)
+  cEffDelta(canvas)
+  cEffEtaVsEta(canvas)
+  cEffEtaAll(canvas)
   cEffPt(canvas)
-#  cEffEta(canvas)
-#  cEffRunAver(canvas)
+  cEffEta(canvas)
+  cEffRunAver(canvas)
   return
 

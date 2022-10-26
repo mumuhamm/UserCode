@@ -55,7 +55,7 @@ OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
   if (theConfig.exists("anaDataEmul")) theAnaDataEmul = new AnaDataEmul(cfg.getParameter<edm::ParameterSet>("anaDataEmul"));
   if (theConfig.exists("anaSecMuSel")) theAnaSecMu = new AnaSecMuSelector(cfg.getParameter<edm::ParameterSet>("anaSecMuSel"));
   if (theConfig.exists("anaTime")) theAnaTime = new AnaTime(cfg.getParameter<edm::ParameterSet>("anaTime"));
-  if (theConfig.exists("anaSynch")) theAnaSynch = new AnaSynch();
+  if (theConfig.exists("anaSynch")) theAnaSynch = new AnaSynch(cfg.getParameter<edm::ParameterSet>("anaSynch"),consumesCollector());
   if (theConfig.exists("anaDiMu")) theAnaDiMu= new AnaDiMu(cfg.getParameter<edm::ParameterSet>("anaDiMu"));
   if (theConfig.exists("anaL1Distribution")) theAnaL1Dist = new AnaL1Distribution( cfg.getParameter<edm::ParameterSet>("anaL1Distribution"));
 }

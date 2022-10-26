@@ -31,12 +31,26 @@
 using namespace edm;
 using namespace std;
 
-SynchroSelectorMuon::SynchroSelectorMuon(const edm::ParameterSet& cfg) : SynchroSelector(cfg) 
-{ }
+namespace {
+  edm::ESGetToken<GlobalTrackingGeometry, GlobalTrackingGeometryRecord> theGeomteryToken;
+  edm::ESGetToken<MagneticField, IdealMagneticFieldRecord> theFieldToken;
+}
 
-SynchroSelectorMuon::SynchroSelectorMuon(const edm::ParameterSet& cfg, TObjArray& histos) 
-  : SynchroSelector(cfg)
-{ initHistos(histos); }
+
+SynchroSelectorMuon::SynchroSelectorMuon(const edm::ParameterSet& cfg,  edm::ConsumesCollector cColl) 
+: SynchroSelector(cfg, cColl) 
+{ 
+  theGeomteryToken = cColl.esConsumes<GlobalTrackingGeometry, GlobalTrackingGeometryRecord>();
+  theFieldToken = cColl.esConsumes<MagneticField, IdealMagneticFieldRecord>();
+}
+
+SynchroSelectorMuon::SynchroSelectorMuon(const edm::ParameterSet& cfg, TObjArray& histos, edm::ConsumesCollector cColl) 
+  : SynchroSelector(cfg, cColl)
+{ 
+  theGeomteryToken = cColl.esConsumes<GlobalTrackingGeometry, GlobalTrackingGeometryRecord>();
+  theFieldToken = cColl.esConsumes<MagneticField, IdealMagneticFieldRecord>();
+  initHistos(histos); 
+}
 
 void SynchroSelectorMuon::initHistos(TObjArray& histos)
 {
@@ -71,13 +85,12 @@ bool SynchroSelectorMuon::takeIt(const RPCDetId & det, const edm::Event&ev, cons
 
   if (!theMuon) return false;
 
-  edm::ESHandle<GlobalTrackingGeometry> globalGeometry;
-  es.get<GlobalTrackingGeometryRecord>().get(globalGeometry);
-  edm::ESHandle<MagneticField> magField;
-  es.get<IdealMagneticFieldRecord>().get(magField);
+  auto const & globalGeometry = es.getData(theGeomteryToken);
+  auto const & magField       = es.getData(theFieldToken);
+
 
   if (hDxy) hDxy->Fill(fabs(theMuon->innerTrack()->dxy(reference)));
-  TrajectoryStateOnSurface aTSOS = trajectoryStateTransform::innerStateOnSurface( *(theMuon->outerTrack()), *globalGeometry, magField.product());
+  TrajectoryStateOnSurface aTSOS = trajectoryStateTransform::innerStateOnSurface( *(theMuon->outerTrack()), globalGeometry, &magField);
   return checkTraj(aTSOS, det,ev,es);
 }
 

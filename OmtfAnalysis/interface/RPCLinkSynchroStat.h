@@ -6,6 +6,7 @@
 #include <vector>
 #include "CondFormats/RPCObjects/interface/LinkBoardElectronicIndex.h"
 #include "DataFormats/RPCDigi/interface/RPCRawSynchro.h"
+#include "UserCode/OmtfAnalysis/interface/SynchroCounts.h"
 
 class RPCReadOutMapping;
 
@@ -41,29 +42,6 @@ protected:
     std::string theName;
     std::vector<ChamberAndPartition> theChamberAndPartitions;
     std::vector<LinkBoardElectronicIndex> theElePaths;
-  };
-
-  class SynchroCounts {
-  public:
-    SynchroCounts() : theCounts(std::vector<unsigned int>(8,0)) {}
-    SynchroCounts(const unsigned int *hits) : theCounts(std::vector<unsigned int>(hits,hits+8)) {}
-    
-    void increment(unsigned int bxDiff);
-    void set(unsigned int bxDiff);
-    unsigned int firstHit() const;
-
-    double rms() const;
-    double mean() const;
-    unsigned int sum() const { return mom0(); }
-
-    std::string print() const;
-    const std::vector<unsigned int> & counts() const { return theCounts; }
-    bool operator==(const SynchroCounts &) const;
-    SynchroCounts & operator+=(const SynchroCounts &rhs);
-  private:
-    unsigned int  mom0() const;
-    double mom1() const;
-    std::vector<unsigned int> theCounts;
   };
 
   typedef std::pair<LinkBoard, SynchroCounts> BoardAndCounts;

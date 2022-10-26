@@ -14,15 +14,15 @@ process.load('Configuration.Geometry.GeometryExtended2017Reco_cff')
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag.globaltag = '113X_dataRun3_Express_v2'
-
-
+#process.GlobalTag.globaltag = '113X_dataRun3_Express_v2'
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 
 
 process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
-      "omtfTree.root"
+#      "omtfTree.root"
+    "../jobs/v1_Muon/omtfTree.root"
 #    "../jobs/v2_SM2018D/omtfTree.root"
 #   "../jobs/v3_SM2017F/omtfTree.root"
 #    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeB.root"
@@ -107,11 +107,11 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   ),
 
    anaDataEmul =  cms.PSet(bxMin=cms.int32(-3),bxMax=cms.int32(4)),
-#  anaEff =  cms.PSet(),     
+   anaEff =  cms.PSet(),     
 #  anaTime = cms.PSet(),
-#  anaSynch = cms.PSet(),
-#  anaDiMu = cms.PSet(),
-#  anaL1Distribution = cms.PSet(),
+   anaSynch = cms.PSet(),
+   anaDiMu = cms.PSet(),
+   anaL1Distribution = cms.PSet(),
 )
 
 process.p = cms.Path(process.omtfAnalysis)

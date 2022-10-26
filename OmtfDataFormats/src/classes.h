@@ -9,7 +9,9 @@
 #include "UserCode/OmtfDataFormats/interface/TriggerMenuResultObj.h"
 #include "UserCode/OmtfDataFormats/interface/SynchroCountsObj.h"
 #include "UserCode/OmtfDataFormats/interface/SynchroCountsObjVect.h"
-
+#include "UserCode/OmtfDataFormats/interface/DetBxStatObj.h"
+#include "UserCode/OmtfDataFormats/interface/DetSpecObj.h"
+#include "UserCode/OmtfDataFormats/interface/BxStatObj.h"
 
 namespace {
   struct dictionary {
@@ -23,5 +25,8 @@ namespace {
     TriggerMenuResultObj aMenuRes;
     SynchroCountsObj aSynch;
     SynchroCountsObjVect aSynchVec;
+    DetBxStatObj aDetBxStatObj;
+    DetSpecObj aDetSpecObj;
+    BxStatObj aBxStatObj;
   };
 }

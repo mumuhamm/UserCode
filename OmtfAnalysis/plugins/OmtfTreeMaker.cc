@@ -24,6 +24,9 @@
 #include "DataFormats/Math/interface/deltaR.h"
 
 #include "UserCode/OmtfAnalysis/interface/ConverterRPCRawSynchroSynchroCountsObj.h"
+#include "UserCode/OmtfDataFormats/interface/DetBxStatObj.h"
+
+
 
 template <class T> T sqr( T t) {return t*t;}
 
@@ -33,11 +36,12 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
     event(0), 
     muonColl(0), l1ObjColl(0), 
     synchroCounts(0), closestTrack(0),
-    theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()),
+    theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()), 
     theBestMuonFinder(cfg.getParameter<edm::ParameterSet>("bestMuonFinder"), consumesCollector()),
     theL1ObjMaker(cfg.getParameter<edm::ParameterSet>("l1ObjMaker"), consumesCollector()), 
     theSynchroGrabber(cfg.getParameter<edm::ParameterSet>("linkSynchroGrabber"), consumesCollector()),
-    theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector())
+    theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector()),
+    theSynchroCheck(cfg.getParameter<edm::ParameterSet>("synchroCheck"), consumesCollector())
 {
 inputSim = consumes<edm::SimTrackContainer>(edm::InputTag("g4SimHits"));
 vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
@@ -46,8 +50,7 @@ vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
 
 void OmtfTreeMaker::beginRun(const edm::Run &ru, const edm::EventSetup &es)
 {
-  std::cout <<" OmtfTreeMaker::beginRun CALLED" << std::endl; 
-//  theMenuInspector.checkRun(ru,es);
+  theMenuInspector.checkRun(ru,es);
 }
 
 void OmtfTreeMaker::beginJob()
@@ -68,6 +71,7 @@ void OmtfTreeMaker::beginJob()
   theBestMuonFinder.initHistos(theHelper);
   theSynchroGrabber.initHistos(theHelper);
   theClosestTrackFinder.initHistos(theHelper);
+  theSynchroCheck.initHistos(theHelper);
 
 }
 
@@ -100,7 +104,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   event->run = ev.run();
   event->lumi = ev.luminosityBlock();
 
-/*
   const reco::Muon * theMuon = theBestMuonFinder.result(ev,es);
 
   if (theConfig.getParameter<bool>("onlyBestMuEvents") && (!theMuon) ) return;
@@ -114,8 +117,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   // create other objects structure
   //
   muonColl = new MuonObjColl (theBestMuonFinder.muons(ev,es));
-*/
-  muonColl = new MuonObjColl;
+//  muonColl = new MuonObjColl;
   l1ObjColl = new L1ObjColl;
 
   bitsL1 = new TriggerMenuResultObj();
@@ -125,7 +127,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
 
   closestTrack = new TrackObj();
 
-/*
   //
   // fill algoBits info
   //
@@ -144,7 +145,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   theMenuInspector.associateHLT(ev,es,muonColl);
 
 
-*/
   // get L1 candidates
   std::vector<L1Obj> l1Objs = theL1ObjMaker(ev);
   if (l1Objs.size()) {
@@ -152,17 +152,16 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1ObjColl->set( std::vector<bool>(l1Objs.size(),false));
     l1ObjColl->set( std::vector<double>(l1Objs.size(),0.));
   }
+
     
   //
   // fill LinkSynchroAnalysis data
   //
-/*
   if (theMuon && theMuon->isGlobalMuon()) {
     theSynchroGrabber.setMuon(theMuon);
     RPCRawSynchro::ProdItem rawCounts  = theSynchroGrabber.counts(ev,es);
     synchroCounts->data = ConverterRPCRawSynchroSynchroCountsObj::toSynchroObj(rawCounts);
   }
-*/
 
   
 /*
@@ -208,6 +207,11 @@ bool debug=0;
   std::cout << *l1ObjColl << std::endl;
   std::cout << std::endl;
   }
+  theSynchroCheck.checkInside(theMuon, ev, es);
+  theSynchroCheck.checkStripCsc(theMuon, ev, es);
+  theSynchroCheck.checkStripRpc(theMuon, ev, es);
+  theSynchroCheck.checkHitRpc(theMuon, ev, es);
+  theSynchroCheck.checkHitCsc(theMuon, ev, es);
 //
 
 /*

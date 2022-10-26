@@ -141,8 +141,8 @@ def cDataEmulBX(canvas):
 #  pad1.SetRightMargin(0.01)
   hD = gROOT.FindObject('hDataEmulBxD')
   hE = gROOT.FindObject('hDataEmulBxE')
-  print 'hDataEmulBxD : ',hD.GetEntries(),' entries'
-  print 'hDataEmulBxE : ',hE.GetEntries(),' entries'
+  print ('hDataEmulBxD : ',hD.GetEntries(),' entries')
+  print ('hDataEmulBxE : ',hE.GetEntries(),' entries')
 #  h.Scale(1/nEvnts)
 #  h.SetMinimum(1.e-4)
   hE.SetLineColor(4)
@@ -166,7 +166,7 @@ def cDataEmulBX(canvas):
     for biny in range(1,h.GetNbinsY()+1) :
       if (biny != 1) : wrong +=  h.GetBinContent(binx,biny)
       all +=  h.GetBinContent(binx,biny)
-  print " all: ",all," wrong: ",wrong
+  print (" all: ",all," wrong: ",wrong)
   xpos=0.60
   ypos=0.86
   legendFontSize = 0.030
@@ -185,7 +185,7 @@ def plotAll(canvas) :
   cDataEmulEta(canvas)
   cDataEmulNotAgree(canvas)
   cDataEmulIssue(canvas)
-  cDataEmulHistory(canvas)
+#  cDataEmulHistory(canvas)
   cDataEmulPt(canvas)
   cDataEmulCompare(canvas)
   cDataEmulDistribution(canvas)

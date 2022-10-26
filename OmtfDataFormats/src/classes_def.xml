@@ -44,5 +44,16 @@
     <version ClassVersion="1" checksum="2760590853"/>
    </class>
 
+   <class name="BxStatObj" ClassVersion="1">
+    <version ClassVersion="1" checksum="1355949135"/>
+   </class>
+   <class name="DetSpecObj" ClassVersion="1">
+    <version ClassVersion="1" checksum="3561353033"/>
+   </class>
+   <class name="DetBxStatObj" ClassVersion="1">
+    <version ClassVersion="1" checksum="1219833196"/>
+   </class>
+
+
  </selection>
 </lcgdict>

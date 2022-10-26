@@ -142,15 +142,15 @@ def cSynch_top10(canvas, what):
   c.Update()
   return
 
-def cSynch_NotComplete(canvas):
-  c = TCanvas("cSynch_NotComplete","cSynch_NotComplete",1200,300)
+def cSynch_Distrib(canvas,opt):
+  c = TCanvas("cSynch_"+opt,"cSynch_"+opt,1200,300)
   canvas.Add(c)
   c.Divide(3,1);
   for fed in range(790,793):
     pad = c.cd(fed-789);
     pad.SetTopMargin(0.1);
     pad.SetGrid(1,1);
-    h = gROOT.FindObject( "hSynch_notComplete{0:3d}".format(fed) );
+    h = gROOT.FindObject( "hSynch_"+opt+"{0:3d}".format(fed) );
     h.GetYaxis().SetNdivisions(510);
     h.GetYaxis().SetNdivisions(605);
     h.GetXaxis().SetTitleOffset(1.0);
@@ -160,7 +160,7 @@ def cSynch_NotComplete(canvas):
     t=TText(); 
     t.SetTextColor(4); t.SetTextAlign(11); t.SetTextSize(0.06);
     t.DrawTextNDC(0.16,0.92,fedStr);
-
+ 
   c.Update()
   return
 
@@ -170,7 +170,9 @@ def plotAll(canvas) :
   cSynch_delaySpread(canvas)
   cSynch_top10(canvas,"Spread")
   cSynch_top10(canvas,"Occup")
-  cSynch_NotComplete(canvas)
+  cSynch_top10(canvas,"Delay")
+  cSynch_Distrib(canvas,"notComplete")
+  cSynch_Distrib(canvas,"Hits")
   return
 
 

@@ -13,14 +13,14 @@ class EventObj;
 #include "CondFormats/RPCObjects/interface/LinkBoardElectronicIndex.h"
 #include "DataFormats/RPCDigi/interface/RPCRawSynchro.h"
 #include "UserCode/OmtfAnalysis/interface/RPCLinkSynchroStat.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 
-namespace edm { class EventSetup; class Run;}
-
+namespace edm { class EventSetup; class Run; class ParameterSet; }
 
 
 class AnaSynch {
 public:
-  AnaSynch();
+  AnaSynch(const edm::ParameterSet& cfg,  edm::ConsumesCollector cColl);
   void init(TObjArray& histos);
   void run( const EventObj* event, const MuonObj* muon, const  RPCRawSynchro::ProdItem & synchro);
   void beginRun(const edm::Run& ru, const edm::EventSetup& es);

@@ -39,8 +39,8 @@ def cDiMuDistribution(canvas):
   hD.SetFillColor(2)
   hD.SetFillStyle(3345)
   hD.DrawCopy('same')
-  print 'Integral Emul: ', hE.Integral() 
-  print 'Integral Data: ', hD.Integral() 
+  print ('Integral Emul: ', hE.Integral()) 
+  print ('Integral Data: ', hD.Integral()) 
 
   c.Update()
   return
@@ -106,7 +106,7 @@ def cDiMuCloseDistrib(canvas):
 def plotAll(canvas) :
   cDiMuNumberOfMuons(canvas)
   cDiMuDistribution(canvas)
-  cDiMuCloseDistrib(canvas)
+#  cDiMuCloseDistrib(canvas)
   cDiMuDistance(canvas)
   return
 

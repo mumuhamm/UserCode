@@ -1,12 +1,12 @@
 import FWCore.ParameterSet.Config as cms
-import commands
 import os
+import sys
+import subprocess
 
 #from Configuration.StandardSequences.Eras import eras
 #process = cms.Process('OmtfTree',eras.Run2_2016)
 
 process = cms.Process('OmtfTree')
-
 
 #
 # For processing single files insert lines with 'file:/PATH/FILE.root'
@@ -14,60 +14,45 @@ process = cms.Process('OmtfTree')
 # or                       '/store/express/Run2015A/ExpressPhysics/FEVT/...root'
 # (there is 255 file limit though). Can be empty for crab.
 #
+
+#dataDir='/eos/cms/store/express/Run2022D/ExpressPhysics/FEVT/Express-v1/000/357/815/00000/'
+#dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/691/00000/'
+#dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/686/00000/'
+#dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/685/00000/'
+dataDir='/eos/cms/store/express/Run2022F/ExpressPhysics/FEVT/Express-v1/000/360/459/00000/'
+lsCommand='ls -1 '+dataDir+'|grep root'
+print ('command: ',lsCommand)
+lsOutput= subprocess.Popen(lsCommand, stdout=subprocess.PIPE, shell=True, text=True).communicate()[0]
+files=[]
+for f in lsOutput.split():
+  files.append('file:'+dataDir+f)
+print ("Number of files in direcotry:",dataDir," ---> ", len(files))
+
+
 process.source = cms.Source("PoolSource", 
 fileNames = cms.untracked.vstring(
-# 'file:/afs/cern.ch/work/k/konec/data/runs/run279931-Express-2000_82DB28E0-7171-E611-A67B-FA163EE0E3A6.root',
+#'file:/afs/cern.ch/work/k/konec/data/runs/run279931-Express-2000_82DB28E0-7171-E611-A67B-FA163EE0E3A6.root',
 #'root://cms-xrd-global.cern.ch//store/express/Run2017B/ExpressPhysics/FEVT/Express-v2/000/298/853/00000/08861D5E-C966-E711-9E99-02163E019DA2.root'
 #'/store/data/Run2017F/SingleMuon/RAW-RECO/ZMu-17Nov2017-v1/70002/BEB00326-8EE0-E711-BCEE-FA163E8B70D3.root',
-#'/store/data/Run2017F/SingleMuon/RAW-RECO/ZMu-PromptReco-v1/000/306/155/00000/860779D7-FFC4-E711-962F-FA163ECB69D1.root'
-#'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/321/010/00000/0601C5EA-FF9A-E811-A8BA-FA163EB3A544.root',
-#'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/321/010/00000/06921998-039B-E811-AE79-FA163E400AA8.root' 
-#'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/321/879/00000/006B4D10-3EAA-E811-AEB0-FA163E6EDA8C.root'
 #'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/887/00000/6C133D73-73AE-E811-8244-FA163E6C4BEA.root'
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/16F0E3D6-96AE-E811-BEF2-FA163E3AE75B.root'
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/22972439-96AE-E811-88C2-FA163EF09AB5.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/869A40B6-86AE-E811-8BD9-02163E013AC9.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/9A7467B6-99AE-E811-8847-FA163EDE9AD6.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/908/00000/5E9D84C4-95AE-E811-B271-FA163E13E714.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/887/00000/F666B1E2-75AE-E811-A074-FA163EB1A399.root'
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/7E72017E-9CAE-E811-910A-FA163EAE6D9D.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/5022FC62-9AAE-E811-9A2C-FA163E7C6CDD.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/E0368CBD-97AE-E811-A96A-FA163E72908D.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/441CE6FB-92AE-E811-9C72-FA163E4CBFDB.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/9E0C65F7-BFB2-E811-A781-FA163E76167C.root'
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/8E0346B2-B5B2-E811-8E3F-FA163EA1D1FE.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/7C6BA8C5-C1B2-E811-ACC1-FA163E9D9A3E.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/0ADE0F3E-BEB2-E811-A837-02163E00AE1A.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/EA5DCF08-C0B2-E811-94FE-FA163E4C08DA.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/2038CFE2-BCB2-E811-B9D2-FA163E79FE08.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/70C8E558-B4B2-E811-9D82-02163E010BF2.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/FA0FC587-BBB2-E811-AC15-FA163E3593E9.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/F62761E9-BDB2-E811-A8C8-FA163E82E6AC.root',
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/106/00000/20D62E93-BEB2-E811-B27D-02163E01A109.root',
-# '/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/909/00000/F076FDEF-99AE-E811-B313-FA163EDAE846.root'
-#'/store/express/Run2018D/ExpressCosmics/FEVT/Express-v1/000/323/100/00000/0BB884B8-B797-2A46-BCD5-66CC96E3DCB5.root'
-#'/store/express/Run2018D/ExpressCosmics/FEVT/Express-v1/000/323/155/00000/76C54B9A-90D5-CB48-9D89-525671C1B304.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/014/00000/D0C532C0-46AF-E811-9A6C-FA163E5578E8.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/014/00000/AACFC51C-3CAF-E811-8A45-FA163ECEF8A9.root'
-#'/store/express/Run2018D/ExpressPhysics/FEVT/Express-v1/000/322/222/00000/FE245209-64B0-E811-B754-FA163E498C7B.root'
-#'/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/475/00000/F293B678-6EA6-E811-905E-FA163E8560D0.root'
-#'/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/322/022/00000/0024C7ED-96AF-E811-B7D8-02163E018013.root'
-#'root://eoscms.cern.ch//eos/cms/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/457/00000/7C5A8E10-BEA5-E811-A56C-02163E014A17.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/348/00000/A8C88C19-40B4-E811-9F14-02163E019EAF.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/323/778/00000/5AD11DED-DA6E-5A4C-83FB-BD8F2905757F.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/323/778/00000/BEB7C02D-D2A8-9E42-B5B9-89007E5365D0.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/324/747/00000/8B681A49-D933-C14C-BEF2-FF0544463151.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/324/769/00000/D3102A05-3B1F-8B4F-AD4F-6F5C14BE0385.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/324/769/00000/A0DA06A1-647A-9F4C-8980-AD587C528742.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/119/00000/E6FB38F2-879E-E811-A4FD-FA163EDEAFA5.root'
-#'file:/afs/cern.ch/work/k/konec/data/runs/A8C88C19-40B4-E811-9F14-02163E019EAF.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/124/00000/9E9321CC-B19E-E811-BF42-FA163E4EAC94.root'
-#'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/140/00000/00CAF0AF-5B9F-E811-9E6B-FA163EEA3181.root'
-#'file:/afs/cern.ch/work/k/konec/data/runs/00CAF0AF-5B9F-E811-9E6B-FA163EEA3181.root'
-'/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/321/149/00000/0C567C00-D89F-E811-A83C-FA163E33F482.root'
+# 'file:/eos/cms/store/express/Commissioning2022/ExpressCosmics/FEVT/Express-v1/000/351/470/00000/ff2a2110-2a06-4a7f-8e51-6977113e6e68.root',
+# 'file:/eos/cms/store/express/Run2022A/ExpressPhysics/FEVT/Express-v1/000/352/417/00000/01946fa6-080a-42e1-af66-b40b0621e8e5.root',
+# 'file:/eos/cms/store/express/Run2022A/ExpressPhysics/FEVT/Express-v1/000/352/417/00000/06079f98-e0ed-4810-9490-1f7d0d5a17bb.root',
+# 'file:/eos/cms/store/express/Run2022A/ExpressPhysics/FEVT/Express-v1/000/352/417/00000/069157b0-dbaa-4546-bdac-072a85fee2ff.root',
+#  'file:/eos/cms/store/express/Run2022A/ExpressPhysics/FEVT/Express-v1/000/352/417/00000/0773fa06-e0e6-4da3-a12f-7f02e809a2ef.root',
+# 'file:/afs/cern.ch/work/k/konec/data/runs/run324201_SingleMuon_DE15789B-9E54-7F41-8C6B-E2442CB23F52.root',
+#  'file:/afs/cern.ch/work/k/konec/data/runs/run321124_JetHT_9E9321CC-B19E-E811-BF42-FA163E4EAC94.root',
+#  'file:/afs/cern.ch/work/k/konec/data/runs/run321140_JetHT_00CAF0AF-5B9F-E811-9E6B-FA163EEA3181.root',
+#  'file:/afs/cern.ch/work/k/konec/data/runs/run322348_JetHT_A8C88C19-40B4-E811-9F14-02163E019EAF.root',
+# 'file:/eos/cms/store/express/Run2022D/ExpressPhysics/FEVT/Express-v1/000/357/815/00000/ffe8b95d-25cb-45cd-9f45-b96d8e18ed4f.root',
   ),
-#skipEvents =  cms.untracked.uint32(1067)
+#skipEvents =  cms.untracked.uint32(6064)
+#skipEvents =  cms.untracked.uint32(19177)
+#skipEvents =  cms.untracked.uint32(19177+1117)
+#skipEvents =  cms.untracked.uint32(19177+1332)
 )
+process.source.fileNames = files
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #
 # import of standard configurations
@@ -75,9 +60,8 @@ fileNames = cms.untracked.vstring(
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 #process.load('Configuration.EventContent.EventContent_cff')
-#process.load('Configuration.Geometry.GeometryExtended2016Reco_cff')
 #process.load('Configuration.Geometry.GeometryDB_cff')
-process.load('Configuration.Geometry.GeometryExtended2017Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2021Reco_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -93,142 +77,109 @@ process.load('EventFilter.L1TRawToDigi.omtfStage2Digis_cfi')
 process.load('EventFilter.L1TRawToDigi.caloStage2Digis_cfi')
 #process.load("CondTools/RPC/RPCLinkMap_sqlite_cff")
 
-
 #
 # set proper GlobalTag
 #
-#process.GlobalTag.globaltag = 'FT_R_53_V10::All' #rereco 2012ABC
-#process.GlobalTag.globaltag = 'FT_R_53_V18::All' #rereco 2012ABC
-#process.GlobalTag.globaltag = 'FT_R_53_V21::All' #rereco 2012D
-#process.GlobalTag.globaltag  = 'GR_E_V46::All' #rereco
-#process.GlobalTag.globaltag  = 'GR_P_V50::All' #rereco
-#process.GlobalTag.globaltag  = 'GR_P_V54::All' #rereco
-#process.GlobalTag.globaltag  = 'GR_P_V56::All' #rereco
-#process.GlobalTag.globaltag  = '74X_dataRun2_Prompt_v0'
-#process.GlobalTag.globaltag  = '74X_dataRun2_Express_v0'
-#process.GlobalTag.globaltag  = 'auto:run2_data'
-#process.GlobalTag.globaltag  = '80X_dataRun2_Prompt_v8'
 from Configuration.AlCa.GlobalTag import GlobalTag
-#from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
-#process.GlobalTag.globaltag  = '92X_dataRun2_Prompt_v4'
-#process.GlobalTag.globaltag = '100X_dataRun2_v1'
-#process.GlobalTag.globaltag = '100X_dataRun2_Express_v3'
-#process.GlobalTag.globaltag = '101X_dataRun2_Express_v8'
-process.GlobalTag.globaltag = '103X_dataRun2_HLT_v1'
+#process.GlobalTag.globaltag = '123X_dataRun3_Express_v5'
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 
 #
 # message logger
 #
 process.load('FWCore.MessageService.MessageLogger_cfi')
-#process.MessageLogger.cerr.threshold = cms.untracked.string('DEBUG')
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
+#process.MessageLogger.cerr.threshold = "DEBUG"
+process.MessageLogger.cerr.enableStatistics = False
 #process.MessageLogger.debugModules.append('muonRPCDigis')
 #process.MessageLogger.debugModules.append('omtfStage2Digis')
-#process.MessageLogger.debugModules.append('omtfStage2Raw')
-#process.MessageLogger.debugModules.append('omtfStage2Digis2')
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
-process.MessageLogger.suppressWarning  = cms.untracked.vstring('Geometry', 'AfterSource','L1T','L1GlobalTriggerRawToDigi')
-process.options = cms.untracked.PSet( wantSummary=cms.untracked.bool(False))
+#process.MessageLogger.suppressWarning  = cms.untracked.vstring('*')
+process.MessageLogger.cout.enable =False 
 
-process.digiComapre = cms.EDAnalyzer("OmtfDigiCompare",
+process.digiCompare = cms.EDAnalyzer("OmtfDigiCompare",
   srcRPC_OMTF = cms.InputTag('omtfStage2Digis'),
-#  srcRPC_OMTF = cms.InputTag('omtfStage2Digis2','OmtfUnpacker2'),
   srcRPC_PACT = cms.InputTag('muonRPCDigis'),
 
   srcCSC_OMTF = cms.InputTag('omtfStage2Digis'),
-#  srcCSC_OMTF  = cms.InputTag('omtfStage2Digis2','OmtfUnpacker2'),
-#  srcCSC_CSC = cms.InputTag('csctfDigis'),
-  srcCSC_CSC = cms.InputTag('emtfStage2Digis'),
+  srcCSC_CSC  = cms.InputTag('emtfStage2Digis'),
+# srcCSC_CSC  = cms.InputTag("muonCSCDigis","MuonCSCCorrelatedLCTDigi"),
+  srcALCT     = cms.InputTag("muonCSCDigis","MuonCSCALCTDigi"),
+  useALCT     = cms.bool(True),
 
   srcOMTF_DATA = cms.InputTag('omtfStage2Digis'),
   srcOMTF_EMUL = cms.InputTag('gmtStage2Digis','OMTF'),
-#  srcOMTF_EMUL = cms.InputTag('omtfEmulator','OMTF'),
-#
-#  srcDTPh_BMTF = cms.InputTag('bmtfDigis'),
-#  srcDTTh_BMTF = cms.InputTag('bmtfDigis'),
+#  srcOMTF_EMUL = cms.InputTag('simOmtfDigis','OMTF'),
+
   srcDTPh_BMTF = cms.InputTag('twinMuxStage2Digis','PhIn'),
   srcDTTh_BMTF = cms.InputTag('twinMuxStage2Digis','ThIn'),
   srcDTPh_OMTF = cms.InputTag('omtfStage2Digis'),
   srcDTTh_OMTF = cms.InputTag('omtfStage2Digis'),
-#  srcDTPh_OMTF = cms.InputTag('omtfStage2Digis2','OmtfUnpacker2'),
-#  srcDTTh_OMTF = cms.InputTag('omtfStage2Digis2','OmtfUnpacker2'),
 )
 
-process.omtfStage2Raw = cms.EDProducer("OmtfPacker",
-  rpcInputLabel = cms.InputTag('omtfStage2Digis'),
-  cscInputLabel = cms.InputTag('omtfStage2Digis'),
-  dtPhInputLabel = cms.InputTag('omtfStage2Digis'),
-  dtThInputLabel = cms.InputTag('omtfStage2Digis'),
-)
+#process.omtfStage2Raw = cms.EDProducer("OmtfPacker",
+#  rpcInputLabel = cms.InputTag('omtfStage2Digis'),
+#  cscInputLabel = cms.InputTag('omtfStage2Digis'),
+#  dtPhInputLabel = cms.InputTag('omtfStage2Digis'),
+#  dtThInputLabel = cms.InputTag('omtfStage2Digis'),
+#)
 
-process.omtfStage2Digis2 = cms.EDProducer("OmtfUnpacker",
-  inputLabel = cms.InputTag('omtfStage2Raw'),
-  useRpcConnectionFile = cms.bool(True),
-  rpcConnectionFile = cms.string("CondTools/RPC/data/RPCOMTFLinkMapInput.txt"),
-  outputTag = cms.string("OmtfUnpacker2"),
-)
+#process.omtfStage2Digis2 = cms.EDProducer("OmtfUnpacker",
+#  inputLabel = cms.InputTag('omtfStage2Raw'),
+#  useRpcConnectionFile = cms.bool(True),
+#  rpcConnectionFile = cms.string("CondTools/RPC/data/RPCOMTFLinkMapInput.txt"),
+#  outputTag = cms.string("OmtfUnpacker2"),
+#)
 
 #
 ###OMTF emulator configuration
 #
 #OMTF ESProducer. Fills CondFormats from XML files.
-process.omtfParamsSource = cms.ESSource( "EmptyESSource",
-     recordName = cms.string('L1TMuonOverlapParamsRcd'),
-    iovIsRunNotTime = cms.bool(True),
-    firstValid = cms.vuint32(1)
-)
-process.omtfParams = cms.ESProducer( "L1TMuonOverlapParamsESProducer",
-     patternsXMLFiles = cms.VPSet( cms.PSet(patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_0x0003.xml")),),
-     configXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/hwToLogicLayer_0x0004.xml"),
-)
+#process.omtfParamsSource = cms.ESSource( "EmptyESSource",
+#     recordName = cms.string('L1TMuonOverlapParamsRcd'),
+#    iovIsRunNotTime = cms.bool(True),
+#    firstValid = cms.vuint32(1)
+#)
+#process.omtfParams = cms.ESProducer( "L1TMuonOverlapParamsESProducer",
+#     patternsXMLFiles = cms.VPSet( cms.PSet(patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_0x0003.xml")),),
+#     configXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/hwToLogicLayer_0x0004.xml"),
+#)
 
-import L1Trigger.L1TMuonOverlap.simOmtfDigis_cfi
-process.omtfEmulator=L1Trigger.L1TMuonOverlap.simOmtfDigis_cfi.simOmtfDigis.clone() 
+#process.load('L1Trigger.L1TMuonOverlapPhase1.fakeOmtfParams_cff')
+#process.omtfParams.configXMLFile =  cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/hwToLogicLayer_0x0008.xml")
+#process.omtfParams.patternsXMLFiles = cms.VPSet( cms.PSet(patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_0x00012_oldSample_3_30Files_grouped1_classProb17_recalib2.xml")))
+
+import L1Trigger.L1TMuonOverlapPhase1.simOmtfDigis_cfi
+process.omtfEmulator=L1Trigger.L1TMuonOverlapPhase1.simOmtfDigis_cfi.simOmtfDigis.clone() 
+#process.omtfEmulator.srcDTPh = cms.InputTag('simDtTriggerPrimitiveDigis'),
+#process.omtfEmulator.srcDTTh = cms.InputTag('simDtTriggerPrimitiveDigis'),
+#process.omtfEmulator.srcCSC = cms.InputTag('simCscTriggerPrimitiveDigis','MPCSORTED'),
+#process.omtfEmulator.srcRPC = cms.InputTag('simMuonRPCDigis'),
 process.omtfEmulator.srcDTPh = cms.InputTag('omtfStage2Digis')
 process.omtfEmulator.srcDTTh = cms.InputTag('omtfStage2Digis')
 process.omtfEmulator.srcCSC = cms.InputTag('omtfStage2Digis')
+#process.omtfEmulator.srcCSC = cms.InputTag('emtfStage2Digis')
 process.omtfEmulator.srcRPC = cms.InputTag('omtfStage2Digis')
-#process.omtfEmulator.dropRPCPrimitives = cms.bool(False)
-#process.omtfEmulator.dropDTPrimitives = cms.bool(False)
-#process.omtfEmulator.dropCSCPrimitives = cms.bool(False)
+#process.omtfEmulator.patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_0x00012_oldSample_3_30Files_grouped1_classProb17_recalib2.xml")
+#
+process.omtfEmulator.dumpResultToXML = cms.bool(False)
+#process.omtfEmulator.dumpResultToROOT = cms.bool(False)
+#process.omtfEmulator.eventCaptureDebug = cms.bool(False)
+#
+#process.omtfEmulator.sorterType = cms.string("byLLH")
+#process.omtfEmulator.ghostBusterType = cms.string("GhostBusterPreferRefDt")
+#process.omtfEmulator.minDtPhiQuality = cms.int32(2)
+#process.omtfEmulator.minDtPhiBQuality = cms.int32(2)
+#process.omtfEmulator.rpcMaxClusterSize = cms.int32(3)
+#process.omtfEmulator.rpcMaxClusterCnt = cms.int32(2)
+#process.omtfEmulator.rpcDropAllClustersIfMoreThanMax = cms.bool(True)
+#process.omtfEmulator.goldenPatternResultFinalizeFunction = cms.int32(9) # 2018: 0, 100g:9
+#process.omtfEmulator.noHitValueInPdf = cms.bool(True) #2018: False, 100g: True
+process.omtfEmulator.lctCentralBx = cms.int32(8);
 process.omtfEmulator.bxMin = cms.int32(-3)
 process.omtfEmulator.bxMax = cms.int32(4)
-#process.omtfEmulator.dumpResultToXML = cms.bool(True)
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 
-#process.omtfEmulator = cms.EDProducer("L1TMuonOverlapTrackProducer",
-###  srcDTPh = cms.InputTag('simDtTriggerPrimitiveDigis'),
-###  srcDTTh = cms.InputTag('simDtTriggerPrimitiveDigis'),
-###  srcDTPh =  cms.InputTag('simTwinMuxDigis'),
-###  srcDTTh =  cms.InputTag('simTwinMuxDigis'),
-###  srcDTPh =  cms.InputTag('twinMuxStage2Digis','PhIn'),
-###  srcDTTh =  cms.InputTag('twinMuxStage2Digis','ThIn'),
-###  srcDTPh =  cms.InputTag('bmtfDigis'),
-###  srcDTTh =  cms.InputTag('bmtfDigis'),
-#   srcDTPh = cms.InputTag('omtfStage2Digis'),
-#   srcDTTh = cms.InputTag('omtfStage2Digis'),
-###  srcCSC = cms.InputTag('csctfDigis'),
-#   srcCSC = cms.InputTag('omtfStage2Digis'),
-###  srcCSC = cms.InputTag('emtfStage2Digis'),
-###  srcCSC = cms.InputTag('muonCSCDigis','MuonCSCCorrelatedLCTDigi'),
-###  srcCSC = cms.InputTag('simCscTriggerPrimitiveDigis','MPCSORTED'),
-###  srcRPC = cms.InputTag('simMuonRPCDigis'),
-###  srcRPC = cms.InputTag('muonRPCDigis'),
-#   srcRPC = cms.InputTag('omtfStage2Digis'),
-##  dumpResultToXML = cms.bool(True),
-#   dumpResultToXML = cms.bool(False),
-#   dumpDetailedResultToXML = cms.bool(False),
-#   XMLDumpFileName = cms.string("TestEvents.xml"),
-###  dumpGPToXML = cms.bool(True),
-###  readEventsFromXML = cms.bool(False),
-###  eventsXMLFiles = cms.vstring("TestEvents.xml"),
-#   dropRPCPrimitives = cms.bool(False),
-#   dropDTPrimitives = cms.bool(False),
-#   dropCSCPrimitives = cms.bool(False),
-#   bxMin = cms.int32(-3),
-#   bxMax = cms.int32(4)
-#)
 
 #
 # reemulate GMT, with changed OMTF
@@ -246,16 +197,14 @@ process.emulGmtStage2Digis = cms.EDProducer('L1TMuonProducer',
     autoBxRange = cms.bool(True), # if True the output BX range is calculated from the inputs and 'bxMin' and 'bxMax' are ignored
     bxMin = cms.int32(-3),
     bxMax = cms.int32(4),
-    autoCancelMode = cms.bool(False), # if True the cancel out methods are configured depending on the FW version number and 'emtfCancelMode' is ignored
+    autoCancelMode = cms.bool(True), # if True the cancel out methods are configured depending on the FW version number and 'emtfCancelMode' is ignored
     emtfCancelMode = cms.string("coordinate") # 'tracks' or 'coordinate'
 )
 
-
-process.raw2digi_step = cms.Path(process.muonRPCDigis+process.csctfDigis+process.bmtfDigis+process.emtfStage2Digis+process.twinMuxStage2Digis+process.gmtStage2Digis+process.caloStage2Digis)
+process.raw2digi_step = cms.Path(process.muonRPCDigis+process.muonCSCDigis+process.bmtfDigis+process.emtfStage2Digis+process.twinMuxStage2Digis+process.gmtStage2Digis+process.caloStage2Digis)
 #process.raw2digi_step = cms.Path(process.muonRPCDigis)
-process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfEmulator+process.emulGmtCaloSumDigis+process.emulGmtStage2Digis)
+process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfEmulator+process.digiCompare+process.emulGmtCaloSumDigis+process.emulGmtStage2Digis)
 #process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfStage2Raw+process.omtfStage2Digis2+process.digiComapre+process.omtfEmulator)
-#process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfStage2Raw+process.omtfStage2Digis2)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.schedule = cms.Schedule(process.raw2digi_step, process.omtf_step, process.endjob_step)
 
@@ -274,8 +223,9 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
 #      "HLT_Mu55_v", "HLT_IsoMu24_eta2p1_v", "HLT_IsoTkMu24_eta2p1_v"
 #    ),
     namesCheckHltMuMatch = cms.vstring(
-      "HLT_IsoMu20_v","HLT_IsoMu24_v","HLT_IsoMu27_v","HLT_Mu50_v","HLT_Mu55_v"
-    ),
+       "HLT_IsoMu24_v"
+#,"HLT_Mu","HLT_IsoMu24_TwoProngs35_v"
+     ),
   ),
 
    linkSynchroGrabber = cms.PSet(
@@ -334,6 +284,11 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     minPtUnique = cms.double(3.0),
     looseUnique = cms.bool(True)
   ),
+
+  synchroCheck = cms.PSet(
+    srcCSC = cms.InputTag('omtfStage2Digis'),
+    srcRPC = cms.InputTag('omtfStage2Digis')
+  ),
 )
 
 #
@@ -341,14 +296,13 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
 #
 process.load("TrackingTools.RecoGeometry.RecoGeometries_cff")
 process.load("TrackingTools.TrackRefitter.TracksToTrajectories_cff")
-#process.load("TrackingTools.TrackRefitter.globalMuonTrajectories_cff")
-import TrackingTools.TrackRefitter.globalMuonTrajectories_cff
-process.refittedMuons = TrackingTools.TrackRefitter.globalMuonTrajectories_cff.globalMuons.clone()
+process.load("TrackingTools.TrackRefitter.globalMuonTrajectories_cff")
+#import TrackingTools.TrackRefitter.globalMuonTrajectories_cff
+#process.refittedMuons = TrackingTools.TrackRefitter.globalMuonTrajectories_cff.globalMuons.clone()
+#process.OmtfTree = cms.Path(process.refittedMuons*process.omtfTree)
 
-process.OmtfTree = cms.Path(process.refittedMuons*process.omtfTree)
-#process.OmtfTree = cms.Path(process.omtfTree)
+process.OmtfTree = cms.Path(process.omtfTree)
 process.schedule.append(process.OmtfTree)
 
 #print process.dumpPython();
-print process.schedule
-
+#print process.schedule

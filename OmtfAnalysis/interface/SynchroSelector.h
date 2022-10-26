@@ -3,6 +3,8 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/GeometryVector/interface/GlobalPoint.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
+
 
 class TH1F;
 class RPCDetId;
@@ -13,7 +15,8 @@ namespace edm { class Event; class EventSetup; }
 
 class SynchroSelector {
 public:
-  public: SynchroSelector( const edm::ParameterSet & cfg = edm::ParameterSet() );
+  public: SynchroSelector( const edm::ParameterSet & cfg, edm::ConsumesCollector cColl );
+  public: SynchroSelector(){}
   virtual ~SynchroSelector(){}
 
   virtual void update(const edm::Event&ev, const edm::EventSetup& es) {}

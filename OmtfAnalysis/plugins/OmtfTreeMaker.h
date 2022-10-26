@@ -20,6 +20,7 @@
 #include "UserCode/OmtfAnalysis/interface/BestMuonFinder.h"
 #include "UserCode/OmtfAnalysis/interface/L1ObjMaker.h"
 #include "UserCode/OmtfAnalysis/interface/ClosestTrackFinder.h"
+#include "UserCode/OmtfAnalysis/interface/SynchroCheck.h"
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
@@ -31,7 +32,8 @@
 #include "SimDataFormats/Vertex/interface/SimVertex.h"
 #include "SimDataFormats/Vertex/interface/SimVertexContainer.h"
 
-
+#include "CondFormats/L1TObjects/interface/L1TUtmTriggerMenu.h"
+#include "CondFormats/DataRecord/interface/L1TUtmTriggerMenuRcd.h"
 
 #include <vector>
 #include "TObjArray.h"
@@ -76,6 +78,7 @@ private:
   L1ObjMaker theL1ObjMaker;
   SynchroCountsGrabber theSynchroGrabber;
   ClosestTrackFinder theClosestTrackFinder;
+  SynchroCheck  theSynchroCheck; 
 
   edm::EDGetTokenT<edm::SimTrackContainer> inputSim;
   edm::EDGetTokenT<edm::SimVertexContainer> vertexSim;

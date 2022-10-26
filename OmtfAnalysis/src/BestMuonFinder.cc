@@ -47,8 +47,9 @@ bool isTightMuon(const reco::Muon& muon){
 
 
 
-BestMuonFinder::BestMuonFinder(const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl)
+BestMuonFinder::BestMuonFinder(const edm::ParameterSet& cfg, edm::ConsumesCollector cColl)
   : lastEvent(0), lastRun(0), theConfig(cfg), 
+    muAtSurface(cColl),
     theUnique(true), theIsLoose(false), theIsMedium(false), theIsTight(false), 
     theAllMuons(0), theMuon(0),
     theTrackerHits(0), theRPCHits(0), theDTHits(0), theCSCHits(0),
@@ -86,8 +87,6 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
   if (!bsHandle.isValid()) return false;
   math::XYZPoint reference =  (bsHandle.isValid())  ?  math::XYZPoint(bsHandle->x0(), bsHandle->y0(), bsHandle->z0())
                                                     :  math::XYZPoint(0.,0.,0.);
-
-
   //get Muon
   edm::Handle<reco::MuonCollection> muons;
   edm::InputTag muonColl =  theConfig.getParameter<edm::InputTag>("muonColl");
@@ -211,17 +210,17 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
     //
     // check muont at L1
     //
-    TrackAtSurface muAtSurface( &(*im), ev, es);
-    TrajectoryStateOnSurface atStation2 = muAtSurface.atPoint(im->eta(), im->phi());
+//    muAtSurface.prepare( &(*im), ev, es);
+//    TrajectoryStateOnSurface atStation2 = muAtSurface.atPoint(im->eta(), im->phi());
+    TrajectoryStateOnSurface atStation2 = muAtSurface.atStation2(&(*im), ev, es);
    
-//
-//  std::cout <<"----------"<<std::endl;
-//  std::cout <<" ETA: "<< im->eta() <<" PHI : "<< im->phi() <<" rho: "<< rho << " z: "<< zet <<" Theta: "<< theta << std::endl;
+/*
+  std::cout <<"----------"<<std::endl;
+  std::cout <<" ETA: "<< im->eta() <<" PHI : "<< im->phi()<< std::endl; // <<" rho: "<< rho << " z: "<< zet <<" Theta: "<< theta << std::endl;
 //  std::cout <<" eta: "<<point.eta() <<" phi : "<< point.phi() <<" rho: "<< point.perp()<<" z: " << point.z() << "theta : " << point.theta()<<" mag : " << point.mag()<< std::endl;
-//  if (atStation2.isValid()) {
-//    std::cout <<" eta: "<<atStation2.globalPosition().eta() <<" phi : "<< atStation2.globalPosition().phi() <<" r: "<< atStation2.globalPosition().perp() <<" z: " << atStation2.globalPosition().z() << std::endl << std::endl;;
-//  }
+  if (atStation2.isValid()) { std::cout <<" eta: "<<atStation2.globalPosition().eta() <<" phi : "<< atStation2.globalPosition().phi() <<" r: "<< atStation2.globalPosition().perp() <<" z: " << atStation2.globalPosition().z() << std::endl << std::endl;; }
    
+*/
    
     MuonObj muonObj;
     muonObj.isUnique = isUnique;
