@@ -63,6 +63,7 @@ MenuInspector::MenuInspector(const edm::ParameterSet& cfg, edm::ConsumesCollecto
 { 
   theTrigResultToken = cColl.consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
   theGlobalAlgToken  = cColl.consumes<GlobalAlgBlkBxCollection>(edm::InputTag("hltGtStage2Digis"));
+  l1tUtmTriggerMenuToken = cColl.esConsumes<edm::Transition::BeginRun>();
 
   cColl.consumes<trigger::TriggerEvent>(edm::InputTag("hltTriggerSummaryAOD","","HLT"));
 
@@ -75,8 +76,10 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
   //
   // L1
   //
-  edm::ESHandle<L1TUtmTriggerMenu> menu;
-  es.get<L1TUtmTriggerMenuRcd>().get(menu);
+  //edm::ESHandle<L1TUtmTriggerMenu> menu;
+  //es.get<L1TUtmTriggerMenuRcd>().get(menu);
+  auto const& menu = es.getHandle(l1tUtmTriggerMenuToken);
+
   theNamesAlgoL1.clear();
   theNamesAlgoL1.resize(menu->getAlgorithmMap().size(),"");
 //  std::cout <<" size of indexes: "<< menu->getAlgorithmMap().size() << std::endl;

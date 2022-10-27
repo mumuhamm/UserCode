@@ -18,6 +18,8 @@
 #include <map>
 
 class MuonObjColl;
+class L1TUtmTriggerMenuRcd;
+class L1TUtmTriggerMenu;
 
 namespace edm {class ParameterSet; class Event; class EventSetup; class Run; }
 
@@ -52,6 +54,7 @@ private:
 
   unsigned int theCounterIN, theCounterL1, theCounterHLT;
 
+  edm::ESGetToken<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd> l1tUtmTriggerMenuToken;
   HLTConfigProvider theHltConfig;
   edm::ParameterSetID theTriggerParSetID;
   bool theWarnNoColl;
