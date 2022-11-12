@@ -30,7 +30,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('file:/scratch/Magisterka/testrun/PhaseIISpring22DRMiniAOD_DYToLL_M-10To50_noPU_40000_04216b41-07a8-4ec9-a1c3-a24cda929b74_2000Ev.root'),
+                            fileNames = cms.untracked.vstring('file:/scratch/Magisterka/Test_data/PhaseIISpring22DRMiniAOD_DYToLL_M-10To50_noPU_40000_04216b41-07a8-4ec9-a1c3-a24cda929b74_2000Ev.root'),
                             #fileNames = cms.untracked.vstring('file:FEVTSIM.root'),
                             #fileNames = cms.untracked.vstring('file:/scratch_hdd/akalinow/CMS/OMTF/PhaseII/HSCP_Production/Tasks_Run2029/crab_HSCPstop_M_800_TuneCP5_13TeV_pythia8_Run2029_test_20_10_2022/results/RECOSIM_1.root',
                             #                                  'file:/scratch_hdd/akalinow/CMS/OMTF/PhaseII/HSCP_Production/Tasks_Run2029/crab_HSCPstop_M_800_TuneCP5_13TeV_pythia8_Run2029_test_20_10_2022/results/RECOSIM_2.root'),
