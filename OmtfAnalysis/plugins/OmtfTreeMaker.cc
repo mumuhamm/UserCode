@@ -36,6 +36,7 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
     theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()),
     theBestMuonFinder(cfg.getParameter<edm::ParameterSet>("bestMuonFinder"), consumesCollector()),
     theL1ObjMaker(cfg.getParameter<edm::ParameterSet>("l1ObjMaker"), consumesCollector()), 
+    theL1PhaseIIObjMaker(cfg.getParameter<edm::ParameterSet>("l1PhaseIIObjMaker"), consumesCollector()),
     theSynchroGrabber(cfg.getParameter<edm::ParameterSet>("linkSynchroGrabber"), consumesCollector()),
     theGenParticleFinder(cfg.getParameter<edm::ParameterSet>("genObjectFinder"), consumesCollector()),
     theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector())
@@ -57,6 +58,8 @@ void OmtfTreeMaker::beginJob()
   theTree->Branch("muonColl", "MuonObjColl", &muonColl, 32000,99);
   theTree->Branch("genColl", "GenObjColl", &genColl,32000,99);
   theTree->Branch("l1ObjColl","L1ObjColl",&l1ObjColl,32000,99);
+  theTree->Branch("l1PhaseIIObjColl","L1PhaseIIObjColl",&l1PhaseIIObjColl,32000,99);   // Added line
+
 
   theTree->Branch("bitsL1" ,"TriggerMenuResultObj",&bitsL1 ,32000,99);
   theTree->Branch("bitsHLT","TriggerMenuResultObj",&bitsHLT,32000,99);
@@ -152,6 +155,14 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1ObjColl->set( std::vector<double>(l1Objs.size(),0.));
   }
 
+    // get L1 candidates new class PhaseII
+  std::vector<L1PhaseIIObj> l1PhaseIIObjs = theL1PhaseIIObjMaker(ev);
+  if (l1OPhaseIIbjs.size()) {
+    l1PhaseIIObjColl->set(l1PhaseIIObjs);
+    l1PhaseIIObjColl->set( std::vector<bool>(l1PhaseIIObjs.size(),false));
+    l1PhaseIIObjColl->set( std::vector<double>(l1PhaseIIObjs.size(),0.));
+  }
+
   //
   // fill LinkSynchroAnalysis data
   //
@@ -177,6 +188,14 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
 
+  // Added
+  L1PhaseIIObjColl omtfColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::OMTF);
+  if (omtfColl) {
+    reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1PhaseIIObjs().front().etaValue(), 
+                                                                    omtfColl.getL1PhaseIIObjs().front().phiValue());
+    closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
+  }
+
   //
   // fill ntuple + cleanup
   //
@@ -188,5 +207,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   delete bitsL1;  bitsL1= 0;
   delete bitsHLT;  bitsHLT= 0;
   delete l1ObjColl; l1ObjColl = 0;
+  delete l1PhaseIIObjColl; l1PhaseIIObjColl = 0;
   delete closestTrack; closestTrack = 0;
 }

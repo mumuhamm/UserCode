@@ -38,6 +38,12 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
     warnNoColl = cms.untracked.bool(True)
   ),
+    l1PhaseIIObjMaker = cms.PSet(
+    omtfEmulSrc = cms.InputTag('simOmtfDigis','OMTF',''),
+    bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
+    emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
+    warnNoColl = cms.untracked.bool(True)
+  ),
   genObjectFinder = cms.PSet(
       genColl = cms.InputTag("genParticles"),
       trackingParticle = cms.InputTag("mix","MergedTrackTruth"),
