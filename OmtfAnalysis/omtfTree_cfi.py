@@ -39,9 +39,9 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   #   bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
   #   emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
   #   warnNoColl = cms.untracked.bool(True)
-  # ),
+  # ), 
     l1PhaseIIObjMaker = cms.PSet(
-    omtfEmulSrc = cms.InputTag('simOmtfDigis','OMTF',''),
+    omtfEmulSrc = cms.InputTag('simOmtfDigis','OMTF',''),   # My added l1PhaseIIObj
     bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
     emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
     warnNoColl = cms.untracked.bool(True)

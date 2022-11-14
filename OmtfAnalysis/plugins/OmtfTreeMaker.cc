@@ -58,8 +58,8 @@ void OmtfTreeMaker::beginJob()
   theTree->Branch("muonColl", "MuonObjColl", &muonColl, 32000,99);
   theTree->Branch("genColl", "GenObjColl", &genColl,32000,99);
   theTree->Branch("l1ObjColl","L1ObjColl",&l1ObjColl,32000,99);
-  theTree->Branch("l1PhaseIIObjColl","L1PhaseIIObjColl",&l1PhaseIIObjColl,32000,99);   // Added line
 
+  theTree->Branch("l1PhaseIIObjColl","L1PhaseIIObjColl",&l1PhaseIIObjColl,32000,99);   // Added line
 
   theTree->Branch("bitsL1" ,"TriggerMenuResultObj",&bitsL1 ,32000,99);
   theTree->Branch("bitsHLT","TriggerMenuResultObj",&bitsHLT,32000,99);

@@ -12,6 +12,10 @@
 #include "UserCode/OmtfDataFormats/interface/GenObj.h"
 #include "UserCode/OmtfDataFormats/interface/GenObjColl.h"
 
+// added
+#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"
+#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObjColl.h"
+
 
 namespace {
   struct dictionary {
@@ -22,6 +26,10 @@ namespace {
     MuonObjColl  aMuons;
     L1Obj aL1;
     L1ObjColl aL1Coll;
+
+    L1PhaseIIObj aL1PhaseII;
+    L1PhaseIIObjColl aL1PhaseIIColl;  // added
+
     TriggerMenuResultObj aMenuRes;
     SynchroCountsObj aSynch;
     SynchroCountsObjVect aSynchVec;
