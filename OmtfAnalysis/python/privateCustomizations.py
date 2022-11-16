@@ -17,9 +17,16 @@ def customize_outputCommands(process):
                                                                       'keep *_simKBmtfDigis_*_*',
                                                                       'keep *_simOmtfDigis_*_*',
                                                                       'keep *_simEmtfDigis_*_*',
+                                                                      'keep *_g4SimHits_MuonCSCHits_*',
+                                                                      'keep *_g4SimHits_MuonDTHits_*',
+                                                                      'keep *_g4SimHits_MuonGEMHits_*',
+                                                                      'keep *_g4SimHits_MuonME0Hits_*',
+                                                                      'keep *_g4SimHits_MuonRPCHits_*',
+                                                                      'keep *_g4SimHits_Stopped*_*',
                                                                       'keep *_TTClusterAssociatorFromPixelDigis_*_*',
                                                                       'keep *_simCscTriggerPrimitiveDigis_*_*',
-                                                                      'keep *_simDtTriggerPrimitiveDigis_*_*'
+                                                                      'keep *_simDtTriggerPrimitiveDigis_*_*',
+                                                                      'keep *_MergedTrackTruth_*_*'
     ))
     return process
 ##########################################
