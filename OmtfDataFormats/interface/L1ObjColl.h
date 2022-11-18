@@ -65,17 +65,7 @@ public:
     return firstBXonly ? (result && firstBX) : result;
   }
 
-/*
-  inline bool isMatching_PtminPtmaxBx(double ptMin, double ptMax, int bx, bool firstBXonly) const {
-    bool firstBX = true; 
-    bool result = false;
-    for (unsigned int i=0; i< theL1Obj.size(); i++) {
-      if (theL1Obj[i].bx < bx) firstBX = false;
-      if ( (theL1Obj[i].pt >= ptMin && theL1Obj[i].pt < ptMax) && (bx == theL1Obj[i].bx) ) result = true;
-    }
-    return firstBXonly ? (result && firstBX) : result;
-  }
-*/
+
 
 //tmp
   std::vector<L1Obj> getL1ObjsMatched(double ptMin = 0) const;

@@ -4,13 +4,6 @@
 #include <iostream>
 #include <math.h>
 
-namespace { 
-  double modulo2PI (double phi) { 
-    while (phi > 2*M_PI) phi -= 2*M_PI;
-    while (phi < 0.) phi += 2*M_PI;
-    return phi;
-  }
-}
 
 class L1PhaseIIObj : public TObject {
 
@@ -25,6 +18,12 @@ public:
   int   iProcessor, position;
 
   L1PhaseIIObj();
+
+  double modulo2PI (double phi) const{ 
+    while (phi > 2*M_PI) phi -= 2*M_PI;
+    while (phi < 0.) phi += 2*M_PI;
+    return phi;
+  }
 
   bool isValid() const { return type!=NONE && pt>0;}
 

@@ -89,7 +89,7 @@ std::vector<L1PhaseIIObj> L1PhaseIIObjColl::typeSelector(const  std::vector<L1Ph
   }
   return result; 
 }
-std::vector<L1PhaseIIObj> L1PhaseIIObjColl::getL1ObjsMatched(double ptMin) const 
+std::vector<L1PhaseIIObj> L1PhaseIIObjColl::getL1PhaseIIObjsMatched(double ptMin) const 
 {
   std::vector<L1PhaseIIObj> result;
   unsigned int nObj = theL1PhaseIIObj.size();
@@ -101,7 +101,7 @@ std::vector<L1PhaseIIObj> L1PhaseIIObjColl::getL1ObjsMatched(double ptMin) const
   return result;
 }
 
-std::vector<L1PhaseIIObj> L1PhaseIIObjColl::getL1ObjsSelected(
+std::vector<L1PhaseIIObj> L1PhaseIIObjColl::getL1PhaseIIObjsSelected(
     bool requireMatched, 
     bool requireNonMatched, 
     double ptMin, double ptMax,
