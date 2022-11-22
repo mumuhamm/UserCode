@@ -24,6 +24,31 @@ namespace {
   edm::EDGetTokenT<l1t::MuonBxCollection> theGmtDataToken, theGmtEmulToken;
 }
 
+L1PhaseIIObjMaker::L1PhaseIIObjMaker(const  edm::ParameterSet & cfg, edm::ConsumesCollector&& cColl)
+  :  theConfig(cfg),
+     lastEvent(0),lastRun(0)
+{
+  if (theConfig.exists("omtfEmulSrc")) theOmtfEmulToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("omtfEmulSrc") );
+  if (theConfig.exists("omtfDataSrc")) theOmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("omtfDataSrc") );
+  if (theConfig.exists("bmtfDataSrc")) theBmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("bmtfDataSrc") );
+  if (theConfig.exists("emtfDataSrc")) theEmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("emtfDataSrc") );
+  if (theConfig.exists("gmtDataSrc"))  theGmtDataToken  =  cColl.consumes<l1t::MuonBxCollection>( theConfig.getParameter<edm::InputTag>("gmtDataSrc") );
+  if (theConfig.exists("gmtEmulSrc"))  theGmtEmulToken  =  cColl.consumes<l1t::MuonBxCollection>( theConfig.getParameter<edm::InputTag>("gmtEmulSrc") );
+ 
+}
+
+void L1PhaseIIObjMaker::run(const edm::Event &ev)
+{
+  if (lastEvent==ev.id().event() && lastRun==ev.run()) return;
+  lastEvent = ev.id().event() ;
+  lastRun = ev.run();
+  theL1PhaseIIObjs.clear();
+
+  if ( !theGmtDataToken.isUninitialized())  makeGmtCandidates(ev, L1PhaseIIObj::uGMT    , theL1PhaseIIObjs);
+  if ( !theGmtEmulToken.isUninitialized())  makeGmtCandidates(ev, L1PhaseIIObj::uGMT_emu, theL1PhaseIIObjs);
+
+}
+
 bool L1PhaseIIObjMaker::makeGmtCandidates(const edm::Event &iEvent,  L1PhaseIIObj::TYPE type, std::vector<L1PhaseIIObj> &result)
 {
   edm::Handle<l1t::MuonBxCollection> candidates;

@@ -38,7 +38,7 @@ public:
   }
   int chargeValue() const { return pow(-1,charge); }
 
-  ClassDef(L1PhaseIIObj,4)
+  ClassDef(L1PhaseIIObj,1)
 };
 
 

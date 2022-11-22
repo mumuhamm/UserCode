@@ -28,7 +28,7 @@ namespace {
     L1ObjColl aL1Coll;
 
     L1PhaseIIObj aL1PhaseII;
-    L1PhaseIIObjColl aL1PhaseIIColl;  // added
+    L1PhaseIIObjColl aL1PhaseIIColl;  
 
     TriggerMenuResultObj aMenuRes;
     SynchroCountsObj aSynch;

@@ -40,6 +40,14 @@
     <version ClassVersion="1" checksum="30982113"/>
    </class>
 
+    <class name="L1PhaseIIObj" ClassVersion="1">
+    <version ClassVersion="1" checksum="2227116373"/>
+    </class>
+
+    <class name="L1PhaseIIObjColl" ClassVersion="1">
+      <version ClassVersion="1" checksum="4150261504"/>
+    </class>
+
    <class name="TriggerMenuResultObj" ClassVersion="1">
     <version ClassVersion="1" checksum="2779745102"/>
    </class>

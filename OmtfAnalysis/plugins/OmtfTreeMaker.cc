@@ -59,7 +59,7 @@ void OmtfTreeMaker::beginJob()
   theTree->Branch("genColl", "GenObjColl", &genColl,32000,99);
   theTree->Branch("l1ObjColl","L1ObjColl",&l1ObjColl,32000,99);
 
-  theTree->Branch("l1PhaseIIObjColl","L1PhaseIIObjColl",&l1PhaseIIObjColl,32000,99);   // Added line
+  theTree->Branch("l1PhaseIIObjColl","L1PhaseIIObjColl",&l1PhaseIIObjColl,32000,99);
 
   theTree->Branch("bitsL1" ,"TriggerMenuResultObj",&bitsL1 ,32000,99);
   theTree->Branch("bitsHLT","TriggerMenuResultObj",&bitsHLT,32000,99);
@@ -116,7 +116,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   muonColl = new MuonObjColl (theBestMuonFinder.muons(ev,es));
   genColl = new GenObjColl( theGenParticleFinder.genparticles(ev,es) ) ;
   l1ObjColl = new L1ObjColl;
-  l1PhaseIIObjColl = new L1PhaseIIObjColl
+  l1PhaseIIObjColl = new L1PhaseIIObjColl;
 
   bitsL1 = new TriggerMenuResultObj();
   bitsHLT = new TriggerMenuResultObj();
@@ -158,7 +158,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
 
     // get L1 candidates new class PhaseII
   std::vector<L1PhaseIIObj> l1PhaseIIObjs = theL1PhaseIIObjMaker(ev);
-  if (l1OPhaseIIbjs.size()) {
+  if (l1PhaseIIObjs.size()) {
     l1PhaseIIObjColl->set(l1PhaseIIObjs);
     l1PhaseIIObjColl->set( std::vector<bool>(l1PhaseIIObjs.size(),false));
     l1PhaseIIObjColl->set( std::vector<double>(l1PhaseIIObjs.size(),0.));
@@ -190,10 +190,10 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   }
 
   // Added
-  L1PhaseIIObjColl omtfColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::OMTF);
-  if (omtfColl) {
-    reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1PhaseIIObjs().front().etaValue(), 
-                                                                    omtfColl.getL1PhaseIIObjs().front().phiValue());
+  L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::OMTF);
+  if (phaseIIColl) {
+    reco::Track track = theClosestTrackFinder.result(ev,es, phaseIIColl.getL1PhaseIIObjs().front().etaValue(), 
+                                                             phaseIIColl.getL1PhaseIIObjs().front().phiValue());
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
 
