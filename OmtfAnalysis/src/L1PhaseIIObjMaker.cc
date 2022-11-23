@@ -32,7 +32,9 @@ L1PhaseIIObjMaker::L1PhaseIIObjMaker(const  edm::ParameterSet & cfg, edm::Consum
   if (theConfig.exists("omtfDataSrc")) theOmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("omtfDataSrc") );
   if (theConfig.exists("bmtfDataSrc")) theBmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("bmtfDataSrc") );
   if (theConfig.exists("emtfDataSrc")) theEmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("emtfDataSrc") );
-  if (theConfig.exists("gmtDataSrc"))  theGmtDataToken  =  cColl.consumes<l1t::MuonBxCollection>( theConfig.getParameter<edm::InputTag>("gmtDataSrc") );
+  // Tu
+  if (theConfig.exists("gmtDataSrc"))  theGmtDataToken  =  cColl.consumes<l1t::TrackerMuonCollection>(edm::InputTag("gmtMuons"));
+  //
   if (theConfig.exists("gmtEmulSrc"))  theGmtEmulToken  =  cColl.consumes<l1t::MuonBxCollection>( theConfig.getParameter<edm::InputTag>("gmtEmulSrc") );
  
 }
