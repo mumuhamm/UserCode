@@ -3,6 +3,14 @@ import FWCore.ParameterSet.Config as cms
 ##########################################
 ##########################################
 def customize_L1TkMuonsGmt(process):
+
+    process.CalibratedDigis.dtDigiTag = "simMuonDTDigis" 
+    process.CalibratedDigis.scenario = 0
+
+    process.dtTriggerPhase2PrimitiveDigis.debug = False
+    process.dtTriggerPhase2PrimitiveDigis.dump = False
+    process.dtTriggerPhase2PrimitiveDigis.scenario = 0
+
     process.L1TkMuonsGmt.trackingParticleInputTag = cms.InputTag("mix", "MergedTrackTruth")
     process.L1TkMuonsGmt.mcTruthTrackInputTag = cms.InputTag("TTTrackAssociatorFromPixelDigis", "Level1TTTracks")
     process.L1TkMuonsGmt.isolation.IsodumpForHLS = 0
@@ -17,8 +25,8 @@ def customize_outputCommands(process):
                                                                       'keep *_simKBmtfDigis_*_*',
                                                                       'keep *_simOmtfDigis_*_*',
                                                                       'keep *_simEmtfDigis_*_*',
-                                                                      'keep *_simGmtStage2Digis_*_*',
                                                                       'keep *_gmtMuons_*_*',
+                                                                      'keep *_simGmtStage2Digis_*_*',
                                                                       'keep *_L1TkMuonsGmt_*_*',
                                                                       'keep *_g4SimHits_MuonCSCHits_*',
                                                                       'keep *_g4SimHits_MuonDTHits_*',
