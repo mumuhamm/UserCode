@@ -54,9 +54,8 @@ void L1PhaseIIObjMaker::run(const edm::Event &ev)
 
 bool L1PhaseIIObjMaker::makeGmtCandidates(const edm::Event &iEvent,  L1PhaseIIObj::TYPE type, std::vector<L1PhaseIIObj> &result)
 {   
-
+  // edm::Handle<l1t::TrackerMuonCollection> candidates;
   cout << "Marny sukces" << endl;
-//   edm::Handle<l1t::TrackerMuonCollection> candidates;
 //   switch (type) {
 //     case  L1PhaseIIObj::uGMT     : { iEvent.getByToken(theGmtDataToken, candidates); break; }
 //     case  L1PhaseIIObj::uGMT_emu : { iEvent.getByToken(theGmtEmulToken, candidates); break; }
