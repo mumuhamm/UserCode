@@ -17,11 +17,11 @@
 #include "DataFormats/L1TMuon/interface/RegionalMuonCandFwd.h"
 #include "DataFormats/L1Trigger/interface/Muon.h"
 
-#include "DataFormats/L1TMuonPhase2/interface/TrackerMuon.h"  // moze jest potrzebne
 using namespace std;
 namespace {
   edm::EDGetTokenT<l1t::RegionalMuonCandBxCollection> theOmtfEmulToken, theOmtfDataToken, theEmtfDataToken, theBmtfDataToken;
-  edm::EDGetTokenT<l1t::MuonBxCollection> theGmtDataToken, theGmtEmulToken;
+  edm::EDGetTokenT<l1t::MuonBxCollection> theGmtEmulToken;
+  edm::EDGetTokenT<l1t::TrackerMuonCollection> theGmtDataToken;
 }
 
 L1PhaseIIObjMaker::L1PhaseIIObjMaker(const  edm::ParameterSet & cfg, edm::ConsumesCollector&& cColl)
@@ -33,9 +33,8 @@ L1PhaseIIObjMaker::L1PhaseIIObjMaker(const  edm::ParameterSet & cfg, edm::Consum
   if (theConfig.exists("bmtfDataSrc")) theBmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("bmtfDataSrc") );
   if (theConfig.exists("emtfDataSrc")) theEmtfDataToken =  cColl.consumes<l1t::RegionalMuonCandBxCollection>(  theConfig.getParameter<edm::InputTag>("emtfDataSrc") );
   // Tu
-  if (theConfig.exists("gmtEmulSrc"))  theGmtDataToken  =  cColl.consumes<l1t::TrackerMuonCollection>(edm::InputTag("L1TkMuonsGmt"));
-  // if (theConfig.exists("gmtDataSrc"))  theGmtDataToken  =  cColl.consumes<l1t::TrackerMuonCollection>(theConfig.getParameter<edm::InputTag>("gmtEmulSrc"));
-
+  // if (theConfig.exists("gmtEmulSrc"))  theGmtDataToken  =  cColl.consumes<l1t::TrackerMuonCollection>(edm::InputTag("L1TkMuonsGmt"));
+  if (theConfig.exists("gmtDataSrc"))  theGmtDataToken  =  cColl.consumes<l1t::TrackerMuonCollection>(theConfig.getParameter<edm::InputTag>("L1TkMuonsGmt"));
   //
   if (theConfig.exists("gmtEmulSrc"))  theGmtEmulToken  =  cColl.consumes<l1t::MuonBxCollection>( theConfig.getParameter<edm::InputTag>("gmtEmulSrc"));
  
