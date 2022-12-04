@@ -44,6 +44,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     omtfEmulSrc = cms.InputTag('simOmtfDigis','OMTF',''),   # My added l1PhaseIIObj
     bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
     emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
+    gmtEmulSrc = cms.InputTag('L1TkMuonsGmt','',''),  # zrodlo moich mionow GMT, te sa emulowane bo Emul
     warnNoColl = cms.untracked.bool(True)
   ),
   genObjectFinder = cms.PSet(

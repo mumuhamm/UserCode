@@ -7,6 +7,7 @@
 #include "DataFormats/Provenance/interface/RunID.h"
 #include "DataFormats/Provenance/interface/EventID.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
+#include "DataFormats/L1TMuonPhase2/interface/TrackerMuon.h"
 
 namespace edm {class Event; }
 

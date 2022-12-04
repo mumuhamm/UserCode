@@ -54,32 +54,31 @@ void L1PhaseIIObjMaker::run(const edm::Event &ev)
 
 bool L1PhaseIIObjMaker::makeGmtCandidates(const edm::Event &iEvent,  L1PhaseIIObj::TYPE type, std::vector<L1PhaseIIObj> &result)
 {   
-  // edm::Handle<l1t::TrackerMuonCollection> candidates;
-  cout << "Marny sukces" << endl;
-//   switch (type) {
-//     case  L1PhaseIIObj::uGMT     : { iEvent.getByToken(theGmtDataToken, candidates); break; }
-//     case  L1PhaseIIObj::uGMT_emu : { iEvent.getByToken(theGmtEmulToken, candidates); break; }
-//     default: { std::cout <<"Invalid type : " << type << std::endl; abort(); }
-//   }
-// //  int bxNumber = 0;
-//   //for (int bxNumber=-2; bxNumber<=2; bxNumber++) {
-//   for (int bxNumber=candidates->getFirstBX(); bxNumber<=candidates->getLastBX(); bxNumber++) {
-//   for (l1t::MuonBxCollection::const_iterator it = candidates.product()->begin(bxNumber);
-//       it != candidates.product()->end(bxNumber);
-//       ++it) {
-//     L1PhaseIIObj obj;
-//     obj.type =  type;
-// //    obj.phi = it->hwPhiAtVtx(); 
-// //    obj.eta = it->hwEtaAtVtx();        // eta = hwEta/240.*2.61
-//     obj.phi = it->hwPhi(); 
-//     obj.eta = it->hwEta();        // eta = hwEta/240.*2.61
-//     obj.pt  = it->hwPt();         // pt = (hwPt-1.)/2.
-//     obj.q   = it->hwQual();                             
-//     obj.bx = bxNumber;
-//     obj.charge = it->hwCharge();  // charge  =  pow(-1,hwSign)
-//     result.push_back(obj);
-//   }
-//   }
+  edm::Handle<l1t::MuonBxCollection> candidates;
+  switch (type) {
+    case  L1PhaseIIObj::uGMT     : { iEvent.getByToken(theGmtDataToken, candidates); break; }
+    case  L1PhaseIIObj::uGMT_emu : { iEvent.getByToken(theGmtEmulToken, candidates); break; }
+    default: { std::cout <<"Invalid type : " << type << std::endl; abort(); }
+  }
+//  int bxNumber = 0;
+  //for (int bxNumber=-2; bxNumber<=2; bxNumber++) {
+  for (int bxNumber=candidates->getFirstBX(); bxNumber<=candidates->getLastBX(); bxNumber++) {
+  for (l1t::MuonBxCollection::const_iterator it = candidates.product()->begin(bxNumber);
+      it != candidates.product()->end(bxNumber);
+      ++it) {
+    L1PhaseIIObj obj;
+    obj.type =  type;
+//    obj.phi = it->hwPhiAtVtx(); 
+//    obj.eta = it->hwEtaAtVtx();        // eta = hwEta/240.*2.61
+    obj.phi = it->hwPhi(); 
+    obj.eta = it->hwEta();        // eta = hwEta/240.*2.61
+    obj.pt  = it->hwPt();         // pt = (hwPt-1.)/2.
+    obj.q   = it->hwQual();                             
+    obj.bx = bxNumber;
+    obj.charge = it->hwCharge();  // charge  =  pow(-1,hwSign)
+    result.push_back(obj);
+  }
+  }
   return true; 
 
 // w naszej wersji nie bedzie petli po bxNumber bo nasza wersja TrackerMuon collection
