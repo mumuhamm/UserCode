@@ -31,12 +31,14 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
        checkUniqueRecHitMatching_maxDist = cms.double(5.)
      )
    ),
-  
   l1ObjMaker = cms.PSet(
     omtfEmulSrc = cms.InputTag('simOmtfDigis','OMTF',''),
     bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
     emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
     warnNoColl = cms.untracked.bool(True)
+  ),
+  l1PhaseIIObjMaker = cms.PSet(
+    gmtEmulSrc = cms.InputTag('L1TkMuonsGmt','',''),  # zrodlo moich mionow GMT, te sa emulowane bo Emul
   ),
   genObjectFinder = cms.PSet(
       genColl = cms.InputTag("genParticles"),
@@ -52,7 +54,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   bestMuonFinder = cms.PSet(
     muonColl = cms.InputTag("muons"),
     beamSpot = cms.InputTag("offlineBeamSpot"),
-    warnNoColl = cms.untracked.bool(True),
+    warnNoColl = cms.untracked.bool(False),
     requireInnerTrack = cms.bool(True),
     requireOuterTrack = cms.bool(False),
     requireGlobalTrack = cms.bool(False),

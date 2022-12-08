@@ -31,7 +31,7 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
   : theConfig(cfg), theCounter(0), theFile(0), theTree(0), 
     bitsL1(0), bitsHLT(0),
     event(0), 
-    muonColl(0), l1ObjColl(0), genColl(0),
+    muonColl(0), l1ObjColl(0), l1PhaseIIObjColl(0), genColl(0),
     synchroCounts(0), closestTrack(0),
     theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()),
     theBestMuonFinder(cfg.getParameter<edm::ParameterSet>("bestMuonFinder"), consumesCollector()),
@@ -58,9 +58,7 @@ void OmtfTreeMaker::beginJob()
   theTree->Branch("muonColl", "MuonObjColl", &muonColl, 32000,99);
   theTree->Branch("genColl", "GenObjColl", &genColl,32000,99);
   theTree->Branch("l1ObjColl","L1ObjColl",&l1ObjColl,32000,99);
-
   theTree->Branch("l1PhaseIIObjColl","L1PhaseIIObjColl",&l1PhaseIIObjColl,32000,99);
-
   theTree->Branch("bitsL1" ,"TriggerMenuResultObj",&bitsL1 ,32000,99);
   theTree->Branch("bitsHLT","TriggerMenuResultObj",&bitsHLT,32000,99);
   theTree->Branch("synchroCounts","SynchroCountsObjVect",&synchroCounts,32000,99);
@@ -70,7 +68,6 @@ void OmtfTreeMaker::beginJob()
   theBestMuonFinder.initHistos(theHelper);
   theSynchroGrabber.initHistos(theHelper);
   theClosestTrackFinder.initHistos(theHelper);
-
 }
 
 void OmtfTreeMaker::endJob()
@@ -109,7 +106,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   event->id = ev.id().event();
   event->run = ev.run();
   event->lumi = ev.luminosityBlock();
-
   //
   // create other objects structure
   //
@@ -146,8 +142,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   // associate HLT info to muonColl objs
   //
   theMenuInspector.associateHLT(ev,es,muonColl);
-
-
+  
   // get L1 candidates
   std::vector<L1Obj> l1Objs = theL1ObjMaker(ev);
   if (l1Objs.size()) {
@@ -155,7 +150,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1ObjColl->set( std::vector<bool>(l1Objs.size(),false));
     l1ObjColl->set( std::vector<double>(l1Objs.size(),0.));
   }
-
+  
     // get L1 candidates new class PhaseII
   std::vector<L1PhaseIIObj> l1PhaseIIObjs = theL1PhaseIIObjMaker(ev);
   if (l1PhaseIIObjs.size()) {
@@ -190,10 +185,10 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   }
 
   // Added
-  L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::OMTF);
+  L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::uGMT_emu);
   if (phaseIIColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, phaseIIColl.getL1PhaseIIObjs().front().etaValue(), 
-                                                             phaseIIColl.getL1PhaseIIObjs().front().phiValue());
+						     phaseIIColl.getL1PhaseIIObjs().front().phiValue());
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
 

@@ -27,16 +27,10 @@ public:
 
   bool isValid() const { return type!=NONE && pt>0;}
 
-  double ptValue() const { return (pt-1.)/2.; }
-  double etaValue() const { return eta/240.*2.61; }
-  double phiValue() const {
-    if (type==OMTF || type==OMTF_emu || type==EMTF) 
-    return modulo2PI( ( (15.+iProcessor*60.)/360. + phi/576. ) *2*M_PI) ;  
-    else if (type==BMTF) return modulo2PI( ( (-15.+iProcessor*30.)/360. + phi/576. ) *2*M_PI);
-    else if (type==uGMT || type==uGMT_emu) return modulo2PI((phi/576.)*2*M_PI);
-    else return 9999.;
-  }
-  int chargeValue() const { return pow(-1,charge); }
+  double ptValue() const { return pt; }
+  double etaValue() const { return eta; }
+  double phiValue() const { return phi;}
+  int chargeValue() const { return charge;}
 
   ClassDef(L1PhaseIIObj,1)
 };
