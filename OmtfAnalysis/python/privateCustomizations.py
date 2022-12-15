@@ -27,6 +27,7 @@ def customize_outputCommands(process):
                                                                       'keep *_simEmtfDigis_*_*',
                                                                       'keep *_gmtMuons_*_*',
                                                                       'keep *_simGmtStage2Digis_*_*',
+                                                                      'keep *_dtTriggerPhase2PrimitiveDigis_*_*',
                                                                       'keep *_L1TkMuonsGmt_*_*',
                                                                       'keep *_g4SimHits_MuonCSCHits_*',
                                                                       'keep *_g4SimHits_MuonDTHits_*',
