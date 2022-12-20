@@ -86,7 +86,6 @@ private:
 
   L1PhaseIIObjMaker theL1PhaseIIObjMaker; // Added
 
-  SynchroCountsGrabber theSynchroGrabber;
   GenParticlefinder theGenParticleFinder;
   ClosestTrackFinder theClosestTrackFinder;
 

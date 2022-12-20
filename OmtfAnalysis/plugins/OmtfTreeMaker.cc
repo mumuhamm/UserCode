@@ -37,7 +37,6 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
     theBestMuonFinder(cfg.getParameter<edm::ParameterSet>("bestMuonFinder"), consumesCollector()),
     theL1ObjMaker(cfg.getParameter<edm::ParameterSet>("l1ObjMaker"), consumesCollector()), 
     theL1PhaseIIObjMaker(cfg.getParameter<edm::ParameterSet>("l1PhaseIIObjMaker"), consumesCollector()),
-    theSynchroGrabber(cfg.getParameter<edm::ParameterSet>("linkSynchroGrabber"), consumesCollector()),
     theGenParticleFinder(cfg.getParameter<edm::ParameterSet>("genObjectFinder"), consumesCollector()),
     theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector())
 { }
@@ -65,8 +64,7 @@ void OmtfTreeMaker::beginJob()
   theTree->Branch("closestTrack","TrackObj",&closestTrack, 32000, 99);
 
   theHelper.SetOwner();
-  theBestMuonFinder.initHistos(theHelper);
-  theSynchroGrabber.initHistos(theHelper);
+  theBestMuonFinder.initHistos(theHelper);  
   theClosestTrackFinder.initHistos(theHelper);
 }
 
@@ -158,24 +156,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1PhaseIIObjColl->set( std::vector<bool>(l1PhaseIIObjs.size(),false));
     l1PhaseIIObjColl->set( std::vector<double>(l1PhaseIIObjs.size(),0.));
   }
-
-  //
-  // fill LinkSynchroAnalysis data
-  //
-  if (theMuon && theMuon->isGlobalMuon()) {
-    theSynchroGrabber.setMuon(theMuon);
-    RPCRawSynchro::ProdItem rawCounts  = theSynchroGrabber.counts(ev,es);
-    synchroCounts->data = ConverterRPCRawSynchroSynchroCountsObj::toSynchroObj(rawCounts);
-  }
-
-  
-/*  if (l1ObjColl->selectByType(L1Obj::OMTF)) {
-  std::cout <<"#"<<theCounter<<" "<< *event << std::endl;
-  std::cout << *muonColl << std::endl;
-  std::cout << *l1ObjColl << std::endl;
-  std::cout << std::endl;
-  }
-*/
 
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
   if (omtfColl) {
