@@ -74,7 +74,6 @@ private:
   MenuInspector theMenuInspector;
   BestMuonFinder theBestMuonFinder;
   L1ObjMaker theL1ObjMaker;
-  SynchroCountsGrabber theSynchroGrabber;
   GenParticlefinder theGenParticleFinder;
   ClosestTrackFinder theClosestTrackFinder;
 

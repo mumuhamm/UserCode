@@ -18,7 +18,11 @@ def customize_L1TkMuonsGmt(process):
 ##########################################
 ##########################################
 def customize_outputCommands(process):
-    process.FEVTSIMoutput.outputCommands.extend(cms.untracked.vstring('keep *_simMuonDTDigis_*_*',
+    process.FEVTSIMoutput.outputCommands.extend(cms.untracked.vstring('drop *_simEcalUnsuppressedDigis_*_*',
+                                                                      'drop *_simHGCalUnsuppressedDigis_*_*',
+                                                                      'drop *_rawDataCollector_*_*',
+                                                                      'drop *_simHcalUnsuppressedDigis_*_*',
+                                                                      'keep *_simMuonDTDigis_*_*',
                                                                       'keep *_simMuonCSCDigis_*_*',
                                                                       'keep *_simMuonRPCDigis_*_*',
                                                                       'keep *_simBmtfDigis_*_*',
@@ -27,7 +31,7 @@ def customize_outputCommands(process):
                                                                       'keep *_simEmtfDigis_*_*',
                                                                       'keep *_gmtMuons_*_*',
                                                                       'keep *_simGmtStage2Digis_*_*',
-                                                                      'keep *_dtTriggerPhase2PrimitiveDigis_*_*',
+                                                                      'keep *_dtTriggerPhase2PrimitiveDigis_*_*',                                                                      
                                                                       'keep *_L1TkMuonsGmt_*_*',
                                                                       'keep *_g4SimHits_MuonCSCHits_*',
                                                                       'keep *_g4SimHits_MuonDTHits_*',
