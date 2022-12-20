@@ -40,7 +40,8 @@
     <version ClassVersion="1" checksum="30982113"/>
    </class>
 
-    <class name="L1PhaseIIObj" ClassVersion="1">
+    <class name="L1PhaseIIObj" ClassVersion="2">
+     <version ClassVersion="2" checksum="2153751825"/>
     <version ClassVersion="1" checksum="2227116373"/>
     </class>
 
