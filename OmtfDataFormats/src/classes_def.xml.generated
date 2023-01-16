@@ -14,7 +14,8 @@
    </class>
 
    <class name="GenObj" ClassVersion="2">
-     <version ClassVersion="2" checksum="796709907"/>
+    <version ClassVersion="2" checksum="796709907"/>
+     <version ClassVersion="1" checksum="1951246927"/>
    </class>
 
    <class name="MuonObj" ClassVersion="5">

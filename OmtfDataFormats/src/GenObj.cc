@@ -10,7 +10,7 @@ std::ostream & operator<< (std::ostream &out, const GenObj &o)
   out<<" charge: "<<o.charge();
   out<<"pt: "<<o.pt()<<" eta: "<<o.eta()<<" phi: "<<o.phi();
   out<<" status: "<<o.status()<<" motherId: "<<o.motherId();
-  out<<" x coordinate of vertex position: "<<o.vx;
+  // out<<" x coordinate of vertex position: "<<o.vx();
 
   out<<std::endl;
 
