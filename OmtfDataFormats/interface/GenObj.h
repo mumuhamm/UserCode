@@ -3,11 +3,13 @@
 #include <ostream>
 
 #include "TObject.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
+
 class GenObj : public TObject {
 public:
  GenObj(float pt=0., float eta=0., float phi=0.,float mass=0., 
-	int charge=0, int pdgid=0, int st=0, int mother=0, double vx=0, double vy=0, double vz=0):
-  _pt(pt),_eta(eta),_phi(phi),_mass(mass),_charge(charge),_id(pdgid),_status(st),_mid(mother),_vx(vx),_vy(vy),_vz(vz) {}
+	int charge=0, int pdgid=0, int st=0, int mother=0, double vx=0., double vy=0., double vz=0., const LorentzVector& p4=0):
+  _pt(pt),_eta(eta),_phi(phi),_mass(mass),_charge(charge),_id(pdgid),_status(st),_mid(mother),_vx(vx),_vy(vy),_vz(vz),_p4(p4) {}
   virtual ~GenObj() {}
 public:
   float pt() const { return _pt;}
@@ -21,13 +23,14 @@ public:
   double vx() const { return _vx;}
   double vy() const { return _vy;}
   double vz() const { return _vz;}
-
+  const LorentzVector& p4() const {return _p4;}
 
 
 private:  
   float _pt,_eta,_phi,_mass; 
   int _charge,_id,_status,_mid; 
   double _vx, _vy, _vz;
+  const LorentzVector& _p4;
 
 public:
   ClassDef(GenObj,3);

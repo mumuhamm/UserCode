@@ -15,6 +15,7 @@ std::ostream & operator<< (std::ostream &out, const GenObj &o)
   out<<" z coordinate of vertex position: "<<o.vz();
 
 
+
   out<<std::endl;
 
   return out;
