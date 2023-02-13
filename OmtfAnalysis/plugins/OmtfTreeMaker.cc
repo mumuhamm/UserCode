@@ -133,13 +133,15 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     bitsL1->names  = theMenuInspector.namesAlgoL1();
     bitsHLT->names = theMenuInspector.namesAlgoHLT();
   }
-  bitsL1->firedAlgos = theMenuInspector.firedAlgosL1(ev,es);
-  bitsHLT->firedAlgos = theMenuInspector.firedAlgosHLT(ev,es);
+  //AK Need ES access update with tokens:
+  ///https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHowToGetDataFromES
+  //AK bitsL1->firedAlgos = theMenuInspector.firedAlgosL1(ev,es);
+  //AK bitsHLT->firedAlgos = theMenuInspector.firedAlgosHLT(ev,es);
 
   //
   // associate HLT info to muonColl objs
   //
-  theMenuInspector.associateHLT(ev,es,muonColl);
+  //AK theMenuInspector.associateHLT(ev,es,muonColl);
 
 
   // get L1 candidates
