@@ -18,7 +18,8 @@ def customize_L1TkMuonsGmt(process):
 def customize_outputCommands(process):
     process.FEVTSIMoutput.outputCommands.extend(cms.untracked.vstring('drop *',
                                                                       'keep *_genParticles_*_*',
-                                                                      'keep *Track*_mix_*_*',                                                                                                                                        
+                                                                      'keep *SimVertex*_*_*_*',
+                                                                      'keep *Track*_*_*_*',                                                                                                                                        
                                                                       'keep *_prunedTrackingParticles_*_*',
                                                                       'keep *_generalTracks_*_*',
                                                                       'keep *_MergedTrackTruth_*_*',  
