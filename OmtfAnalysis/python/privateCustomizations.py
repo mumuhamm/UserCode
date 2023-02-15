@@ -62,7 +62,14 @@ def customize_extra_outputCommands(process):
                                                                       'keep *_muons_*_*',
                                                                       'keep TrackingRecHitsOwned_*_*_*',
                                                                       'keep csctfTrackStubCSCTriggerContainer_*_*_*',
-                                                                      'keep edmTriggerResults_*_*_*'
+                                                                      'keep edmTriggerResults_*_*_*',                                                                       
+                                                                      'keep *DtChamber*_*_*_*',
+                                                                      'keep  L1Mu*_*_*_**',
+                                                                      'keep  DTChamberIdDT*_*_*_**',
+                                                                      'keep  DTLayerId*_*_*_**',
+                                                                      'keep  CSCDetId*_*_*_**',
+                                                                      'keep  csc*_*_*_**',  
+                                                                      'keep  intL1*_*_*_**' 
     ))
     return process
 ##########################################
