@@ -38,7 +38,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     warnNoColl = cms.untracked.bool(True)
   ),
   l1PhaseIIObjMaker = cms.PSet(
-    gmtEmulSrc = cms.InputTag('L1TkMuonsGmt','',''),  # zrodlo moich mionow GMT, te sa emulowane bo Emul
+    gmtEmulSrc = cms.InputTag('L1TTkMuonsGmt','',''),
   ),
   genObjectFinder = cms.PSet(
       genColl = cms.InputTag("genParticles"),

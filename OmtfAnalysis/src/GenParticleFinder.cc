@@ -69,7 +69,7 @@ void GenParticlefinder::getTrackingParticles(const edm::Event &ev){
     if (abs(iTP->pdgId()) != 13) continue;
     
     GenObj genObj(iTP->pt(), iTP->eta(), iTP->phi(), iTP->mass(), iTP->charge(),
-		  iTP->pdgId(), iTP->status(), iTP->vx(), iTP->vy(), iTP->vz(), iTP->beta(),1);
+		  iTP->pdgId(), iTP->status(), iTP->vx(), iTP->vy(), iTP->vz(), iTP->p4().Beta(),1);
     theGenObjs.push_back(genObj);
   }  
 }

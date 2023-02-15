@@ -71,6 +71,7 @@ private:
   EventObj* event;
   MuonObjColl* muonColl;
   L1ObjColl * l1ObjColl;
+  L1PhaseIIObjColl *l1PhaseIIObjColl;
   GenObjColl * genColl;
   SynchroCountsObjVect * synchroCounts;
   TrackObj* closestTrack;
