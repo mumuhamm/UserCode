@@ -15,12 +15,18 @@
 #include "UserCode/OmtfDataFormats/interface/GenObjColl.h"
 #include "UserCode/OmtfDataFormats/interface/L1Obj.h"
 #include "UserCode/OmtfDataFormats/interface/L1ObjColl.h"
+
+#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"  // Added
+#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObjColl.h"
+
 #include "UserCode/OmtfDataFormats/interface/TriggerMenuResultObj.h"
 #include "UserCode/OmtfDataFormats/interface/SynchroCountsObjVect.h"
 
 #include "UserCode/OmtfAnalysis/interface/MenuInspector.h"
 #include "UserCode/OmtfAnalysis/interface/BestMuonFinder.h"
 #include "UserCode/OmtfAnalysis/interface/L1ObjMaker.h"
+#include "UserCode/OmtfAnalysis/interface/L1PhaseIIObjMaker.h" // Added
+
 #include "UserCode/OmtfAnalysis/interface/ClosestTrackFinder.h"
 #include "UserCode/OmtfAnalysis/interface/GenParticleFinder.h"
 
@@ -74,6 +80,7 @@ private:
   MenuInspector theMenuInspector;
   BestMuonFinder theBestMuonFinder;
   L1ObjMaker theL1ObjMaker;
+  L1PhaseIIObjMaker theL1PhaseIIObjMaker; 
   GenParticlefinder theGenParticleFinder;
   ClosestTrackFinder theClosestTrackFinder;
 

@@ -13,8 +13,8 @@
     <version ClassVersion="1" checksum="1223179708"/>
    </class>
 
-   <class name="GenObj" ClassVersion="1">
-     <version ClassVersion="1" checksum="1951246927"/>
+   <class name="GenObj" ClassVersion="4">
+     <version ClassVersion="4" checksum="2851172724"/>
    </class>
 
    <class name="MuonObj" ClassVersion="5">
@@ -39,6 +39,15 @@
    <class name="L1ObjColl" ClassVersion="1">
     <version ClassVersion="1" checksum="30982113"/>
    </class>
+
+    <class name="L1PhaseIIObj" ClassVersion="2">
+     <version ClassVersion="2" checksum="2153751825"/>
+    <version ClassVersion="1" checksum="2227116373"/>
+    </class>
+
+    <class name="L1PhaseIIObjColl" ClassVersion="1">
+      <version ClassVersion="1" checksum="4150261504"/>
+    </class>
 
    <class name="TriggerMenuResultObj" ClassVersion="1">
     <version ClassVersion="1" checksum="2779745102"/>

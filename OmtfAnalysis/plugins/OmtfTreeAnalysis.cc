@@ -20,6 +20,10 @@
 #include "UserCode/OmtfDataFormats/interface/MuonObjColl.h"
 #include "UserCode/OmtfDataFormats/interface/L1Obj.h"
 #include "UserCode/OmtfDataFormats/interface/L1ObjColl.h"
+
+#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"       // My added classes
+#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObjColl.h"
+
 #include "UserCode/OmtfDataFormats/interface/TriggerMenuResultObj.h"
 #include "UserCode/OmtfDataFormats/interface/SynchroCountsObjVect.h"
 
@@ -112,6 +116,9 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
   MuonObjColl * muonColl = 0;
   
   L1ObjColl* l1ObjColl = 0;
+
+  L1PhaseIIObjColl* l1PhaseIIObjColl = 0;   // Added
+
   TriggerMenuResultObj *bitsL1  = 0;
   TriggerMenuResultObj *bitsHLT = 0;
   SynchroCountsObjVect* synchroCounts = 0;
@@ -123,6 +130,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
   chain.SetBranchAddress("muonColl",&muonColl);
   chain.SetBranchAddress("genColl", &genColl);
   chain.SetBranchAddress("l1ObjColl",&l1ObjColl);
+  chain.SetBranchAddress("l1PhaseIIObjColl",&l1PhaseIIObjColl);   // Added class 
   chain.SetBranchAddress("bitsL1",&bitsL1);
   chain.SetBranchAddress("bitsHLT",&bitsHLT);
   chain.SetBranchAddress("synchroCounts",&synchroCounts);
