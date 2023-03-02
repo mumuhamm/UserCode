@@ -15,19 +15,23 @@ process = cms.Process('OmtfTree')
 # (there is 255 file limit though). Can be empty for crab.
 #
 
+dataDir='/afs/cern.ch/work/k/konec/data/runs/'
 #dataDir='/eos/cms/store/express/Run2022D/ExpressPhysics/FEVT/Express-v1/000/357/815/00000/'
 #dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/691/00000/'
 #dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/686/00000/'
 #dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/685/00000/'
-dataDir='/eos/cms/store/express/Run2022F/ExpressPhysics/FEVT/Express-v1/000/360/459/00000/'
-lsCommand='ls -1 '+dataDir+'|grep root'
+#dataDir='/eos/cms/store/express/Run2022F/ExpressPhysics/FEVT/Express-v1/000/360/459/00000/'
+#dataDir='/eos/cms/store/express/Run2022G/ExpressPhysics/FEVT/Express-v1/000/362/728/00000/'
+#lsCommand='ls -1 '+dataDir+'|grep root'
+#lsCommand='ls -1 '+dataDir+'|grep JetMET | grep 362437 |grep root'
+lsCommand='ls -1 '+dataDir+'|grep run362728_Muon'
+
 print ('command: ',lsCommand)
 lsOutput= subprocess.Popen(lsCommand, stdout=subprocess.PIPE, shell=True, text=True).communicate()[0]
 files=[]
 for f in lsOutput.split():
   files.append('file:'+dataDir+f)
 print ("Number of files in direcotry:",dataDir," ---> ", len(files))
-
 
 process.source = cms.Source("PoolSource", 
 fileNames = cms.untracked.vstring(
@@ -45,13 +49,24 @@ fileNames = cms.untracked.vstring(
 #  'file:/afs/cern.ch/work/k/konec/data/runs/run321140_JetHT_00CAF0AF-5B9F-E811-9E6B-FA163EEA3181.root',
 #  'file:/afs/cern.ch/work/k/konec/data/runs/run322348_JetHT_A8C88C19-40B4-E811-9F14-02163E019EAF.root',
 # 'file:/eos/cms/store/express/Run2022D/ExpressPhysics/FEVT/Express-v1/000/357/815/00000/ffe8b95d-25cb-45cd-9f45-b96d8e18ed4f.root',
+#  '/store/data/Run2022G/Muon/RAW-RECO/ZMu-PromptReco-v1/000/362/728/00000/02c66efb-5541-4c9d-b2ac-952ce4ebdcd7.root',
+#  'file:/afs/cern.ch/work/k/konec/data/runs/run362728_Muon_02c66efb-5541-4c9d-b2ac-952ce4ebdcd7.root',
+#  '/store/data/Run2022G/JetMET/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v1/000/362/437/00000/7fa78eec-f7bf-47be-bbce-9264b8d5205e.root',
+#  '/store/data/Run2022G/JetMET/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v1/000/362/437/00000/cc10cdfb-6a8c-455d-a441-960522112238.root',
+#   '/store/data/Run2022G/Muon/AOD/PromptReco-v1/000/362/760/00000/00a1687e-de9a-4fd7-9fa5-386d66edb074.root',
+#   '/store/data/Run2022G/Muon/MINIAOD/PromptReco-v1/000/362/760/00000/01cd8e14-f3a9-412e-8548-3f17ea13040b.root',
+#    '/store/data/Run2022G/Muon/AOD/PromptReco-v1/000/362/760/00000/021cbe42-3d27-44aa-83fc-7f5f15552cfe.root',
+# '/store/data/Run2022G/Muon/ALCARECO/TkAlMuonIsolated-PromptReco-v1/000/362/760/00000/b9d6c199-1399-49bc-bf4f-af6fa6cf533a.root',
+#  '/store/data/Run2022G/EGamma/AOD/PromptReco-v1/000/362/760/00000/0242aec2-ddf7-4a43-87c1-827be4a2fadf.root',
+#  '/store/data/Run2022G/JetMET/NANOAOD/PromptNanoAODv10_v1-v1/2820000/869d807d-3acd-4aac-860e-da3ecf6b625f.root',
+  '/store/data/Run2022G/JetMET/MINIAOD/PromptReco-v1/000/362/760/00000/110404fa-abee-41ad-9ff3-25756fa54d58.root',
   ),
-#skipEvents =  cms.untracked.uint32(6064)
+#skipEvents =  cms.untracked.uint32(764)
 #skipEvents =  cms.untracked.uint32(19177)
 #skipEvents =  cms.untracked.uint32(19177+1117)
 #skipEvents =  cms.untracked.uint32(19177+1332)
 )
-process.source.fileNames = files
+#process.source.fileNames = files
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 #
@@ -90,7 +105,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 # message logger
 #
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 #process.MessageLogger.cerr.threshold = "DEBUG"
 process.MessageLogger.cerr.enableStatistics = False
 #process.MessageLogger.debugModules.append('muonRPCDigis')
@@ -223,8 +238,7 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
 #      "HLT_Mu55_v", "HLT_IsoMu24_eta2p1_v", "HLT_IsoTkMu24_eta2p1_v"
 #    ),
     namesCheckHltMuMatch = cms.vstring(
-       "HLT_IsoMu24_v"
-#,"HLT_Mu","HLT_IsoMu24_TwoProngs35_v"
+       "HLT_IsoMu24_v","HLT_IsoMu24_eta2p1_v","HLT_Mu50_v"
      ),
   ),
 

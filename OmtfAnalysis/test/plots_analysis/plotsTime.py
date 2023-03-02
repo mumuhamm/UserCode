@@ -18,6 +18,36 @@ def plot1(hIn):
   t.DrawLatex(0.78, 0.9, entries)
   return
 
+def cTimeLayers(canvas):
+  c = TCanvas("cTimeLayers","cTimeLayers",1000,600)
+  canvas.Add(c)
+
+  h=gROOT.FindObject("hTimeLayers")
+  h.SetStats(0)
+  h.SetMinimum(0.)
+  h.DrawCopy()
+  h.SetFillColor(2)
+  h.SetFillStyle(3345)
+  h.GetXaxis().SetRange(1,6)
+  h.DrawCopy('same')
+
+  h.SetFillColor(4)
+  h.SetFillStyle(3344)
+  h.GetXaxis().SetRange(7,10)
+  h.DrawCopy('same')
+
+  h.SetFillColor(8)
+  h.SetFillStyle(3354)
+  h.GetXaxis().SetRange(11,18)
+  h.DrawCopy('same')
+
+#  line = TLine()
+#  line.SetLineColor(2)
+#  line.DrawLine(5.5,0.5,5.5,vMax)
+  c.Update()
+  return
+
+
 def cTimeMtfs(canvas, what1, what2, what3):
   c = TCanvas("cTimeMtfs" + what1+what2+what3, "cTimeMTFs" + what1+what2+what3, 1200, 400)
   canvas.Add(c)
@@ -173,12 +203,43 @@ def cTimeTrackBX(canvas) :
   hTimeOmtfTrackBX1.DrawCopy()
   return
 
+def cTimeDeltaR(canvas) :
+  c = TCanvas("cTimeDeltR","cTimeDeltR",800,800)
+  canvas.Add(c)
+  hTimeDeltaR_Q=gROOT.FindObject("hTimeDeltaR_Q")
+  c.SetLogy()
+  hTimeDeltaR_Q.SetStats(0)
+  hTimeDeltaR_Q.SetLineColor(4)
+  hTimeDeltaR_Q.SetMinimum(0.9)
+  hTimeDeltaR_Q.DrawCopy()
+  hTimeDeltaR_QW=gROOT.FindObject("hTimeDeltaR_QW")
+  hTimeDeltaR_QW.SetLineColor(2)
+  hTimeDeltaR_QW.DrawCopy('same')
+  for i in range(3) :
+    hTimeDeltaR_Q_B=gROOT.FindObject("hTimeDeltaR_Q_B"+str(i+1))
+    hTimeDeltaR_Q_B.SetLineColor(7)
+    hTimeDeltaR_Q_B.DrawCopy('same')
+    hTimeDeltaR_QW_B=gROOT.FindObject("hTimeDeltaR_QW_B"+str(i+1))
+    hTimeDeltaR_QW_B.SetLineColor(6)
+    hTimeDeltaR_QW_B.DrawCopy('same')
+  legend = TLegend(2.0, 0.3*hTimeDeltaR_Q.GetMaximum(), 3.8, hTimeDeltaR_Q.GetMaximum(),"","")
+  legend.AddEntry(hTimeDeltaR_Q, '#mu Q #geq 12')
+  legend.AddEntry(hTimeDeltaR_QW, 'wrong #mu, Q #geq 12')
+  legend.AddEntry(hTimeDeltaR_Q_B, '#mu, Q #geq 12, wrong BX')
+  legend.AddEntry(hTimeDeltaR_QW_B, 'wrong #mu, Q #geq 12, wrong BX')
+  legend.Draw()
+  canvas.Add(legend)
+
+  c.Update()
+  return
+
+
 def plotAll(canvas) :
-#  cTimeMtfsCorr(canvas)
+  cTimeMtfsCorr(canvas)
 #  cTimeMtfs(canvas,'Bmtf_A','Omtf_A','Emtf_A')
 #  cTimeMtfs(canvas,'Bmtf_Q','Omtf_Q','Emtf_Q')
 #  cTimeMtfs(canvas,'Bmtf_M','Omtf_M','Emtf_M')
-#  cTimeMtfs(canvas,'Bmtf_QM','Omtf_QM','Emtf_QM')
+  cTimeMtfs(canvas,'Bmtf_QM','Omtf_QM','Emtf_QM')
 #  cTimeMtfs(canvas,'Bmtf_W','Omtf_W','Emtf_W')
 #  cTimeMtfs(canvas,'Bmtf_QW','Omtf_QW','Emtf_QW')
   cTimeMtf(canvas,'Bmtf')
@@ -186,6 +247,8 @@ def plotAll(canvas) :
   cTimeMtf(canvas,'Emtf')
 #  cTimeTrackPt(canvas)
 #  cTimeTrackBX(canvas)
+  cTimeDeltaR(canvas)
+  cTimeLayers(canvas)
   return
 
 

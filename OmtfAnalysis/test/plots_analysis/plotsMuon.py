@@ -34,6 +34,7 @@ def cMuonDIS(canvas):
   hM = gROOT.FindObject('hMuonPhi_MEN')
   hM.SetLineColor(3)
   hM.DrawCopy('same')
+  c.Update()
   return
 def cMuonPtVsEta(canvas):
   c = TCanvas('cMuonPtVsEta','cMuonPtVsEta',1200,600)
@@ -54,6 +55,7 @@ def cMuonPtVsEta(canvas):
   h.SetMinimum(0.)
   h.SetStats(0)
   h.DrawCopy("box")
+  c.Update()
   return
 
 def plotAll(canvas) :

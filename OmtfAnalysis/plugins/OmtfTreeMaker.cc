@@ -143,7 +143,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   //
   theMenuInspector.associateHLT(ev,es,muonColl);
 
-
   // get L1 candidates
   std::vector<L1Obj> l1Objs = theL1ObjMaker(ev);
   if (l1Objs.size()) {
@@ -160,14 +159,26 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1PhaseIIObjColl->set( std::vector<double>(l1PhaseIIObjs.size(),0.));
   }
 
+//
+bool debug=0;
+  if (debug) { // || l1ObjColl->selectByType(L1Obj::OMTF_emu)) {
+  std::cout << *muonColl << std::endl;
+  std::cout << *l1ObjColl << std::endl;
+  std::cout << std::endl;
+  }
+  theSynchroCheck.checkInside(theMuon, ev, es);
+  theSynchroCheck.checkStripCsc(theMuon, ev, es);
+  theSynchroCheck.checkStripRpc(theMuon, ev, es);
+  theSynchroCheck.checkHitRpc(theMuon, ev, es);
+  theSynchroCheck.checkHitCsc(theMuon, ev, es);
+
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
   if (omtfColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1Objs().front().etaValue(), 
-                                                                    omtfColl.getL1Objs().front().phiValue());
+                                                            omtfColl.getL1Objs().front().phiValue());
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
 
-  // Added
   L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::uGMT_emu);
   if (phaseIIColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, phaseIIColl.getL1PhaseIIObjs().front().etaValue(), 

@@ -15,6 +15,8 @@
 #include <ostream>
 #include <iostream>
 #include <cmath>
+#include <bitset>
+
 
 namespace { 
   TH1D *hTimeOmtf_A,  *hTimeBmtf_A,   *hTimeEmtf_A;  
@@ -26,6 +28,11 @@ namespace {
   TH1D *hTimeOmtf_emu_A, *hTimeOmtf_emu_Q, *hTimeOmtf_emu_M, *hTimeOmtf_emu_QM, *hTimeOmtf_emu_W, *hTimeOmtf_emu_QW;
 
   TH2D *hTimeBmtfOmtf, *hTimeOmtfEmtf, *hTimeOmtfOmtf_E;
+
+  TH1D *hTimeDeltaR_Q, *hTimeDeltaR_QW, 
+       *hTimeDeltaR_Q_B1, *hTimeDeltaR_Q_B2, *hTimeDeltaR_Q_B3, 
+       *hTimeDeltaR_QW_B1, *hTimeDeltaR_QW_B2, *hTimeDeltaR_QW_B3;
+  TH1D *hTimeLayers;
 
   TH2D *hTimeOmtfTrackDPhiT, *hTimeOmtfTrackDPhiM, *hTimeOmtfTrackDEtaT, *hTimeOmtfTrackDEtaM;
   TH1D *hTimeOmtfTrackDRM;
@@ -60,12 +67,12 @@ void AnaTime::init(TObjArray& histos)
   hTimeEmtf_W = new TH1D("hTimeEmtf_W","hTimeEmtf_W",5,-2.5,2.5); histos.Add(hTimeEmtf_W); 
   hTimeEmtf_QW = new TH1D("hTimeEmtf_QW","hTimeEmtf_QW",5,-2.5,2.5); histos.Add(hTimeEmtf_QW); 
 
-  hTimeOmtf_A = new TH1D("hTimeOmtf_A","hTimeOmtf_A",5,-2.5,2.5); histos.Add(hTimeOmtf_A); 
-  hTimeOmtf_Q = new TH1D("hTimeOmtf_Q","hTimeOmtf_Q",5,-2.5,2.5); histos.Add(hTimeOmtf_Q); 
-  hTimeOmtf_M = new TH1D("hTimeOmtf_M","hTimeOmtf_M",5,-2.5,2.5); histos.Add(hTimeOmtf_M); 
-  hTimeOmtf_QM = new TH1D("hTimeOmtf_QM","hTimeOmtf_QM",5,-2.5,2.5); histos.Add(hTimeOmtf_QM); 
-  hTimeOmtf_W = new TH1D("hTimeOmtf_W","hTimeOmtf_W",5,-2.5,2.5); histos.Add(hTimeOmtf_W); 
-  hTimeOmtf_QW = new TH1D("hTimeOmtf_QW","hTimeOmtf_QW",5,-2.5,2.5); histos.Add(hTimeOmtf_QW); 
+  hTimeOmtf_A = new TH1D("hTimeOmtf_A","hTimeOmtf_A",7,-3.5,3.5); histos.Add(hTimeOmtf_A); 
+  hTimeOmtf_Q = new TH1D("hTimeOmtf_Q","hTimeOmtf_Q",7,-3.5,3.5); histos.Add(hTimeOmtf_Q); 
+  hTimeOmtf_M = new TH1D("hTimeOmtf_M","hTimeOmtf_M",7,-3.5,3.5); histos.Add(hTimeOmtf_M); 
+  hTimeOmtf_QM = new TH1D("hTimeOmtf_QM","hTimeOmtf_QM",7,-3.5,3.5); histos.Add(hTimeOmtf_QM); 
+  hTimeOmtf_W = new TH1D("hTimeOmtf_W","hTimeOmtf_W",7,-3.5,3.5); histos.Add(hTimeOmtf_W); 
+  hTimeOmtf_QW = new TH1D("hTimeOmtf_QW","hTimeOmtf_QW",7,-3.5,3.5); histos.Add(hTimeOmtf_QW); 
 
   hTimeOmtf_emu_A = new TH1D("hTimeOmtf_emu_A","hTimeOmtf_emu_A",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_A); 
   hTimeOmtf_emu_Q = new TH1D("hTimeOmtf_emu_Q","hTimeOmtf_emu_Q",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_Q); 
@@ -73,6 +80,20 @@ void AnaTime::init(TObjArray& histos)
   hTimeOmtf_emu_QM = new TH1D("hTimeOmtf_emu_QM","hTimeOmtf_emu_QM",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_QM); 
   hTimeOmtf_emu_W = new TH1D("hTimeOmtf_emu_W","hTimeOmtf_emu_W",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_W); 
   hTimeOmtf_emu_QW = new TH1D("hTimeOmtf_emu_QW","hTimeOmtf_emu_QW",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_QW); 
+
+  hTimeDeltaR_Q = new TH1D("hTimeDeltaR_Q","hTimeDeltaR_Q",   100,0.,4.);  histos.Add(hTimeDeltaR_Q);
+  hTimeDeltaR_QW = new TH1D("hTimeDeltaR_QW","hTimeDeltaR_QW",100,0.,4.);  histos.Add(hTimeDeltaR_QW);
+  hTimeDeltaR_Q_B3 = new TH1D("hTimeDeltaR_Q_B3","hTimeDeltaR_Q_B3",100,0.,4.);  histos.Add(hTimeDeltaR_Q_B3);
+  hTimeDeltaR_Q_B2 = new TH1D("hTimeDeltaR_Q_B2","hTimeDeltaR_Q_B2",100,0.,4.);  histos.Add(hTimeDeltaR_Q_B2);
+  hTimeDeltaR_Q_B1 = new TH1D("hTimeDeltaR_Q_B1","hTimeDeltaR_Q_B1",100,0.,4.);  histos.Add(hTimeDeltaR_Q_B1);
+  hTimeDeltaR_QW_B3 = new TH1D("hTimeDeltaR_QW_B3","hTimeDeltaR_QW_B3",100,0.,4.);  histos.Add(hTimeDeltaR_QW_B3);
+  hTimeDeltaR_QW_B2 = new TH1D("hTimeDeltaR_QW_B2","hTimeDeltaR_QW_B2",100,0.,4.);  histos.Add(hTimeDeltaR_QW_B2);
+  hTimeDeltaR_QW_B1 = new TH1D("hTimeDeltaR_QW_B1","hTimeDeltaR_QW_B1",100,0.,4.);  histos.Add(hTimeDeltaR_QW_B1);
+
+  unsigned int nOmtfLayers =  omtfUtilities::layerNames.size();
+  hTimeLayers =  new TH1D("hTimeLayers","hTimeLayers", nOmtfLayers,-0.5,nOmtfLayers-0.5); histos.Add(hTimeLayers);
+  for (unsigned int ibin=1; ibin<=nOmtfLayers; ibin++) hTimeLayers->GetXaxis()->SetBinLabel(ibin,omtfUtilities::layerNames[ibin-1].c_str());
+
 
 
   hTimeBmtfOmtf = new TH2D("hTimeBmtfOmtf","hTimeBmtfOmtf",5,-2.5,2.5, 5,-2.5,2.5); histos.Add(hTimeBmtfOmtf);
@@ -100,17 +121,34 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
   //
   const std::vector<L1Obj> & l1mtfs = *l1Objs;
   const std::vector<MuonObj> & muons = *muonColl;
+  bool printdeb = false;
   for (const auto & l1mtf : l1mtfs) {
     bool matched  = false;
     bool matchedW = false;
+    bool qualOK = (l1mtf.q >= 12);
     for (const auto & muon : muons) { 
       if (!muon.isValid()) continue;
+//      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.eta(), muon.phi());
       double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
       double deltaRW = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), -muon.l1Eta, muon.l1Phi+M_PI/2.);
+      if (qualOK && l1mtf.type==L1Obj::OMTF) { 
+        hTimeDeltaR_Q->Fill(deltaR); 
+        hTimeDeltaR_QW->Fill(deltaRW); 
+        if (l1mtf.bx == -3) hTimeDeltaR_Q_B3->Fill(deltaR); 
+        if (l1mtf.bx == -2) hTimeDeltaR_Q_B2->Fill(deltaR); 
+        if (l1mtf.bx == -1) hTimeDeltaR_Q_B1->Fill(deltaR); 
+        if (l1mtf.bx == -3) hTimeDeltaR_QW_B3->Fill(deltaRW); 
+        if (l1mtf.bx == -2) hTimeDeltaR_QW_B2->Fill(deltaRW); 
+        if (l1mtf.bx == -1) hTimeDeltaR_QW_B1->Fill(deltaRW); 
+        if ( deltaR < 0.2 && l1mtf.bx < 0) {
+          printdeb = true;
+          std::bitset<18> hitLayers(l1mtf.hits);
+          for (unsigned int hitLayer=0; hitLayer<18;hitLayer++) if(hitLayers[hitLayer]) hTimeLayers->Fill(hitLayer);
+        }
+      }
       if (deltaR  < 0.4)  matched=true;
       if (deltaRW < 0.4) matchedW=true;
     }
-    bool qualOK = (l1mtf.q >= 12);
     TH1D *hA, *hQ, *hM, *hQM, *hW, *hQW; 
     hA=hQ=hM=hQM=hW=hQW=0; 
     switch (l1mtf.type) {
@@ -138,18 +176,33 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
       double deltaEta = l1mtf_1.etaValue()-l1mtf_2.etaValue();
       double deltaPhi = reco::deltaPhi( l1mtf_1.phiValue(),  l1mtf_2.phiValue());
 
-      if ( (fabs(deltaEta) > 0.2) || (fabs(deltaPhi >0.05)) ) continue;
-      if (l1mtf_1.type==L1Obj::BMTF && l1mtf_2.type ==  L1Obj::OMTF) {
+      if ( (fabs(deltaEta) > 0.2) || (fabs(deltaPhi) >0.05) ) continue;
+      if (l1mtf_1.type==L1Obj::BMTF && l1mtf_2.type ==  L1Obj::OMTF && l1mtf_2.q>=12) {
          hTimeBmtfOmtf->Fill(l1mtf_1.bx,l1mtf_2.bx);
+//         if (l1mtf_2.bx <0 && l1mtf_1.bx==0) { printdeb=true;
+//           std::cout <<" deta: "<<deltaEta<<" dphi: "<<deltaPhi<<std::endl;
+//           std::cout << l1mtf_2<<std::endl;
+//           std::cout << l1mtf_1<<std::endl;
+//         }
       }
-      if (l1mtf_1.type==L1Obj::OMTF && l1mtf_2.type ==  L1Obj::EMTF) {
+      if (l1mtf_1.type==L1Obj::OMTF && l1mtf_1.q>=12  && l1mtf_2.type ==  L1Obj::EMTF) {
          hTimeOmtfEmtf->Fill(l1mtf_1.bx,l1mtf_2.bx);
+//         if (l1mtf_1.bx <0 && l1mtf_2.bx==0) { printdeb=true;
+//           std::cout <<" deta: "<<deltaEta<<" dphi: "<<deltaPhi<<std::endl;
+//           std::cout << l1mtf_1<<std::endl;
+//           std::cout << l1mtf_2<<std::endl;
+//         }
       }
       if (l1mtf_1.type==L1Obj::OMTF && l1mtf_2.type ==  L1Obj::OMTF_emu) {
          hTimeOmtfOmtf_E->Fill(l1mtf_1.bx,l1mtf_2.bx);
       }
     }
   }
+  if (printdeb) {
+    std::cout <<"-------- PREFIRE debug: "<<std::endl; 
+    if (muonColl) std::cout << *muonColl << std::endl;
+    if (l1Objs)  std::cout << *l1Objs<< std::endl;
+  } 
 
 /*
 
