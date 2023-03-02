@@ -5,11 +5,42 @@
 
 #include "UserCode/OmtfDataFormats/interface/L1Obj.h"
 
-OmtfName makeName(const L1Obj & obj) 
+OmtfName omtfUtilities::makeName(const L1Obj & obj) 
 {  
   return (obj.type==L1Obj::OMTF || obj.type==L1Obj::OMTF_emu) ? 
              OmtfName(obj.iProcessor, obj.position) : OmtfName(); 
 }
+
+double omtfUtilities::code2pt(int pt) { return std::fmin( double(pt-1)/2., 159); }
+
+const int  omtfUtilities::etaBinVal[nEtaBins] = {73, 75, 78, 79, 85, 90, 92, 94, 95, 99, 103, 110, 115, 121};
+
+int omtfUtilities::code2HistoBin (int code) {
+    int sign = omtfUtilities::sgn(code);
+    switch (abs(code)) {
+      case  73 : return sign*1;
+      case  75 : return sign*2;
+      case  78 : return sign*3;
+      case  79 : return sign*4;
+      case  85 : return sign*5;
+      case  90 : return sign*6;
+      case  92 : return sign*7;
+      case  94 : return sign*8;
+      case  95 : return sign*9;
+      case  99 : return sign*10;
+      case 103 : return sign*11;
+      case 110 : return sign*12;
+      case 115 : return sign*13;
+      case 121 : return sign*14;
+      default:  return sign*0;
+    }
+}
+
+std::vector<std::string> omtfUtilities::layerNames = { "MB1","MB1phi","MB2","MB2_phi","MB3","MB3_phi",
+                                                       "ME1/3", "ME2/2", "ME3/2", "ME1/2",
+                                                       "RB1in", "RB1out", "RB2in", "RB2out", "RB3",
+                                                       "RE1/3",  "RE2/3",  "RE3/3"};
+
 
 //  for each index return corresponding ipt code value.   
 //  exception: 0 -> returns 0. instead of "no muon"
@@ -18,8 +49,15 @@ OmtfName makeName(const L1Obj & obj)
 double L1PtScale::ptBins[]={ 0., 0.1, 
                          1.5,  2., 2.5,  3., 3.5,  4.,   4.5,   5.,   6.,   8., 
                          10., 12., 14., 16., 18., 20.,   22.,  25.,  30.,  35., 
+                         40., 45., 50., 55., 60., 65., 70., 80., 90., 100., 120., 140., 180., 250., 350., 500., 
+                         1000. };
+/*
+double L1PtScale::ptBins[]={ 0., 0.1, 
+                         1.5,  2., 2.5,  3., 3.5,  4.,   4.5,   5.,   6.,   8., 
+                         10., 12., 14., 16., 18., 20.,   22.,  25.,  30.,  35., 
                          40., 50., 60., 70., 80., 100., 120., 150., 200., 500., 
                          1000. };
+*/
 
 /*
 double L1PtScale::ptBins[]={0., 0.1, 

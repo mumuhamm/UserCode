@@ -16,7 +16,7 @@
 #include "UserCode/OmtfDataFormats/interface/L1Obj.h"
 #include "UserCode/OmtfDataFormats/interface/L1ObjColl.h"
 
-#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"  // Added
+#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"  
 #include "UserCode/OmtfDataFormats/interface/L1PhaseIIObjColl.h"
 
 #include "UserCode/OmtfDataFormats/interface/TriggerMenuResultObj.h"
@@ -25,18 +25,24 @@
 #include "UserCode/OmtfAnalysis/interface/MenuInspector.h"
 #include "UserCode/OmtfAnalysis/interface/BestMuonFinder.h"
 #include "UserCode/OmtfAnalysis/interface/L1ObjMaker.h"
-#include "UserCode/OmtfAnalysis/interface/L1PhaseIIObjMaker.h" // Added
+#include "UserCode/OmtfAnalysis/interface/L1PhaseIIObjMaker.h" 
 
 #include "UserCode/OmtfAnalysis/interface/ClosestTrackFinder.h"
 #include "UserCode/OmtfAnalysis/interface/GenParticleFinder.h"
+#include "UserCode/OmtfAnalysis/interface/SynchroCheck.h"
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 #include "UserCode/OmtfAnalysis/interface/SynchroCountsGrabber.h"
+#include "SimDataFormats/Track/interface/SimTrack.h"
+#include "SimDataFormats/Track/interface/SimTrackContainer.h"
+#include "SimDataFormats/Vertex/interface/SimVertex.h"
+#include "SimDataFormats/Vertex/interface/SimVertexContainer.h"
 
-
+#include "CondFormats/L1TObjects/interface/L1TUtmTriggerMenu.h"
+#include "CondFormats/DataRecord/interface/L1TUtmTriggerMenuRcd.h"
 
 #include <vector>
 #include "TObjArray.h"
@@ -84,6 +90,10 @@ private:
   L1PhaseIIObjMaker theL1PhaseIIObjMaker; 
   GenParticlefinder theGenParticleFinder;
   ClosestTrackFinder theClosestTrackFinder;
+  SynchroCheck  theSynchroCheck; 
+
+  edm::EDGetTokenT<edm::SimTrackContainer> inputSim;
+  edm::EDGetTokenT<edm::SimVertexContainer> vertexSim;
 
 };
 #endif

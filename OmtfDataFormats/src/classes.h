@@ -12,10 +12,12 @@
 #include "UserCode/OmtfDataFormats/interface/GenObj.h"
 #include "UserCode/OmtfDataFormats/interface/GenObjColl.h"
 
-// added
 #include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"
 #include "UserCode/OmtfDataFormats/interface/L1PhaseIIObjColl.h"
 
+#include "UserCode/OmtfDataFormats/interface/DetBxStatObj.h"
+#include "UserCode/OmtfDataFormats/interface/DetSpecObj.h"
+#include "UserCode/OmtfDataFormats/interface/BxStatObj.h"
 
 namespace {
   struct dictionary {
@@ -35,5 +37,8 @@ namespace {
     SynchroCountsObjVect aSynchVec;
     GenObj aGen;
     GenObjColl aGenColl;
+    DetBxStatObj aDetBxStatObj;
+    DetSpecObj aDetSpecObj;
+    BxStatObj aBxStatObj;
   };
 }

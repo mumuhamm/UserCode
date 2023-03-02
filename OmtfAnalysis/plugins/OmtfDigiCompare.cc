@@ -44,6 +44,8 @@
 #include "DataFormats/MuonDetId/interface/CSCDetId.h"
 #include "DataFormats/CSCDigi/interface/CSCCorrelatedLCTDigi.h"
 #include "DataFormats/CSCDigi/interface/CSCCorrelatedLCTDigiCollection.h"
+#include "DataFormats/CSCDigi/interface/CSCALCTDigiCollection.h"
+#include "DataFormats/CSCDigi/interface/CSCALCTDigi.h"
 
 //#include "DataFormats/MuonDetId/interface/DtDetId.h"
 #include "DataFormats/MuonDetId/interface/DTChamberId.h"
@@ -58,6 +60,13 @@
 #include "FWCore/PluginManager/interface/ModuleDef.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
+#include "TH2D.h"
+#include "TFile.h"
+
+namespace {
+  TH2D *hDigiCompareBx0, *hDigiCompareBx1;
+  TH2D *hDigiRpcPACT, *hDigiRpcOMTF, *hDigiRpcDiff;
+}
     struct MyDigi { 
        uint32_t det; int data; int bx; 
        bool operator==(const MyDigi&o) const {
@@ -83,6 +92,14 @@ class OmtfDigiCompare : public edm::EDAnalyzer {
 public:
   OmtfDigiCompare (const edm::ParameterSet & cfg);
   virtual ~OmtfDigiCompare(){ 
+    TFile f("compare.root","RECREATE");
+    f.cd();
+    hDigiCompareBx0->Write(); 
+    hDigiCompareBx1->Write(); 
+    hDigiRpcPACT->Write(); 
+    hDigiRpcOMTF->Write(); 
+    hDigiRpcDiff->Write(); 
+    f.Write();
     std::cout << "AT THE END: "
               << theErrMuonDigisCnt+theErrDtPDigisCnt+theErrDtTDigisCnt+theErrCscDigisCnt+theErrRpcDigisCnt <<" Errors"
               <<  std::endl; printStat(); 
@@ -90,7 +107,7 @@ public:
 
   virtual void analyze(const edm::Event &ev, const edm::EventSetup& es) {
     theEventCnt++;
-    debug = true;
+    debug = 0;
 /*
     if (    ev.id().event() != 483248 
         &&  ev.id().event() != 480262
@@ -116,8 +133,9 @@ private:
     edm::EDGetTokenT<L1MuDTChambPhContainer> inputDTPh_BMTF, inputDTPh_OMTF;
     edm::EDGetTokenT<L1MuDTChambThContainer> inputDTTh_BMTF, inputDTTh_OMTF;
     edm::EDGetTokenT<l1t::RegionalMuonCandBxCollection> inputOMTF_DATA, inputOMTF_EMUL; 
+    edm::EDGetTokenT<CSCALCTDigiCollection> inputALCT;
 
-    bool debug;
+    bool debug, useALCT;
     unsigned int theEventCnt;
     unsigned int theAllMuonDigisCnt,theErrMuonDigisCnt;
     unsigned int theAllDtPDigisCnt, theErrDtPDigisCnt;
@@ -155,7 +173,16 @@ OmtfDigiCompare::OmtfDigiCompare(const edm::ParameterSet & cfg)
   inputDTTh_OMTF = consumes<L1MuDTChambThContainer>(cfg.getParameter<edm::InputTag>("srcDTTh_OMTF"));
   inputOMTF_DATA = consumes<l1t::RegionalMuonCandBxCollection>(cfg.getParameter<edm::InputTag>("srcOMTF_DATA"));
   inputOMTF_EMUL = consumes<l1t::RegionalMuonCandBxCollection>(cfg.getParameter<edm::InputTag>("srcOMTF_EMUL"));
+
+  useALCT = cfg.getParameter<bool>("useALCT");
+  if (useALCT) inputALCT = consumes<CSCALCTDigiCollection>(cfg.getParameter<edm::InputTag>("srcALCT"));
   
+  hDigiCompareBx0 = new TH2D("hDigiCompareBx0","hDigiCompareBx0",36,0.5,36.5,9,-4.5,4.5);
+  hDigiCompareBx1 = new TH2D("hDigiCompareBx1","hDigiCompareBx1",36,0.5,36.5,9,-4.5,4.5);
+
+  hDigiRpcPACT = new TH2D("hDigiRpcPACT","hDigiRpcPACT;sector/chamber;station/disk",36,0.5,36.5,29,-14.5,14.5);
+  hDigiRpcOMTF = new TH2D("hDigiRpcOMTF","hDigiRpcOMTF;sector/chamber;station/disk",36,0.5,36.5,29,-14.5,14.5);
+  hDigiRpcDiff = new TH2D("hDigiRpcDiff","hDigiRpcDiff;sector/chamber;station/disk",36,0.5,36.5,29,-14.5,14.5);
 }
 
 void OmtfDigiCompare::analyzeRPC(const edm::Event &ev, const edm::EventSetup& es)
@@ -181,7 +208,7 @@ void OmtfDigiCompare::analyzeRPC(const edm::Event &ev, const edm::EventSetup& es
       const RPCDigi & digi = (*id);
       MyDigi myDigi = { rawDetId, digi.strip(), digi.bx() };
       if (myOmtf.end() == std::find(myOmtf.begin(), myOmtf.end(), myDigi)) myOmtf.push_back(myDigi);
-//      if (debug) std::cout <<rpcDetId<< " myDigi:"<<myDigi<<std::endl;
+      if (debug) std::cout <<rpcDetId<< " myDigi:"<<myDigi<<std::endl;
     } 
   }
   std::sort(myOmtf.begin(),myOmtf.end());
@@ -203,8 +230,7 @@ void OmtfDigiCompare::analyzeRPC(const edm::Event &ev, const edm::EventSetup& es
       const RPCDigi & digi = (*id);
       MyDigi myDigi = { rawDetId, digi.strip(), digi.bx() };
       if (myPact.end() == std::find(myPact.begin(), myPact.end(), myDigi)) myPact.push_back(myDigi);
-//      if (debug) std::cout <<rpcDetId<< " myDigi:"<<myDigi<<std::endl;
-      
+      if (debug) std::cout <<rpcDetId<< " myDigi:"<<myDigi<<std::endl;
     } 
   }
   std::sort(myPact.begin(),myPact.end());
@@ -214,21 +240,33 @@ void OmtfDigiCompare::analyzeRPC(const edm::Event &ev, const edm::EventSetup& es
   for (const auto & omtf : myOmtf ) {
      if (omtf.bx != 0) continue;
      theAllRpcDigisCnt++;     
+     RPCDetId rpcDetId(omtf.det);
+     int chamb   = rpcDetId.region()==0 ? rpcDetId.sector() : (rpcDetId.sector()-1)*6+rpcDetId.subsector();
+     int station = rpcDetId.region()==0 ? rpcDetId.ring()/abs(rpcDetId.ring())*(rpcDetId.station()*2+(rpcDetId.layer()-1))
+                                        : rpcDetId.region()*(rpcDetId.station()+10);
+     hDigiRpcOMTF->Fill(chamb,station); 
      std::vector<MyDigi>::const_iterator itRpc = find(myPact.begin(), myPact.end(), omtf);
      if (itRpc == myPact.end() ) {
        if (debug) std::cout << "HERE PROBLEM!!! ----- RPC DIGI corresponding to OMTF ("<<RPCDetId(omtf.det)<<" digi:"<<omtf<<") NOT FOUND! " << std::endl;
        hasError = true;
        theErrRpcDigisCnt++; 
+       hDigiRpcDiff->Fill(chamb,station); 
      }
   }
   for (const auto & pact : myPact) {
      if (pact.bx != 0) continue;
      theAllRpcDigisCnt++;     
+     RPCDetId rpcDetId(pact.det);
+     int chamb   = rpcDetId.region()==0 ? rpcDetId.sector() : (rpcDetId.sector()-1)*6+rpcDetId.subsector();
+     int station = rpcDetId.region()==0 ? rpcDetId.ring()/abs(rpcDetId.ring())*(rpcDetId.station()*2+(rpcDetId.layer()-1))
+                                        : rpcDetId.region()*(rpcDetId.station()+10);
+     hDigiRpcPACT->Fill(chamb,station); 
      std::vector<MyDigi>::const_iterator it = find(myOmtf.begin(), myOmtf.end(), pact);
      if (it == myOmtf.end() ) {
        if (debug) std::cout << "HERE PROBLEM!!! ----- OMTF DIGI corresponding to PACT ("<<RPCDetId(pact.det)<<" digi:"<<pact<<") NOT FOUND! " << std::endl;
        hasError = true;
        theErrRpcDigisCnt++; 
+       hDigiRpcDiff->Fill(chamb,station); 
      }
   }
 
@@ -466,12 +504,12 @@ void OmtfDigiCompare::analyzeOMTF( const edm::Event &ev, const edm::EventSetup& 
 }
 
 void OmtfDigiCompare::analyzeCSC(const edm::Event &ev, const edm::EventSetup& es) {
-  if (debug) std::cout << "-------- HERE DIGI COMPARE CSC---------" << std::endl;
+  if (debug) std::cout << "------------- HERE DIGI COMPARE CSC --------------" << std::endl;
 
   edm::Handle<CSCCorrelatedLCTDigiCollection> digiCollectionCSC_OMTF;
   ev.getByToken(inputCSC_OMTF,digiCollectionCSC_OMTF);
   const CSCCorrelatedLCTDigiCollection & cscDigisOmtf = *digiCollectionCSC_OMTF.product();
-  if (debug) std::cout <<" CSC digis from OMTF" << std::endl;
+  if (debug) std::cout <<" ===> CSC digis from OMTF" << std::endl;
   std::vector<MyDigi> myOmtf;
   for (const auto & chDigis : cscDigisOmtf) {
     auto rawId = chDigis.first;
@@ -480,7 +518,7 @@ void OmtfDigiCompare::analyzeCSC(const edm::Event &ev, const edm::EventSetup& es
     if (debug) std::cout <<"CSC DET ID: "<< cscDetId << std::endl; 
     for (auto digi = chDigis.second.first; digi != chDigis.second.second; digi++) {
       if (debug) std::cout << *digi << std::endl;
-      MyDigi myDigi = { rawId, digi->getStrip(), digi->getBX() };
+      MyDigi myDigi = { rawId, digi->getStrip(), digi->getBX()};
       if (debug) std::cout <<" MyDigi (OMTF): " << myDigi << std::endl;
       if (myOmtf.end() == std::find(myOmtf.begin(), myOmtf.end(), myDigi)) myOmtf.push_back(myDigi);
       else if (debug) std::cout <<" DUPLICATE. " << std::endl;
@@ -493,7 +531,21 @@ void OmtfDigiCompare::analyzeCSC(const edm::Event &ev, const edm::EventSetup& es
   edm::Handle<CSCCorrelatedLCTDigiCollection> digiCollectionCSC_CSC;
   ev.getByToken(inputCSC_CSC,digiCollectionCSC_CSC);
   const CSCCorrelatedLCTDigiCollection & cscDigisCSC = *digiCollectionCSC_CSC.product();
-  if (debug) std::cout <<" CSC digis from CSC" << std::endl;
+  edm::Handle<CSCALCTDigiCollection> alcts;
+  if (useALCT) ev.getByToken(inputALCT,alcts);
+
+  if (debug) std::cout <<"===> CSC digis from CSC" << std::endl;
+  if (debug) {
+  std::cout <<" ALCT DIGIS: "<<std::endl;
+  for (CSCALCTDigiCollection::DigiRangeIterator j = alcts->begin(); j != alcts->end(); j++) {
+    std::cout <<"CSC DET ID: "<< CSCDetId((*j).first)<<" ";
+    std::vector<CSCALCTDigi>::const_iterator digiItr = (*j).second.first;
+    std::vector<CSCALCTDigi>::const_iterator last = (*j).second.second;
+    for (; digiItr != last; ++digiItr) std::cout << (*digiItr)<<" ";
+    std::cout  << std::endl;
+  }
+  }
+
   for (const auto & chDigis : cscDigisCSC) {
     auto rawId = chDigis.first;
     CSCDetId cscDetId(rawId);
@@ -501,8 +553,21 @@ void OmtfDigiCompare::analyzeCSC(const edm::Event &ev, const edm::EventSetup& es
     if (debug) std::cout <<"--------------"<< std::endl;
     if (debug) std::cout <<"CSC DET ID: "<< cscDetId << std::endl; 
     for (auto digi = chDigis.second.first; digi != chDigis.second.second; digi++) {
+      int cscBX = digi->getBX();
       if (debug) std::cout << *digi << std::endl;
-      MyDigi myDigi = { rawId, digi->getStrip(), digi->getBX() };
+      if (useALCT) {
+        for (CSCALCTDigiCollection::DigiRangeIterator j = alcts->begin(); j != alcts->end(); j++) {
+          if (CSCDetId((*j).first) == rawId) {
+            for (auto alct = (*j).second.first; alct != (*j).second.second; alct++) {
+              if (alct->isValid() && alct->getKeyWG()==digi->getKeyWG()) {
+                cscBX=alct->getBX()+5;
+                if (debug) std::cout <<" ---> fix digi bx, old BX="<<digi->getBX()<<" new BX="<<cscBX <<std::endl; 
+              }
+            }
+          }
+        }
+      } 
+      MyDigi myDigi = { rawId, digi->getStrip(), cscBX };
       if (debug) std::cout <<" MyDigi (CSCTF): " << myDigi << std::endl;
       if (myCsc.end() == std::find(myCsc.begin(), myCsc.end(), myDigi)) myCsc.push_back(myDigi);
     }
@@ -511,8 +576,39 @@ void OmtfDigiCompare::analyzeCSC(const edm::Event &ev, const edm::EventSetup& es
   if (debug) std::cout <<" myCsc size is: " << myCsc.size() << std::endl;
 
   bool hasError = false;
+/*
   for (const auto & omtf : myOmtf ) {
-     if (omtf.bx != 6) continue;
+     theAllCscDigisCnt++;     
+     
+     std::vector<MyDigi>::const_iterator itCsc = find(myCsc.begin(), myCsc.end(), omtf);
+     if (itCsc == myCsc.end() ) {
+       if (debug) std::cout << "HERE PROBLEM!!! ----- CSC DIGI corresponding to OMTF ("<<omtf<<") NOT FOUND! " << std::endl;
+       hasError = true;
+       theErrCscDigisCnt++; 
+     }
+
+     for (const auto & csc : myCsc) {
+       CSCDetId cscDetId(omtf.det);
+       if (cscDetId.ring()==3)continue;
+       int y=cscDetId.station();
+       if (cscDetId.endcap()==2) y *=-1;
+       if (omtf.det==csc.det && omtf.data==csc.data && omtf.bx==csc.bx) hDigiCompareBx0->Fill(cscDetId.chamber(), y);
+       if (omtf.det==csc.det && omtf.data==csc.data && (omtf.bx-csc.bx)==1) hDigiCompareBx1->Fill(cscDetId.chamber(), y);
+     }
+  }
+*/
+  for (const auto & omtf : myOmtf ) {
+
+     for (const auto & csc : myCsc) {
+       CSCDetId cscDetId(omtf.det);
+       if (cscDetId.ring()==3)continue;
+       int y=cscDetId.station();
+       if (cscDetId.endcap()==2) y *=-1;
+       if (omtf.det==csc.det && omtf.data==csc.data && omtf.bx==csc.bx) hDigiCompareBx0->Fill(cscDetId.chamber(), y);
+       if (omtf.det==csc.det && omtf.data==csc.data && (omtf.bx-csc.bx)==1) hDigiCompareBx1->Fill(cscDetId.chamber(), y);
+     }
+
+     if (abs(omtf.bx-8)>1) continue;
      theAllCscDigisCnt++;     
      std::vector<MyDigi>::const_iterator itCsc = find(myCsc.begin(), myCsc.end(), omtf);
      if (itCsc == myCsc.end() ) {
@@ -522,7 +618,7 @@ void OmtfDigiCompare::analyzeCSC(const edm::Event &ev, const edm::EventSetup& es
      }
   }
   for (const auto & csctf : myCsc ) {
-     if (csctf.bx != 6) continue;
+     if (abs(csctf.bx-8) >1) continue;
      theAllCscDigisCnt++;     
      std::vector<MyDigi>::const_iterator it = find(myOmtf.begin(), myOmtf.end(), csctf);
      if (it == myOmtf.end() ) {

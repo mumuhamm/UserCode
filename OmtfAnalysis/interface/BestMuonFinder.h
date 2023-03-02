@@ -6,6 +6,7 @@
 #include "DataFormats/Provenance/interface/EventID.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "UserCode/OmtfDataFormats/interface/MuonObj.h"
+#include "UserCode/OmtfAnalysis/interface/TrackAtSurface.h"
 
 namespace edm { class Event; class EventSetup; }
 namespace reco { class Muon; }
@@ -20,7 +21,7 @@ class TObjArray;
 class BestMuonFinder {
 
 public:
-  BestMuonFinder( const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl);
+  BestMuonFinder( const edm::ParameterSet& cfg, edm::ConsumesCollector cColl);
  
   const reco::Muon* result( const edm::Event &ev, const edm::EventSetup &es) { run(ev,es); return theMuon; }
   std::vector<MuonObj> muons( const edm::Event &ev, const edm::EventSetup &es) { run(ev,es); return theMuonObjs; }
@@ -43,6 +44,8 @@ private:
   edm::EventNumber_t lastEvent;
   edm::RunNumber_t   lastRun;
   edm::ParameterSet  theConfig;
+
+  TrackAtSurface muAtSurface;
 
   bool theUnique, theIsLoose, theIsMedium, theIsTight;
   unsigned int theAllMuons;

@@ -25,6 +25,7 @@ bool AnaMenu::filter( const EventObj* ev, const MuonObj* muon,
                       const TriggerMenuResultObj *bitsHLT)
 
 {
+  bool vetoOK = false;
   const std::vector<unsigned int> & algosL1 = bitsL1->firedAlgos;
   const std::vector<unsigned int> & algosHLT = bitsHLT->firedAlgos;
 
@@ -35,6 +36,7 @@ bool AnaMenu::filter( const EventObj* ev, const MuonObj* muon,
   debug = false;
   if (debug) std::cout << "================== L1 names: "<< std::endl;
   std::vector<std::string> acceptL1_Names = theConfig.exists("acceptL1_Names") ?  theConfig.getParameter<std::vector<std::string> >("acceptL1_Names") : std::vector<std::string>();
+  std::vector<std::string> vetoL1_Names = theConfig.exists("vetoL1_Names") ?  theConfig.getParameter<std::vector<std::string> >("vetoL1_Names") : std::vector<std::string>();
   for (CIT it=algosL1.begin(); it != algosL1.end(); ++it) {
     bool aokL1 = false;
     std::string nameAlgo = theMenuL1[*it];
@@ -42,9 +44,8 @@ bool AnaMenu::filter( const EventObj* ev, const MuonObj* muon,
     bool isMu = ( nameAlgo.find("Mu") != std::string::npos || nameAlgo.find("MU") != std::string::npos);
     if (theConfig.getParameter<bool>("acceptL1_OtherThanMu") && !isMu ) aokL1 = true;
     if (theConfig.getParameter<bool>("acceptL1_Mu") &&  isMu) aokL1 = true;
-    for ( std::vector<std::string>::const_iterator is=acceptL1_Names.begin(); is != acceptL1_Names.end(); ++is) {
-       if (nameAlgo==(*is)) aokL1 = true;
-    }
+    for ( std::vector<std::string>::const_iterator is=acceptL1_Names.begin(); is != acceptL1_Names.end(); ++is) { if (nameAlgo==(*is)) aokL1 = true; }
+    for ( std::vector<std::string>::const_iterator is=vetoL1_Names.begin(); is != vetoL1_Names.end(); ++is) { if (nameAlgo==(*is)) vetoOK = true; }
     if (debug) {std::cout <<nameAlgo; if (aokL1) std::cout <<" <--"; std::cout << std::endl; }
     if (aokL1) okL1=true;
   }
@@ -75,7 +76,7 @@ bool AnaMenu::filter( const EventObj* ev, const MuonObj* muon,
     if (aokHLT) okHLT=true;
   }
 
-  if (okL1 && okHLT) {
+  if (okL1 && okHLT && !vetoOK) {
     for (CIT it=algosL1.begin();  it != algosL1.end();  ++it)  theAlgosL1[ theMenuL1[*it] ]++; 
     for (CIT it=algosHLT.begin(); it != algosHLT.end(); ++it) theAlgosHLT[ theMenuHLT[*it] ]++;
     return true; 

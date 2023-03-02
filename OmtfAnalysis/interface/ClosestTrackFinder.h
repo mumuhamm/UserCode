@@ -19,6 +19,7 @@ class TObjArray;
 class ClosestTrackFinder {
 
 public:
+  ClosestTrackFinder(){}
   ClosestTrackFinder( const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl);
 
   reco::Track result(const edm::Event &ev, const edm::EventSetup &es, double eta, double phi);

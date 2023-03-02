@@ -28,36 +28,44 @@
 using namespace edm;
 using namespace std;
 
-SynchroSelector::SynchroSelector(const edm::ParameterSet & cfg) 
+namespace {
+  edm::ESGetToken<GlobalTrackingGeometry, GlobalTrackingGeometryRecord> theGeomteryToken;
+  edm::ESGetToken<Propagator, TrackingComponentsRecord> thePropagatorAnyToken;
+}
+
+SynchroSelector::SynchroSelector(const edm::ParameterSet & cfg, edm::ConsumesCollector cColl) 
   : theConfig(cfg), hPullX(0),hDistX(0)
-{ }
+{ 
+  theGeomteryToken = cColl.esConsumes<GlobalTrackingGeometry, GlobalTrackingGeometryRecord>();
+  thePropagatorAnyToken= cColl.esConsumes<Propagator, TrackingComponentsRecord>(edm::ESInputTag("","SteppingHelixPropagatorAny"));
+
+}
 
 bool SynchroSelector::checkRpcDetMatching( const TrajectoryStateOnSurface & tsos,  const RPCDetId & det, const edm::Event&ev, const edm::EventSetup& es)
 {
-  edm::ESHandle<Propagator> propagator;
-  es.get<TrackingComponentsRecord>().get("SteppingHelixPropagatorAlong", propagator);
 
-  edm::ESHandle<GlobalTrackingGeometry> globalGeometry;
-  es.get<GlobalTrackingGeometryRecord>().get(globalGeometry);
+  auto const & globalGeometry = es.getData(theGeomteryToken);
+  auto const & propagator = es.getData(thePropagatorAnyToken);
+
 
   GlobalPoint detPos, trackPos;
 //  std::cout <<"BEFORE PROPAGATION POSITION:"<< tsos.globalPosition().perp()<<"  GLOBAL MOMENTUM:"<<tsos.globalMomentum().mag()<< std::endl;
-  TrajectoryStateOnSurface trackAtRPC =  propagator->propagate(tsos, globalGeometry->idToDet(det)->surface());
+  TrajectoryStateOnSurface trackAtRPC =  propagator.propagate(tsos, globalGeometry.idToDet(det)->surface());
   if (!trackAtRPC.isValid()) return false;
 //  std::cout <<"AFTER PROPAGATION POSITION:"<< trackAtRPC.globalPosition().perp()<<"  GLOBAL MOMENTUM:"<<trackAtRPC.globalMomentum().mag()<< std::endl;
-  detPos = globalGeometry->idToDet(det)->position();
+  detPos = globalGeometry.idToDet(det)->position();
   trackPos = trackAtRPC.globalPosition();
 
 /*
   std::cout <<" **** "<<theConfig.getParameter<std::string>("collection")<<" position at RPC det:"<<det.rawId()
-                      //<< is :"<globalGeometry->idToDet(det)->position()
+                      //<< is :"<globalGeometry.idToDet(det)->position()
                       <<", r= "<<trackAtRPC.globalPosition().perp()
                       <<", z= "<<trackAtRPC.globalPosition().z()
                       <<", phi= "<<trackAtRPC.globalPosition().phi()
                       <<", eta= "<<trackAtRPC.globalPosition().eta()
                       //<<" localPosition: "<<trackAtRPC.localPosition()
                       //<<" localError: (xx:"<<trackAtRPC.localError().positionError()
-                     <<" isInside: "<< globalGeometry->idToDet(det)->surface().bounds().inside( trackAtRPC.localPosition())
+                     <<" isInside: "<< globalGeometry.idToDet(det)->surface().bounds().inside( trackAtRPC.localPosition())
                      << std::endl;
 */
   float propQuality = 0.; 
@@ -70,7 +78,7 @@ bool SynchroSelector::checkRpcDetMatching( const TrajectoryStateOnSurface & tsos
   if (propQuality < theConfig.getParameter<int>("checkRpcDetMatching_minPropagationQuality") ) return false;
   double scale = theConfig.getParameter<bool>("checkRpcDetMatching_matchingScaleAuto") ? propQuality : theConfig.getParameter<double>("checkRpcDetMatching_matchingScaleValue") ;
    
-  bool inside = globalGeometry->idToDet(det)->surface().bounds().inside( trackAtRPC.localPosition(), trackAtRPC.localError().positionError(), scale);
+  bool inside = globalGeometry.idToDet(det)->surface().bounds().inside( trackAtRPC.localPosition(), trackAtRPC.localError().positionError(), scale);
   //std::cout<<"In:"<<inside <<" detector r:" << detPos.perp()<<" phi:"<<detPos.phi()<<" z:"<<detPos.z() 
   // <<" track r:"<< trackPos.perp()<<" phi:"<<trackPos.phi()<<" z:"<<trackPos.z() <<"Error: "<<trackAtRPC.localError().positionError()<< std::endl; 
   return inside;
@@ -79,11 +87,9 @@ bool SynchroSelector::checkRpcDetMatching( const TrajectoryStateOnSurface & tsos
 bool SynchroSelector::checkUniqueRecHitMatching( const TrajectoryStateOnSurface & tsos,  const RPCDetId & det, const edm::Event&ev, const edm::EventSetup& es)
 {
   //propagate to det
-  edm::ESHandle<Propagator> propagator;
-  es.get<TrackingComponentsRecord>().get("SteppingHelixPropagatorAny", propagator);
-  edm::ESHandle<GlobalTrackingGeometry> globalGeometry;
-  es.get<GlobalTrackingGeometryRecord>().get(globalGeometry);
-  TrajectoryStateOnSurface trackAtRPC =  propagator->propagate(tsos, globalGeometry->idToDet(det)->surface());
+  auto const & globalGeometry = es.getData(theGeomteryToken);
+  auto const & propagator = es.getData(thePropagatorAnyToken);
+  TrajectoryStateOnSurface trackAtRPC =  propagator.propagate(tsos, globalGeometry.idToDet(det)->surface());
   if (!trackAtRPC.isValid()) return false;
   
   LocalPoint trackAtRPCPoint = trackAtRPC.localPosition() ;

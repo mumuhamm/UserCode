@@ -16,6 +16,8 @@
 #include "UserCode/OmtfDataFormats/interface/L1ObjColl.h"
 #include "UserCode/OmtfAnalysis/interface/Utilities.h"
 
+using namespace omtfUtilities;
+
 namespace {
   TH1D *hDataEmulCompare; 
   TH1D *hDataEmulIssue;
@@ -32,34 +34,6 @@ namespace {
                    10., 12., 14., 16., 18., 20., 25., 30., 35., 40., 45., 
                    50., 60., 70., 80., 90., 100., 120., 140., 
                    160};
-
-  const int nEtaBins = 14;
-  int  etaBinVal[nEtaBins] = {73, 75, 78, 79, 85, 90, 92, 94, 95, 99, 103, 110, 115, 121}; 
-
-  double code2pt(int pt) { return std::fmin( double(pt-1)/2., 159); } 
-
-  template <typename T> int sgn(T val) { return (T(0) < val) - (val < T(0)); }
-
-  int code2HistoBin (int code) { 
-    int sign = sgn(code);
-    switch (abs(code)) {
-      case  73 : return sign*1;
-      case  75 : return sign*2;
-      case  78 : return sign*3;
-      case  79 : return sign*4;
-      case  85 : return sign*5;
-      case  90 : return sign*6;
-      case  92 : return sign*7;
-      case  94 : return sign*8;
-      case  95 : return sign*9;
-      case  99 : return sign*10;
-      case 103 : return sign*11;
-      case 110 : return sign*12;
-      case 115 : return sign*13;
-      case 121 : return sign*14;
-      default:  return sign*0;
-    }
-  } 
 
 }
 
@@ -301,7 +275,10 @@ void AnaDataEmul::run(EventObj* event, L1ObjColl * coll)
          hDataEmulNotAgreePhi->Fill( OmtfName(emul->iProcessor, emul->position), emul->phi ); 
       }
     
-      if (debug && diff!=agree ) std::cout << "NOT agree("<<matchName(diff)<<"), dt: "<< dt <<", csc: "<< csc <<", rpcB: "<< hasRpcHitsB(hits)<<", rpcE: "<<hasRpcHitsE(hits) << std::endl <<*coll << std::endl; 
+//      if(layerComb==6) {
+//        if (debug && diff==agree ) std::cout << "HERE agree("<<matchName(diff)<<"), dt: "<< dt <<", csc: "<< csc <<", rpcB: "<< hasRpcHitsB(hits)<<", rpcE: "<<hasRpcHitsE(hits) << std::endl <<*coll << std::endl; 
+        if (debug && diff!=agree ) std::cout << "NOT agree("<<matchName(diff)<<"), dt: "<< dt <<", csc: "<< csc <<", rpcB: "<< hasRpcHitsB(hits)<<", rpcE: "<<hasRpcHitsE(hits) << std::endl <<*coll << std::endl; 
+//}
     
       if (unique) {
         hDataEmulPt->Fill( code2pt(data->pt), code2pt(emul->pt) );

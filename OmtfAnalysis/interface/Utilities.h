@@ -9,7 +9,23 @@
 #include "L1Trigger/L1TMuonOverlap/interface/OmtfName.h"
 class L1Obj;
 
-OmtfName makeName(const L1Obj & obj);
+namespace omtfUtilities {
+  OmtfName makeName(const L1Obj & obj);
+
+  const int nEtaBins = 14;
+  extern const int  etaBinVal[nEtaBins]; // = {73, 75, 78, 79, 85, 90, 92, 94, 95, 99, 103, 110, 115, 121};
+
+  double code2pt(int pt);
+
+  template <typename T> int sgn(T val) { return (T(0) < val) - (val < T(0)); } 
+
+  int code2HistoBin (int code);
+
+  extern std::vector<std::string> layerNames;
+
+
+} // end omtfUtilities
+
 
 // variable-size PT bins corresponding to L1 trigger scale. 
 // Lower bound of bin ipt corresponds to L1Pt(ipt),
@@ -18,7 +34,7 @@ class L1PtScale {
 public:
   static unsigned int ptCode(float ptValue);
   static float ptValue(unsigned int ptCode);
-  static const unsigned int nPtBins = 32;
+  static const unsigned int nPtBins = 38;
   static double ptBins[nPtBins + 1];
 };
 

@@ -37,6 +37,7 @@
 #include "UserCode/OmtfAnalysis/interface/AnaSynch.h"
 #include "UserCode/OmtfAnalysis/interface/ConverterRPCRawSynchroSynchroCountsObj.h"
 #include "UserCode/OmtfAnalysis/interface/AnaDiMu.h"
+#include "UserCode/OmtfAnalysis/interface/AnaL1Distribution.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
@@ -51,7 +52,8 @@ OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
     theAnaSecMu(0), 
     theAnaTime(0),
     theAnaSynch(0),
-    theAnaDiMu(0)
+    theAnaDiMu(0),
+    theAnaL1Dist(0)
 { 
   if (theConfig.exists("anaEvent")) theAnaEvent = new   AnaEvent(cfg.getParameter<edm::ParameterSet>("anaEvent") );
   if (theConfig.exists("anaMuonDistribution")) theAnaMuonDistribution = new AnaMuonDistribution( cfg.getParameter<edm::ParameterSet>("anaMuonDistribution"));
@@ -61,8 +63,9 @@ OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
   if (theConfig.exists("anaDataEmul")) theAnaDataEmul = new AnaDataEmul(cfg.getParameter<edm::ParameterSet>("anaDataEmul"));
   if (theConfig.exists("anaSecMuSel")) theAnaSecMu = new AnaSecMuSelector(cfg.getParameter<edm::ParameterSet>("anaSecMuSel"));
   if (theConfig.exists("anaTime")) theAnaTime = new AnaTime(cfg.getParameter<edm::ParameterSet>("anaTime"));
-  if (theConfig.exists("anaSynch")) theAnaSynch = new AnaSynch();
+  if (theConfig.exists("anaSynch")) theAnaSynch = new AnaSynch(cfg.getParameter<edm::ParameterSet>("anaSynch"),consumesCollector());
   if (theConfig.exists("anaDiMu")) theAnaDiMu= new AnaDiMu(cfg.getParameter<edm::ParameterSet>("anaDiMu"));
+  if (theConfig.exists("anaL1Distribution")) theAnaL1Dist = new AnaL1Distribution( cfg.getParameter<edm::ParameterSet>("anaL1Distribution"));
 }
 
 void OmtfTreeAnalysis::beginJob()
@@ -79,6 +82,7 @@ void OmtfTreeAnalysis::beginJob()
   if (theAnaTime)             theAnaTime->init(theHistos);
   if (theAnaSynch)            theAnaSynch->init(theHistos);
   if (theAnaSecMu)            theAnaSecMu->init(theHistos);
+  if (theAnaL1Dist)           theAnaL1Dist->init(theHistos);
 
 }
 
@@ -151,7 +155,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
   for (int ev=0; ev<nentries; ev++) {
 
     chain.GetEntry(ev);
-//    std::cout <<"---------------------------------------#"<<ev<<", event: "<< *event << std::endl;
+    std::cout <<"---------------------------------------#"<<ev<<", event: "<< *event << std::endl;
 
     if (theAnaMenu) theAnaMenu->updateMenu(bitsL1->names, bitsHLT->names);
 
@@ -201,6 +205,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
     theAnaMenu->debug=false;
     theAnaEff->debug=false;
 */
+    if (theAnaDataEmul) theAnaDataEmul->debug = true; 
 
     //
     // Analyses
@@ -212,8 +217,8 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
     if (theAnaTime)     theAnaTime->run( event, muonColl, closestTrack, l1ObjColl);
     if (theAnaSynch)    theAnaSynch->run( event, &muon, ConverterRPCRawSynchroSynchroCountsObj::toRawSynchro( synchroCounts->data));
 
-    if (theAnaDataEmul)    theAnaDataEmul->debug = false; 
     if (theAnaDiMu)   theAnaDiMu->run( event, muonColl, l1ObjColl);
+    if (theAnaL1Dist) theAnaL1Dist->run( event, muonColl, closestTrack, l1ObjColl);
   }
 }
 
@@ -240,5 +245,6 @@ void OmtfTreeAnalysis::endJob()
   delete theAnaTime;
   delete theAnaSynch;
   delete theAnaDiMu;
+  delete theAnaL1Dist;
 
 }

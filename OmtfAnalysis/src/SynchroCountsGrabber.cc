@@ -16,7 +16,6 @@
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 
-#include "UserCode/OmtfAnalysis/interface/TrackAtSurface.h"
 #include "Geometry/RPCGeometry/interface/RPCGeometry.h"
 #include "TrackingTools/Records/interface/TrackingComponentsRecord.h"
 #include "DataFormats/Math/interface/deltaR.h"
@@ -31,18 +30,22 @@ namespace {
   edm::EDGetTokenT<RPCRawSynchro::ProdItem> theSynchroCounts_Tag;
   edm::EDGetTokenT<std::vector<Trajectory> > theRefittedGlbMu_Tag;
   edm::EDGetTokenT<RPCRecHitCollection> theRPCRecHitCollection_Tag;
+  edm::ESGetToken<RPCEMap, RPCEMapRcd> theReadoutMappingToken;
+  edm::ESGetToken<RPCGeometry, MuonGeometryRecord> theRPCGeometryToken;
 }
 
-SynchroCountsGrabber::SynchroCountsGrabber(const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl)
- : theCabling(0), 
-   theSelector(cfg.getParameter<edm::ParameterSet>("synchroSelector")), 
+SynchroCountsGrabber::SynchroCountsGrabber(const edm::ParameterSet& cfg, edm::ConsumesCollector cColl)
+ : trackAtSurface(cColl), theCabling(0), 
+   theSelector(cfg.getParameter<edm::ParameterSet>("synchroSelector"),cColl), 
    deltaR_MuonToDetUnit_cutoff(cfg.getParameter<double>("deltaR_MuonToDetUnit_cutoff")), 
    checkInside(cfg.getParameter<bool>("checkInside")),
    theNoSynchroWarning(false)
 { 
   theSynchroCounts_Tag = cColl.consumes<RPCRawSynchro::ProdItem> (cfg.getParameter<edm::InputTag>("rawSynchroTag") );
-  theRefittedGlbMu_Tag = cColl.consumes<std::vector<Trajectory> >(edm::InputTag("refittedMuons","Refitted"));
+//  theRefittedGlbMu_Tag = cColl.consumes<std::vector<Trajectory> >(edm::InputTag("refittedMuons","Refitted"));
   theRPCRecHitCollection_Tag = cColl.consumes<RPCRecHitCollection>(edm::InputTag("rpcRecHits"));
+  theReadoutMappingToken = cColl.esConsumes<RPCEMap, RPCEMapRcd>(); 
+  theRPCGeometryToken = cColl.esConsumes<RPCGeometry, MuonGeometryRecord>();
 }
 
 SynchroCountsGrabber::~SynchroCountsGrabber()
@@ -57,11 +60,10 @@ RPCRawSynchro::ProdItem SynchroCountsGrabber::counts(const edm::Event &ev, const
 
   if (theMapWatcher.check(es)) {
     delete theCabling;
-    edm::ESTransientHandle<RPCEMap> readoutMapping;
-    es.get<RPCEMapRcd>().get(readoutMapping);
+    edm::ESTransientHandle<RPCEMap> readoutMapping =  es.getTransientHandle(theReadoutMappingToken);
     theCabling = readoutMapping->convert();
-    //LogTrace("") << "SynchroCountsGrabber - record has CHANGED!!, read map, VERSION: " << theCabling->version();
-    std::cout << "SynchroCountsGrabber - record has CHANGED!!, read map, VERSION: " << theCabling->version() << std::endl;
+  //LogTrace("") << "SynchroCountsGrabber - record has CHANGED!!, read map, VERSION: " << theCabling->version();
+    std::cout    << "SynchroCountsGrabber - record has CHANGED!!, read map, VERSION: " << theCabling->version() << std::endl;
   }
 
   edm::Handle<RPCRawSynchro::ProdItem> synchroCounts;
@@ -73,10 +75,9 @@ RPCRawSynchro::ProdItem SynchroCountsGrabber::counts(const edm::Event &ev, const
     return result;
   }
 
-  TrackAtSurface trackAtSurface(theMuon, ev,es);
-  edm::ESHandle<RPCGeometry> rpcGeometry;
-  es.get<MuonGeometryRecord>().get(rpcGeometry);
+  const RPCGeometry & rpcGeometry = es.getData(theRPCGeometryToken);
 
+//  trackAtSurface.prepare(theMuon, ev,es);
 
   for(RPCRawSynchro::ProdItem::const_iterator it = synchroCounts->begin(); it != synchroCounts->end(); ++it) {
     const LinkBoardElectronicIndex & path = it->first;
@@ -85,10 +86,10 @@ RPCRawSynchro::ProdItem SynchroCountsGrabber::counts(const edm::Event &ev, const
     for (std::vector<FebConnectorSpec>::const_iterator iif = febs.begin(); iif != febs.end(); ++iif) dets[iif->rawId()] = true;
     for ( std::map<uint32_t,bool>::const_iterator im = dets.begin(); im != dets.end(); ++im) {
       RPCDetId rpcDet(im->first);
-      const GeomDet *geomDet = rpcGeometry->idToDet(rpcDet);
+      const GeomDet *geomDet = rpcGeometry.idToDet(rpcDet);
       GlobalPoint detPosition = geomDet->position();
       if (deltaR(theMuon->eta(), theMuon->phi(), detPosition.eta(), detPosition.phi()) > deltaR_MuonToDetUnit_cutoff) continue;
-      TrajectoryStateOnSurface stateAtDet = trackAtSurface.atDetFromClose(rpcDet,detPosition);
+      TrajectoryStateOnSurface stateAtDet = trackAtSurface.atDetFromClose(theMuon, rpcDet,detPosition,es);
       if (!stateAtDet.isValid()) continue;
       if (checkInside && !(geomDet->surface().bounds().inside(stateAtDet.localPosition()))) continue;
       if (!theSelector.checkTraj(stateAtDet, rpcDet, ev, es)) continue;

@@ -9,6 +9,7 @@ def cEvent(canvas):
   canvas.Add(c)
   hEvent_BX = gROOT.FindObject("hEvent_BX")
   hEvent_BX.DrawCopy()
+  c.Update()
   return
 
 def plotAll(canvas) :

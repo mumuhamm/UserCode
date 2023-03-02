@@ -6,12 +6,23 @@
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "DataFormats/Provenance/interface/RunID.h"
 #include "DataFormats/Provenance/interface/EventID.h"
-
+#include "FWCore/Framework/interface/ESHandle.h"
 
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
+
+#include "CondFormats/L1TObjects/interface/L1GtTriggerMenuFwd.h"
+#include "CondFormats/L1TObjects/interface/L1GtTriggerMenu.h"
+#include "CondFormats/DataRecord/interface/L1GtTriggerMenuRcd.h"
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
+#include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerRecord.h"
+
+#include "CondFormats/L1TObjects/interface/L1TUtmTriggerMenu.h"
+#include "CondFormats/DataRecord/interface/L1TUtmTriggerMenuRcd.h"
+
+
 
 #include <vector>
 #include <string>
@@ -25,7 +36,8 @@ namespace edm {class ParameterSet; class Event; class EventSetup; class Run; }
 
 class MenuInspector :  public edm::EDFilter {
 public:
-  explicit MenuInspector(const edm::ParameterSet&, edm::ConsumesCollector&& cColl);
+  explicit MenuInspector(const edm::ParameterSet&, edm::ConsumesCollector cColl);
+//, edm::esConsumes<edm::Transition::BeginRun> && esConsum);
   virtual ~MenuInspector();
 
   const std::vector<std::string> & namesAlgoHLT() const { return theNamesAlgoHLT; }
@@ -63,6 +75,8 @@ private:
   std::vector<unsigned int> theFiredHLT;
   std::vector<unsigned int> theFiredL1;
   std::map<std::string, int> theNamesCheckHltMuMatchIdx;
+
+  const edm::ESGetToken<L1TUtmTriggerMenu,L1TUtmTriggerMenuRcd> theL1MenuToken;
 
 };
 #endif

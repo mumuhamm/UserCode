@@ -24,6 +24,7 @@
 #include "DataFormats/Math/interface/deltaR.h"
 
 #include "UserCode/OmtfAnalysis/interface/ConverterRPCRawSynchroSynchroCountsObj.h"
+#include "UserCode/OmtfDataFormats/interface/DetBxStatObj.h"
 
 template <class T> T sqr( T t) {return t*t;}
 
@@ -33,18 +34,21 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
     event(0), 
     muonColl(0), l1ObjColl(0), l1PhaseIIObjColl(0), genColl(0),
     synchroCounts(0), closestTrack(0),
-    theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()),
+    theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()), 
     theBestMuonFinder(cfg.getParameter<edm::ParameterSet>("bestMuonFinder"), consumesCollector()),
     theL1ObjMaker(cfg.getParameter<edm::ParameterSet>("l1ObjMaker"), consumesCollector()), 
     theL1PhaseIIObjMaker(cfg.getParameter<edm::ParameterSet>("l1PhaseIIObjMaker"), consumesCollector()),
     theGenParticleFinder(cfg.getParameter<edm::ParameterSet>("genObjectFinder"), consumesCollector()),
-    theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector())
-{ }
+    theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector()),
+    theSynchroCheck(cfg.getParameter<edm::ParameterSet>("synchroCheck"), consumesCollector())
+{
+inputSim = consumes<edm::SimTrackContainer>(edm::InputTag("g4SimHits"));
+vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
+ }
   
 
 void OmtfTreeMaker::beginRun(const edm::Run &ru, const edm::EventSetup &es)
 {
-  std::cout <<" OmtfTreeMaker::beginRun CALLED" << std::endl; 
   theMenuInspector.checkRun(ru,es);
 }
 
@@ -66,6 +70,7 @@ void OmtfTreeMaker::beginJob()
   theHelper.SetOwner();
   theBestMuonFinder.initHistos(theHelper);  
   theClosestTrackFinder.initHistos(theHelper);
+  
 }
 
 void OmtfTreeMaker::endJob()
@@ -89,6 +94,14 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   //
   // initial filter. Optionally do not further use events without muon
   //
+  event = new EventObj;
+  event->bx = ev.bunchCrossing();
+  event->orbit = ev.orbitNumber();
+  event->time = ev.time().value();
+  event->id = ev.id().event();
+  event->run = ev.run();
+  event->lumi = ev.luminosityBlock();
+
   const reco::Muon * theMuon = theBestMuonFinder.result(ev,es);
 
   if (theConfig.getParameter<bool>("onlyBestMuEvents") && (!theMuon) ) return;
@@ -97,18 +110,12 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   //
   // fill event information
   //
-  event = new EventObj;
-  event->bx = ev.bunchCrossing();
-  event->orbit = ev.orbitNumber();
-  event->time = ev.time().value();
-  event->id = ev.id().event();
-  event->run = ev.run();
-  event->lumi = ev.luminosityBlock();
+
   //
   // create other objects structure
   //
   muonColl = new MuonObjColl (theBestMuonFinder.muons(ev,es));
-  genColl = new GenObjColl( theGenParticleFinder.genparticles(ev,es) ) ;
+//  muonColl = new MuonObjColl;
   l1ObjColl = new L1ObjColl;
   l1PhaseIIObjColl = new L1PhaseIIObjColl;
 
@@ -116,13 +123,8 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   bitsHLT = new TriggerMenuResultObj();
 
   synchroCounts = new SynchroCountsObjVect;
-
+  
   closestTrack = new TrackObj();
-  
-  // 
-  // Get Gen information
-  //
-  
 
   //
   // fill algoBits info
@@ -133,15 +135,13 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     bitsL1->names  = theMenuInspector.namesAlgoL1();
     bitsHLT->names = theMenuInspector.namesAlgoHLT();
   }
-  //AK Need ES access update with tokens:
-  ///https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHowToGetDataFromES
-  //AK bitsL1->firedAlgos = theMenuInspector.firedAlgosL1(ev,es);
-  //AK bitsHLT->firedAlgos = theMenuInspector.firedAlgosHLT(ev,es);
+  bitsL1->firedAlgos = theMenuInspector.firedAlgosL1(ev,es);
+  bitsHLT->firedAlgos = theMenuInspector.firedAlgosHLT(ev,es);
 
   //
   // associate HLT info to muonColl objs
   //
-  //AK theMenuInspector.associateHLT(ev,es,muonColl);
+  theMenuInspector.associateHLT(ev,es,muonColl);
 
 
   // get L1 candidates

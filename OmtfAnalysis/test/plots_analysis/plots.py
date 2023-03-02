@@ -1,9 +1,11 @@
-#!/cvmfs/cms.cern.ch/slc6_amd64_gcc700/cms/cmssw/CMSSW_10_2_1/external/slc6_amd64_gcc700/bin/python
+#!/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/CMSSW_12_4_8/external/slc7_amd64_gcc10/bin/python3
 
+#import ROOT
 import sys
 import math
-import libPyROOT
+#import libPyROOT
 from ROOT import *
+
 import plotsDataEmul
 import plotsEff
 import plotsEvent
@@ -13,11 +15,12 @@ import plotsMenu
 import plotsSynch
 import plotsSecMuSel
 import plotsDiMu
+import plotsL1Dist
 
-print "Hello ROOT"
+print("Hello ROOT")
 fileName = "../omtfAnalysis.root"
 
-print 'Read data from: ', fileName
+print ('Read data from: ', fileName)
 gROOT.Reset()
 f = TFile(fileName);
 f.ls();
@@ -27,23 +30,25 @@ f.ls();
 canvas = TObjArray()
 #plotsEvent.plotAll(canvas)
 #plotsMuon.plotAll(canvas)
-plotsEff.plotAll(canvas)
-#plotsSecMuSel.plotAll(canvas)
-plotsDataEmul.plotAll(canvas)
-#plotsTime.plotAll(canvas)
+#plotsEff.plotAll(canvas)
+#    plotsSecMuSel.plotAll(canvas)
+#plotsDataEmul.plotAll(canvas)
+#    plotsTime.plotAll(canvas)
+
 #plotsMenu.plotAll(canvas)
-#plotsSynch.plotAll(canvas)
+plotsSynch.plotAll(canvas)
 #plotsDiMu.plotAll(canvas)
+#plotsL1Dist.plotAll(canvas)
 
 #--------- HERE pause 
-raw_input('press enter to exit')
+input('press enter to exit')
 
 #--------- HERE plots
 for canva in canvas :
   canvaName =  canva.ClassName()
   if canvaName != 'TCanvas' : continue
   pictName  = "fig_png/"+canva.GetName()+".png"
-  canva.Print(pictName)
+  canva.Print(pictName,'png')
 
 
 

@@ -7,10 +7,14 @@ class TObjArray;
 class TH1F;
 class TrajectoryStateOnSurface;
 
+#include "FWCore/Framework/interface/ConsumesCollector.h"
+
+
 class SynchroSelectorMuon : public SynchroSelector {
 public:
-   SynchroSelectorMuon(const edm::ParameterSet&, TObjArray& );
-   SynchroSelectorMuon(const edm::ParameterSet&);
+   SynchroSelectorMuon(){}
+   SynchroSelectorMuon(const edm::ParameterSet&, TObjArray&,  edm::ConsumesCollector cColl );
+   SynchroSelectorMuon(const edm::ParameterSet&, edm::ConsumesCollector cColl );
    void initHistos(TObjArray& histos);
    virtual ~SynchroSelectorMuon(){}
    virtual bool takeIt(const RPCDetId & det, const edm::Event&ev, const edm::EventSetup& es);

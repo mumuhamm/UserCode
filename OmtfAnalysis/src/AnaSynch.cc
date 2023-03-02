@@ -14,6 +14,8 @@
 #include "CondFormats/RPCObjects/interface/RPCReadOutMapping.h"
 
 #include "UserCode/OmtfAnalysis/interface/RPCLinkSynchroHistoMaker.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TFile.h"
@@ -21,16 +23,22 @@
 
 namespace {
   TH1F *hSynch_delaySummary;  
-  TH2F *hSynch_delaySpread, *hSynch_topOccup, *hSynch_topSpread;
-  TH2F *hSynch_notComplete[3];
+  TH2F *hSynch_delaySpread, *hSynch_topOccup, *hSynch_topSpread, *hSynch_topDelay;
+  TH2F *hSynch_notComplete[3], *hSynch_Hits[3];
+
+  edm::ESGetToken<RPCEMap, RPCEMapRcd> theReadoutMappingToken;
+
 }
 
 
 
 
-AnaSynch::AnaSynch()
+AnaSynch::AnaSynch(const edm::ParameterSet& cfg, edm::ConsumesCollector cColl)
  : theSynchroStat(true)
-{ }
+//, theReadoutMappingToken(cColl.esConsumes<edm::Transition::BeginRun>())
+{ 
+  theReadoutMappingToken = cColl.esConsumes<edm::Transition::BeginRun>(); 
+}
 
 void AnaSynch::init(TObjArray& histos)
 {
@@ -61,23 +69,44 @@ void AnaSynch::init(TObjArray& histos)
     hSynch_notComplete[i]->SetYTitle("link");
     hSynch_notComplete[i]->SetStats(0);
   }
+
+  hSynch_Hits[0] = new TH2F("hSynch_Hits790","FED790: Paths hit",36,-0.5,35.5,18,-0.5,17.5); histos.Add(hSynch_Hits[0]);
+  hSynch_Hits[1] = new TH2F("hSynch_Hits791","FED791: Paths hit",36,-0.5,35.5,18,-0.5,17.5); histos.Add(hSynch_Hits[1]);
+  hSynch_Hits[2] = new TH2F("hSynch_Hits792","FED792: Paths hit",36,-0.5,35.5,18,-0.5,17.5); histos.Add(hSynch_Hits[2]);
+  for (unsigned int i=0;i<3;++i) {
+    hSynch_Hits[i]->GetXaxis()->SetNdivisions(512);
+    hSynch_Hits[i]->GetYaxis()->SetNdivisions(505);
+    hSynch_Hits[i]->SetXTitle("rmb");
+    hSynch_Hits[i]->SetYTitle("link");
+    hSynch_Hits[i]->SetStats(0);
+  }
+
   hSynch_topOccup  = new TH2F("hSynch_topOccup","Top10 LinkBoard occupancy",8,-0.5,7.5, 10,0.,10.); histos.Add( hSynch_topOccup);
   hSynch_topSpread = new TH2F("hSynch_topSpread","Top10 LinkBoard delay spread",8,-0.5,7.5, 10,0.,10.); histos.Add( hSynch_topSpread);
+  hSynch_topDelay = new TH2F("hSynch_topDelay","Top10 LinkBoard Delay",8,-0.5,7.5, 10,0.,10.); histos.Add( hSynch_topDelay);
   hSynch_topOccup->GetXaxis()->SetNdivisions(110);
   hSynch_topSpread->GetXaxis()->SetNdivisions(110);
+  hSynch_topDelay->GetXaxis()->SetNdivisions(110);
   hSynch_topOccup->SetStats(0);
   hSynch_topSpread->SetStats(0);
+  hSynch_topDelay->SetStats(0);
 
  }
 
 void AnaSynch::beginRun(const edm::Run&, const edm::EventSetup& es)
 {
-  edm::ESTransientHandle<RPCEMap> readoutMapping;
-  es.get<RPCEMapRcd>().get(readoutMapping);
+  edm::ESTransientHandle<RPCEMap> readoutMapping =  es.getTransientHandle(theReadoutMappingToken);
   const RPCReadOutMapping * cabling = readoutMapping->convert();
   std::cout <<" INITIALISING READOUT MAP, version: "<< cabling->version() << std::endl;
   theSynchroStat.init(cabling, true); // second for use of DetNames
   delete cabling;
+
+//  edm::ESTransientHandle<RPCEMap> readoutMapping;
+//  es.get<RPCEMapRcd>().get(readoutMapping);
+//  const RPCReadOutMapping * cabling = readoutMapping->convert();
+//  std::cout <<" INITIALISING READOUT MAP, version: "<< cabling->version() << std::endl;
+//  theSynchroStat.init(cabling, true); // second for use of DetNames
+//  delete cabling;
 }
 
 
@@ -88,12 +117,13 @@ void AnaSynch::run( const EventObj* event, const MuonObj* muon, const  RPCRawSyn
   for (std::vector<LinkBoardElectronicIndex>::const_iterator it=problems.begin(); it != problems.end(); ++it) {
     hSynch_notComplete[it->dccId-790]->Fill(it->dccInputChannelNum,it->tbLinkInputNum);
   }
+  for (const auto & eip : synchro ) hSynch_Hits[eip.first.dccId-790]->Fill( eip.first.dccInputChannelNum, eip.first.tbLinkInputNum);
 } 
 
 void AnaSynch::endJob()
 {
   RPCLinkSynchroHistoMaker hm(theSynchroStat);
-  hm.fill(hSynch_delaySummary, hSynch_delaySpread, hSynch_topOccup, hSynch_topSpread);
+  hm.fill(hSynch_delaySummary, hSynch_delaySpread, hSynch_topOccup, hSynch_topSpread, hSynch_topDelay);
 
   std::ofstream file("l1RpcDelays.txt");
   file << theSynchroStat.dumpDelays() << std::endl;

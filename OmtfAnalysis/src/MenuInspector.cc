@@ -56,10 +56,11 @@ namespace {
 }
 
 
-MenuInspector::MenuInspector(const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl)
+MenuInspector::MenuInspector(const edm::ParameterSet& cfg, edm::ConsumesCollector cColl)
   : lastEvent(0), lastRun(0),
     theCounterIN(0), theCounterL1(0), theCounterHLT(0),
-    theWarnNoColl(cfg.getUntrackedParameter<bool>("warnNoColl",true))
+    theWarnNoColl(cfg.getUntrackedParameter<bool>("warnNoColl",true)),
+    theL1MenuToken(cColl.esConsumes<edm::Transition::BeginRun>())
 { 
   theTrigResultToken = cColl.consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
   theGlobalAlgToken  = cColl.consumes<GlobalAlgBlkBxCollection>(edm::InputTag("hltGtStage2Digis"));
@@ -76,14 +77,15 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
   //
   // L1
   //
-  //edm::ESHandle<L1TUtmTriggerMenu> menu;
-  //es.get<L1TUtmTriggerMenuRcd>().get(menu);
-  auto const& menu = es.getHandle(l1tUtmTriggerMenuToken);
+//  edm::ESHandle<L1TUtmTriggerMenu> menu;
+//  es.get<L1TUtmTriggerMenuRcd>().get(menu);
+  auto const & menu = es.getData(theL1MenuToken);
+//  const L1TUtmTriggerMenu & menu = es.getData(theL1MenuToken);
 
   theNamesAlgoL1.clear();
-  theNamesAlgoL1.resize(menu->getAlgorithmMap().size(),"");
-//  std::cout <<" size of indexes: "<< menu->getAlgorithmMap().size() << std::endl;
-  for (auto const & keyval: menu->getAlgorithmMap()) {
+  theNamesAlgoL1.resize(menu.getAlgorithmMap().size(),"");
+//  std::cout <<" size of indexes: "<< menu.getAlgorithmMap().size() << std::endl;
+  for (auto const & keyval: menu.getAlgorithmMap()) {
     std::string const & name  = keyval.second.getName();
     unsigned int        index = keyval.second.getIndex();
 //    std::cout << " L1  Index: " << index << " name: " << name << std::endl;
@@ -111,7 +113,7 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
       //for goes up to .size()-1, since the last is "Final" decision.
       for (unsigned int idx =0;  idx < theHltConfig.size()-1; idx++) {
         std::string name = theHltConfig.triggerName(idx);
-//      std::cout <<" HLT index: "<< idx << "name: "<< name << std::endl;
+//        std::cout <<" HLT index: "<< idx << "name: "<< name << std::endl;
         theNamesAlgoHLT.push_back( name );
         for (auto & im : theNamesCheckHltMuMatchIdx) if (name.find(im.first) != std::string::npos) im.second = idx; 
       }
@@ -141,36 +143,51 @@ bool MenuInspector::associateHLT(const edm::Event &ev, const edm::EventSetup &es
 {
   run(ev,es);
 
+  bool debug = 0;
   //get HLT result
   edm::Handle<trigger::TriggerEvent> triggerAOD;
   ev.getByLabel(edm::InputTag("hltTriggerSummaryAOD","","HLT"), triggerAOD);
   if (!triggerAOD.isValid()) return false;
   const trigger::TriggerObjectCollection & triggerObjects = triggerAOD->getObjects();
+
+  edm::Handle<edm::TriggerResults> triggerResults;
+  ev.getByLabel(edm::InputTag("TriggerResults","","HLT"), triggerResults);
+  if (!triggerResults.isValid()) return false;
+
   std::vector<MuonObj> & muons = muonColl->data();
 
+//  std::cout <<"SIZE of theNamesCheckHltMuMatchIdx : " << theNamesCheckHltMuMatchIdx.size() << std::endl;
+
   for (const auto & checkHlt : theNamesCheckHltMuMatchIdx) {
+//    std::cout <<"checkHlt: "<<checkHlt.first<<" "<<checkHlt.second<<std::endl;
     int checkAlgoIndex = checkHlt.second; 
     if (checkAlgoIndex < 0) continue;
     bool isIsoAlgo = (theNamesAlgoHLT[checkAlgoIndex].find("Iso") != std::string::npos); 
     if( std::find(theFiredHLT.begin(), theFiredHLT.end(), checkAlgoIndex) == theFiredHLT.end() ) continue; 
 
-
+//  std::cout <<" HERE, fired index:" <<checkAlgoIndex<< theHltConfig.triggerName(checkAlgoIndex)<< std::endl;
     const std::vector<std::string> moduleLabels(theHltConfig.moduleLabels(checkAlgoIndex));
-    unsigned int moduleFireIndex = theHltConfig.size(checkAlgoIndex)-2;
+//  {for (const auto & ml : moduleLabels) std::cout <<"Module label: " << ml << std::endl;}
+//  unsigned int moduleFireIndex = theHltConfig.size(checkAlgoIndex)-2;  //not works enymore for run3
+    unsigned int moduleFireIndex = triggerResults->index(checkAlgoIndex)-1;
+
     // check if better way exists, this one is crazy....
+//  std::cout <<" moduleLabels[moduleFireIndex] : " <<  moduleLabels[moduleFireIndex] << std::endl;
     unsigned hltFilterIndex = triggerAOD->filterIndex( edm::InputTag ( moduleLabels[moduleFireIndex], "", "HLT") ); 
     if (hltFilterIndex >= triggerAOD->sizeFilters())  { std::cout <<" PROBLEM, wrong filter index, skip" << std::endl; continue;}
 
     trigger::Keys triggerKeys(triggerAOD->filterKeys(hltFilterIndex));
-
     unsigned nTriggers = triggerKeys.size();
-//    std::cout <<" fired algo: " << theNamesAlgoHLT[checkAlgoIndex] <<", triggers: " << nTriggers<<std::endl;
+    if (debug) std::cout <<" fired algo: " << theNamesAlgoHLT[checkAlgoIndex]<<" module: "<<moduleLabels[moduleFireIndex] <<", #triggers: " << nTriggers<<std::endl;
     for (size_t iTrig = 0; iTrig < nTriggers; ++iTrig) {
-      trigger::TriggerObject trigObject = triggerObjects[triggerKeys[iTrig]];
+      trigger::TriggerObject triggerObject = triggerObjects[triggerKeys[iTrig]];
+      bool matched = false;
       for (auto & muon : muons) {
-        double dR = reco::deltaR(muon, trigObject);
-        if (dR < 0.1) { if (isIsoAlgo) muon.isMatchedIsoHlt = true; else  muon.isMatchedHlt = true; }
+        double dR = reco::deltaR(muon, triggerObject);
+        if (dR < 0.1) { matched = true; if (isIsoAlgo) muon.isMatchedIsoHlt = true; else  muon.isMatchedHlt = true; }
       }
+      if (debug) std::cout <<"--> ID: "<< triggerObject.id()<<" PT: "<<triggerObject.pt() <<" ETA: "<< triggerObject.eta() <<" PHI:"<< triggerObject.phi()<<" MATCHED: "<<matched << std::endl;
+      
     }
   } 
 
@@ -206,7 +223,7 @@ std::vector<unsigned int>  MenuInspector::runFiredAlgosL1(const edm::Event&ev, c
   GlobalAlgBlk const * glbAlgBlk  = & ugt->at(0, 0);
   if (!glbAlgBlk) { std::cout << " PROBLEM, no glbAlgBlk, return " << std::endl; return result; }
 //  line below print GT record with initial, prescaled and final decision.
-//  if (glbAlgBlk) glbAlgBlk->print( std::cout);
+//  if (glbAlgBlk) {glbAlgBlk->print( std::cout); std::cout<<std::dec;}
   for (unsigned int idx = 0 ; idx < theNamesAlgoL1.size(); idx++) {
     bool isAccept = glbAlgBlk->getAlgoDecisionFinal(idx);
     if (isAccept) result.push_back(idx);
@@ -224,7 +241,7 @@ std::vector<unsigned int> MenuInspector::runFiredAlgosHLT(const edm::Event&ev, c
   //
   // get trigger result
   //
-  edm::Handle<edm::TriggerResults>   triggerResults;
+  edm::Handle<edm::TriggerResults> triggerResults;
   ev.getByLabel(edm::InputTag("TriggerResults","","HLT"), triggerResults);
   if (!triggerResults.isValid()) { 
     if (theWarnNoColl)std::cout << "firedAlgosHLT, PROBLEM, record not OK"<< std::endl; 
@@ -249,15 +266,12 @@ std::vector<unsigned int> MenuInspector::runFiredAlgosHLT(const edm::Event&ev, c
   //
   // fill result table
   //
-  //unsigned int ntrig=0;
-  for (unsigned int triggerIndex =0; triggerIndex < theHltConfig.size()-1; ++triggerIndex) {   //skip "Final" decision indes
+  for (unsigned int triggerIndex=0; triggerIndex < theHltConfig.size(); ++triggerIndex) {
     bool isAccept = triggerResults->accept(triggerIndex);
     if (isAccept) result.push_back(triggerIndex);
 //  line below prints HLT fired triggers
-//  if (isAccept) std::cout <<  triggerIndex <<" ("<< theHltConfig.triggerName(triggerIndex)<<") "<< std::endl;;
-    //    if (isAccept) ntrig++;
+//  if (isAccept) std::cout <<std::dec<<  triggerIndex <<" ("<< theHltConfig.triggerName(triggerIndex)<< std::endl;;
   }
-  //std::cout <<"  --->  TOTAL NUMBER OF HLT TRIGGERS: " <<  ntrig << std::endl;
  
   return result;
 }
