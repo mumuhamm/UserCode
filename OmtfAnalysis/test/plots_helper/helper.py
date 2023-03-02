@@ -2,9 +2,9 @@
 
 from ROOT import *
 gROOT.Reset()
-#f = TFile('../../jobs/v3_Muon/omtfHelper.root');
-#f = TFile('../../jobs/v4_Muon/omtfHelper.root');
-f = TFile('../omtfHelper.root');
+#f = TFile('../omtfHelper.root');
+#f = TFile('../../jobs/v9_Muon/crab_Run2022G_from362755/omtfHelper.root');
+f = TFile('../../jobs/v6_Express/crab_Run2022G_from362755/omtfHelper.root');
 f.ls();
 
 
@@ -99,7 +99,7 @@ def plot_chambers(name, wd, sr) :
   h.DrawCopy('box text')
   c.Update()
   c.Print(c.GetName()+".png")
-  input("press a key")
+#  input("press a key")
 
 #bxstat = detBxStat.getBxStat( DetSpecObj(DetSpecObj.DET.RPCe, 1,2,24) )
 #bxstat.print()

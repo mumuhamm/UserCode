@@ -212,16 +212,13 @@ bool debug=0;
   theSynchroCheck.checkStripRpc(theMuon, ev, es);
   theSynchroCheck.checkHitRpc(theMuon, ev, es);
   theSynchroCheck.checkHitCsc(theMuon, ev, es);
-//
 
-/*
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
   if (omtfColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1Objs().front().etaValue(), 
-                                                                    omtfColl.getL1Objs().front().phiValue());
+                                                            omtfColl.getL1Objs().front().phiValue());
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
-*/
 
   //
   // fill ntuple + cleanup
