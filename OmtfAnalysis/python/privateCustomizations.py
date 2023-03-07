@@ -58,6 +58,7 @@ def customize_extra_outputCommands(process):
                                                                       'keep *_g4SimHits_MuonME0Hits_*',
                                                                       'keep *_g4SimHits_MuonRPCHits_*',
                                                                       'keep *_g4SimHits_Stopped*_*',
+                                                                      'keep  SimTracks_g4SimHits_*_*',
                                                                       'keep *_standAloneMuons_*_*',
                                                                       'keep *_muons_*_*',
                                                                       'keep TrackingRecHitsOwned_*_*_*',
@@ -69,7 +70,8 @@ def customize_extra_outputCommands(process):
                                                                       'keep  DTLayerId*_*_*_**',
                                                                       'keep  CSCDetId*_*_*_**',
                                                                       'keep  csc*_*_*_**',  
-                                                                      'keep  intL1*_*_*_**' 
+                                                                      'keep  intL1*_*_*_**',                                                                                                                                             
+                                                                      'keep edmTriggerResults_*_*_*',                                                                    
     ))
     return process
 ##########################################
