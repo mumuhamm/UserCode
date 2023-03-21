@@ -70,6 +70,7 @@ void OmtfTreeMaker::beginJob()
   theHelper.SetOwner();
   theBestMuonFinder.initHistos(theHelper);  
   theClosestTrackFinder.initHistos(theHelper);
+  theSynchroCheck.initHistos(theHelper);
   
 }
 
@@ -115,7 +116,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   // create other objects structure
   //
   muonColl = new MuonObjColl (theBestMuonFinder.muons(ev,es));
-//  muonColl = new MuonObjColl;
+  genColl = new GenObjColl( theGenParticleFinder.genparticles(ev,es) ) ;
   l1ObjColl = new L1ObjColl;
   l1PhaseIIObjColl = new L1PhaseIIObjColl;
 
@@ -142,7 +143,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   // associate HLT info to muonColl objs
   //
   theMenuInspector.associateHLT(ev,es,muonColl);
-
+  
   // get L1 candidates
   std::vector<L1Obj> l1Objs = theL1ObjMaker(ev);
   if (l1Objs.size()) {
@@ -166,20 +167,20 @@ bool debug=0;
   std::cout << *l1ObjColl << std::endl;
   std::cout << std::endl;
   }
-  theSynchroCheck.checkInside(theMuon, ev, es);
+  
+  theSynchroCheck.checkInside(theMuon, ev, es);  
   theSynchroCheck.checkStripCsc(theMuon, ev, es);
   theSynchroCheck.checkStripRpc(theMuon, ev, es);
   theSynchroCheck.checkHitRpc(theMuon, ev, es);
   theSynchroCheck.checkHitCsc(theMuon, ev, es);
   
-
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
   if (omtfColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1Objs().front().etaValue(), 
                                                             omtfColl.getL1Objs().front().phiValue());
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
-
+  
   L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::uGMT_emu);
   if (phaseIIColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, phaseIIColl.getL1PhaseIIObjs().front().etaValue(), 
@@ -200,4 +201,5 @@ bool debug=0;
   delete l1ObjColl; l1ObjColl = 0;
   delete l1PhaseIIObjColl; l1PhaseIIObjColl = 0;
   delete closestTrack; closestTrack = 0;
+
 }

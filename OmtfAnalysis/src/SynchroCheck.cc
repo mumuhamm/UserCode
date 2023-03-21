@@ -217,19 +217,19 @@ void SynchroCheck::checkStripRpc(const reco::Muon *muon, const edm::Event &ev, c
     for (auto digi = chDigis.second.first; digi != chDigis.second.second; digi++) {
       int strip = digi->strip();
       if (debug) std::cout << *digi <<" strip: "<< strip <<std::endl;
-      const RPCRoll * roll = geomRpc.roll(rpcDetId);
-      const Propagator & propagator = es.getData(thePropagatorAnyToken);
+      const RPCRoll * roll = geomRpc.roll(rpcDetId);      
+      const Propagator & propagator = es.getData(thePropagatorAnyToken);      
       TrajectoryStateOnSurface stateAtLayer =  propagator.propagate(muTSOS, roll->surface());
-      if (!stateAtLayer.isValid()) continue;
+      if (!stateAtLayer.isValid()) continue;      
       LocalPoint stripLocalPosition = roll->centreOfStrip(strip);
       double distX = stateAtLayer.localPosition().x() - stripLocalPosition.x();
       double pullX = distX/sqrt(stateAtLayer.localError().positionError().xx());
-      bool inside = roll->surface().bounds().inside(stateAtLayer.localPosition());
+      bool inside = roll->surface().bounds().inside(stateAtLayer.localPosition());      
       hRpcDistX->Fill(distX);
       hRpcPullX->Fill(pullX);
       if ( inside && fabs(distX) < 10. && fabs(pullX) < 1.) {
         DetSpecObj det =(rpcDetId.region()==0) ? DetSpecObj(DetSpecObj::DET::RPCb, rpcDetId.ring(),                     rpcDetId.station(), rpcDetId.sector()) 
-                                               : DetSpecObj(DetSpecObj::DET::RPCe, rpcDetId.region()*rpcDetId.station(), rpcDetId.ring(), (rpcDetId.sector()-1)*6+rpcDetId.subsector());
+                                               : DetSpecObj(DetSpecObj::DET::RPCe, rpcDetId.region()*rpcDetId.station(), rpcDetId.ring(), (rpcDetId.sector()-1)*6+rpcDetId.subsector());        
         theDetBxStat->bxStat(det).incrementBx(digi->bx());
       } 
     }

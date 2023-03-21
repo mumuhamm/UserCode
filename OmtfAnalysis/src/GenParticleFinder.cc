@@ -50,7 +50,7 @@ void GenParticlefinder::getGenParticles(const edm::Event &ev){
     
     
     GenObj genObj(im->pt(),im->eta(),im->phi(),im->mass(),im->charge(),
-		  im->pdgId(),im->status(),im->vx(),im->vy(),im->vz(),0);
+		  im->pdgId(),im->status(),0,im->vx(),im->vy(),im->vz(), im->p4().Beta());
     theGenObjs.push_back(genObj);
   }  
 }
@@ -61,15 +61,18 @@ void GenParticlefinder::getTrackingParticles(const edm::Event &ev){
   edm::InputTag trackingPartTag =  theConfig.getParameter<edm::InputTag>("trackingParticle");
   ev.getByLabel(trackingPartTag, trackingParticleHandle);
   if (!trackingParticleHandle.isValid()) return;
-
+  
   for (TrackingParticleCollection::const_iterator iTP = trackingParticleHandle->begin();
        iTP!=trackingParticleHandle->end();++iTP){
-
+      
     if(iTP->eventId().bunchCrossing() != 0) continue;
     if (abs(iTP->pdgId()) != 13) continue;
-    
-    GenObj genObj(iTP->pt(), iTP->eta(), iTP->phi(), iTP->mass(), iTP->charge(),
-		  iTP->pdgId(), iTP->status(), iTP->vx(), iTP->vy(), iTP->vz(), iTP->p4().Beta(),1);
+        
+    GenObj genObj(iTP->pt(), iTP->eta(), iTP->phi(), 
+                  iTP->mass(), iTP->charge(),
+		              iTP->pdgId(), iTP->status(), 0,
+		              iTP->vx(), iTP->vy(), iTP->vz(), 
+		              iTP->p4().Beta());
     theGenObjs.push_back(genObj);
   }  
 }
