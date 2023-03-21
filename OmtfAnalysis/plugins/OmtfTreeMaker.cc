@@ -151,7 +151,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1ObjColl->set( std::vector<double>(l1Objs.size(),0.));
   }
   
-    // get L1 candidates new class PhaseII
+  // get L1 candidates new class PhaseII
   std::vector<L1PhaseIIObj> l1PhaseIIObjs = theL1PhaseIIObjMaker(ev);
   if (l1PhaseIIObjs.size()) {
     l1PhaseIIObjColl->set(l1PhaseIIObjs);
@@ -171,6 +171,7 @@ bool debug=0;
   theSynchroCheck.checkStripRpc(theMuon, ev, es);
   theSynchroCheck.checkHitRpc(theMuon, ev, es);
   theSynchroCheck.checkHitCsc(theMuon, ev, es);
+  
 
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
   if (omtfColl) {
