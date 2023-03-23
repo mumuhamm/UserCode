@@ -66,11 +66,10 @@ def customize_extra_outputCommands(process):
                                                                       'keep edmTriggerResults_*_*_*',                                                                       
                                                                       'keep *DtChamber*_*_*_*',
                                                                       'keep  L1Mu*_*_*_**',                                                                      
-                                                                      'keep  DTLayerId*_*_*_**',
-                                                                      'keep  CSCDetId*_*_*_**',
-                                                                      'keep  csc*_*_*_**',  
-                                                                      'keep  intL1*_*_*_**' 
-                                                                      'keep edmTriggerResults_*_*_*'                                                                      
+                                                                      'keep  DTLayerId*_*_*_*',
+                                                                      'keep  CSCDetId*_*_*_*',
+                                                                      'keep  csc*_*_*_*',  
+                                                                      'keep  intL1*_*_*_*'                                                                 
     ))
     return process
 ##########################################
