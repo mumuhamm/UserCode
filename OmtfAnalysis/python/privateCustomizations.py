@@ -69,7 +69,9 @@ def customize_extra_outputCommands(process):
                                                                       'keep  DTLayerId*_*_*_*',
                                                                       'keep  CSCDetId*_*_*_*',
                                                                       'keep  csc*_*_*_*',  
-                                                                      'keep  intL1*_*_*_*'                                                                 
+                                                                      'keep  intL1*_*_*_*',
+                                                                      'keep *_omtfStage2Digis_*_*',
+                                                                      'keep *_offlineBeamSpot_*_*'
     ))
     return process
 ##########################################

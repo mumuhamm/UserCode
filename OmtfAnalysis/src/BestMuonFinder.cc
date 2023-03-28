@@ -69,6 +69,7 @@ BestMuonFinder::BestMuonFinder(const edm::ParameterSet& cfg, edm::ConsumesCollec
 bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
 {
 
+
   if (lastEvent==ev.id().event() && lastRun==ev.run()) return false;
   lastEvent = ev.id().event() ;
   lastRun = ev.run();
@@ -78,26 +79,29 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
   theIsMedium = false;
   theIsTight= false;
   theMuonObjs.clear();
-
+  
+  static bool warnNoColl = theConfig.getUntrackedParameter<bool>("warnNoColl", true);
 
   //getBeamSpot
   edm::InputTag beamSpot =  theConfig.getParameter<edm::InputTag>("beamSpot");
   edm::Handle<reco::BeamSpot> bsHandle;
   ev.getByLabel( beamSpot, bsHandle);
-  if (!bsHandle.isValid()) return false;
+  if(warnNoColl && !bsHandle.isValid()){
+    if (warnNoColl) std::cout <<"** WARNING - no collection labeled: "<< beamSpot <<std::endl; 
+  }
+  
   math::XYZPoint reference =  (bsHandle.isValid())  ?  math::XYZPoint(bsHandle->x0(), bsHandle->y0(), bsHandle->z0())
                                                     :  math::XYZPoint(0.,0.,0.);
   //get Muon
   edm::Handle<reco::MuonCollection> muons;
   edm::InputTag muonColl =  theConfig.getParameter<edm::InputTag>("muonColl");
-  static bool warnNoColl = theConfig.getUntrackedParameter<bool>("warnNoColl", true);
   ev.getByLabel( muonColl, muons);
   if (!muons.isValid()) {
     if (warnNoColl) std::cout <<"** WARNING - no collection labeled: "<<muonColl <<std::endl; 
     return false;
   }
   theAllMuons = muons->size();
-//  std::cout <<"SIZE of muons: " <<  muons->size() << std::endl;
+  std::cout <<"SIZE of muons: " <<  muons->size() << std::endl;
   
   for (reco::MuonCollection::const_iterator im = muons->begin(); im != muons->end(); ++im) {
 

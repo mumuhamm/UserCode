@@ -168,12 +168,13 @@ bool debug=0;
   std::cout << std::endl;
   }
   
+  /* AK synchroCheck has collections names hardcoded
   theSynchroCheck.checkInside(theMuon, ev, es);  
   theSynchroCheck.checkStripCsc(theMuon, ev, es);
   theSynchroCheck.checkStripRpc(theMuon, ev, es);
   theSynchroCheck.checkHitRpc(theMuon, ev, es);
   theSynchroCheck.checkHitCsc(theMuon, ev, es);
-  
+  */
   L1ObjColl omtfColl = l1ObjColl->selectByType(L1Obj::OMTF);
   if (omtfColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1Objs().front().etaValue(), 
