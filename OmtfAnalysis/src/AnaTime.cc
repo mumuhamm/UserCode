@@ -3,6 +3,7 @@
 #include "TObjArray.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TEfficiency.h"
 #include "UserCode/OmtfDataFormats/interface/TrackObj.h"
 #include "UserCode/OmtfDataFormats/interface/MuonObj.h"
 #include "UserCode/OmtfDataFormats/interface/MuonObjColl.h"
@@ -41,6 +42,8 @@ namespace {
   TH1D *hTimeOmtfTrackBX0, *hTimeOmtfTrackBX1;
   TH2D *hTimeOmtfDrTrackMuon;
 
+  TEfficiency *hTimeEffPt_BMTF, *hTimeEffPt_EMTF, *hTimeEffPt_OMTF, *hTimeEffPt_OMTF_emu;
+
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
@@ -74,12 +77,12 @@ void AnaTime::init(TObjArray& histos)
   hTimeOmtf_W = new TH1D("hTimeOmtf_W","hTimeOmtf_W",7,-3.5,3.5); histos.Add(hTimeOmtf_W); 
   hTimeOmtf_QW = new TH1D("hTimeOmtf_QW","hTimeOmtf_QW",7,-3.5,3.5); histos.Add(hTimeOmtf_QW); 
 
-  hTimeOmtf_emu_A = new TH1D("hTimeOmtf_emu_A","hTimeOmtf_emu_A",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_A); 
-  hTimeOmtf_emu_Q = new TH1D("hTimeOmtf_emu_Q","hTimeOmtf_emu_Q",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_Q); 
-  hTimeOmtf_emu_M = new TH1D("hTimeOmtf_emu_M","hTimeOmtf_emu_M",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_M); 
-  hTimeOmtf_emu_QM = new TH1D("hTimeOmtf_emu_QM","hTimeOmtf_emu_QM",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_QM); 
-  hTimeOmtf_emu_W = new TH1D("hTimeOmtf_emu_W","hTimeOmtf_emu_W",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_W); 
-  hTimeOmtf_emu_QW = new TH1D("hTimeOmtf_emu_QW","hTimeOmtf_emu_QW",5,-2.5,2.5); histos.Add(hTimeOmtf_emu_QW); 
+  hTimeOmtf_emu_A = new TH1D("hTimeOmtf_emu_A","hTimeOmtf_emu_A",7,-3.5,3.5); histos.Add(hTimeOmtf_emu_A); 
+  hTimeOmtf_emu_Q = new TH1D("hTimeOmtf_emu_Q","hTimeOmtf_emu_Q",7,-3.5,3.5); histos.Add(hTimeOmtf_emu_Q); 
+  hTimeOmtf_emu_M = new TH1D("hTimeOmtf_emu_M","hTimeOmtf_emu_M",7,-3.5,3.5); histos.Add(hTimeOmtf_emu_M); 
+  hTimeOmtf_emu_QM = new TH1D("hTimeOmtf_emu_QM","hTimeOmtf_emu_QM",7,-3.5,3.5); histos.Add(hTimeOmtf_emu_QM); 
+  hTimeOmtf_emu_W = new TH1D("hTimeOmtf_emu_W","hTimeOmtf_emu_W",7,-3.5,3.5); histos.Add(hTimeOmtf_emu_W); 
+  hTimeOmtf_emu_QW = new TH1D("hTimeOmtf_emu_QW","hTimeOmtf_emu_QW",7,-3.5,3.5); histos.Add(hTimeOmtf_emu_QW); 
 
   hTimeDeltaR_Q = new TH1D("hTimeDeltaR_Q","hTimeDeltaR_Q",   100,0.,4.);  histos.Add(hTimeDeltaR_Q);
   hTimeDeltaR_QW = new TH1D("hTimeDeltaR_QW","hTimeDeltaR_QW",100,0.,4.);  histos.Add(hTimeDeltaR_QW);
@@ -111,6 +114,12 @@ void AnaTime::init(TObjArray& histos)
   hTimeOmtfTrackBX0 = new TH1D("hTimeOmtfTrackBX0", "hTimeOmtfTrackBX0", 50,0.,25.); histos.Add(hTimeOmtfTrackBX0);
   hTimeOmtfTrackBX1 = new TH1D("hTimeOmtfTrackBX1", "hTimeOmtfTrackBX1", 50,0.,25.); histos.Add(hTimeOmtfTrackBX1);
   hTimeOmtfDrTrackMuon = new TH2D("hTimeOmtfDrTrackMuon","hTimeOmtfDrTrackMuon",50,0.,25.,50, -1.,1.); histos.Add(hTimeOmtfDrTrackMuon);
+
+  double xbins[]={0.,4., 8., 12., 16., 22., 30.};
+  hTimeEffPt_BMTF = new TEfficiency("hTimeEffPt_BMTF","hTimeEffPt_BMTF: BX=-1/(BX==-1orBX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_BMTF);
+  hTimeEffPt_EMTF = new TEfficiency("hTimeEffPt_EMTF","hTimeEffPt_EMTF: BX=-1/(BX==-1orBX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_EMTF);
+  hTimeEffPt_OMTF = new TEfficiency("hTimeEffPt_OMTF","hTimeEffPt_OMTF: BX=-1/(BX==-1orBX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_OMTF);
+  hTimeEffPt_OMTF_emu = new TEfficiency("hTimeEffPt_OMTF_emu","hTimeEffPt_OMTF_emu: BX=-1/(BX==-1orBX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_OMTF_emu);
 }
 
 void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackObj* track, const L1ObjColl * l1Objs)
@@ -121,17 +130,22 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
   //
   const std::vector<L1Obj> & l1mtfs = *l1Objs;
   const std::vector<MuonObj> & muons = *muonColl;
-  bool printdeb = false;
+
+  bool isOtherTrigger= true;
+  for (const auto & muon : muons) {
+    if ( (muon.isMatchedHlt ||muon.isMatchedIsoHlt) && (fabs(muon.eta())>1.4 || fabs(muon.eta())<0.6) ) isOtherTrigger=true;
+  } 
+  bool printdeb = true;
   for (const auto & l1mtf : l1mtfs) {
     bool matched  = false;
     bool matchedW = false;
-    bool qualOK = (l1mtf.q >= 12);
+    bool qualOK = (l1mtf.q >= 12 && l1mtf.ptValue()<= theCfg.getParameter<double>("maxPt") && l1mtf.ptValue() >= theCfg.getParameter<double>("minPt") );
     for (const auto & muon : muons) { 
       if (!muon.isValid()) continue;
 //      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.eta(), muon.phi());
       double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
       double deltaRW = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), -muon.l1Eta, muon.l1Phi+M_PI/2.);
-      if (qualOK && l1mtf.type==L1Obj::OMTF) { 
+      if (qualOK && l1mtf.type==L1Obj::OMTF_emu) { 
         hTimeDeltaR_Q->Fill(deltaR); 
         hTimeDeltaR_QW->Fill(deltaRW); 
         if (l1mtf.bx == -3) hTimeDeltaR_Q_B3->Fill(deltaR); 
@@ -151,14 +165,16 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
     }
     TH1D *hA, *hQ, *hM, *hQM, *hW, *hQW; 
     hA=hQ=hM=hQM=hW=hQW=0; 
+    TEfficiency * hE=0;
     switch (l1mtf.type) {
-        case (L1Obj::BMTF) : hA=hTimeBmtf_A; hQ=hTimeBmtf_Q; hM=hTimeBmtf_M;  hQM=hTimeBmtf_QM;  hW=hTimeBmtf_W;  hQW=hTimeBmtf_QW; break;
-        case (L1Obj::EMTF) : hA=hTimeEmtf_A; hQ=hTimeEmtf_Q; hM=hTimeEmtf_M;  hQM=hTimeEmtf_QM;  hW=hTimeEmtf_W;  hQW=hTimeEmtf_QW; break;
-        case (L1Obj::OMTF) : hA=hTimeOmtf_A; hQ=hTimeOmtf_Q; hM=hTimeOmtf_M;  hQM=hTimeOmtf_QM;  hW=hTimeOmtf_W;  hQW=hTimeOmtf_QW; break;
-        case (L1Obj::OMTF_emu) : hA=hTimeOmtf_emu_A; hQ=hTimeOmtf_emu_Q; hM=hTimeOmtf_emu_M;  hQM=hTimeOmtf_emu_QM;  hW=hTimeOmtf_emu_W;  hQW=hTimeOmtf_emu_QW; break;
+        case (L1Obj::BMTF) : hA=hTimeBmtf_A; hQ=hTimeBmtf_Q; hM=hTimeBmtf_M;  hQM=hTimeBmtf_QM;  hW=hTimeBmtf_W;  hQW=hTimeBmtf_QW; hE=hTimeEffPt_BMTF; break;
+        case (L1Obj::EMTF) : hA=hTimeEmtf_A; hQ=hTimeEmtf_Q; hM=hTimeEmtf_M;  hQM=hTimeEmtf_QM;  hW=hTimeEmtf_W;  hQW=hTimeEmtf_QW; hE=hTimeEffPt_EMTF; break;
+        case (L1Obj::OMTF) : hA=hTimeOmtf_A; hQ=hTimeOmtf_Q; hM=hTimeOmtf_M;  hQM=hTimeOmtf_QM;  hW=hTimeOmtf_W;  hQW=hTimeOmtf_QW; hE=hTimeEffPt_OMTF; break;
+        case (L1Obj::OMTF_emu) : hA=hTimeOmtf_emu_A; hQ=hTimeOmtf_emu_Q; hM=hTimeOmtf_emu_M;  hQM=hTimeOmtf_emu_QM;  hW=hTimeOmtf_emu_W;  hQW=hTimeOmtf_emu_QW; hE=hTimeEffPt_OMTF_emu; break;
         default: ;
     }
-    if (hA!=0) {
+    if (hA!=0 && isOtherTrigger) {
+//    if (hA!=0) {
       hA->Fill(l1mtf.bx); 
       if (qualOK) hQ->Fill(l1mtf.bx); 
       if (matched) hM->Fill(l1mtf.bx);  
@@ -166,6 +182,10 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
       if (matchedW) hW->Fill(l1mtf.bx);  
       if (qualOK && matchedW) hQW->Fill(l1mtf.bx);  
     }
+    if (qualOK && matched && hE && (l1mtf.bx == -1 || l1mtf.bx == 0)) {
+      bool pref = (l1mtf.bx == -1);
+      hE->Fill(pref, l1mtf.ptValue());
+    } 
   }
 
   //

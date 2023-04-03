@@ -210,6 +210,7 @@ bool debug=0;
   theSynchroCheck.checkInside(theMuon, ev, es);
   theSynchroCheck.checkStripCsc(theMuon, ev, es);
   theSynchroCheck.checkStripRpc(theMuon, ev, es);
+  theSynchroCheck.checkDigiDt(theMuon, ev, es);
   theSynchroCheck.checkHitRpc(theMuon, ev, es);
   theSynchroCheck.checkHitCsc(theMuon, ev, es);
 

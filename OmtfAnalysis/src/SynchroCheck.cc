@@ -11,6 +11,7 @@
 
 #include "Geometry/CommonDetUnit/interface/GlobalTrackingGeometry.h"
 #include "Geometry/Records/interface/GlobalTrackingGeometryRecord.h"
+#include "Geometry/DTGeometry/interface/DTGeometry.h"
 #include "Geometry/RPCGeometry/interface/RPCGeometry.h"
 #include "Geometry/CSCGeometry/interface/CSCGeometry.h"
 #include "Geometry/CSCGeometry/interface/CSCChamber.h"
@@ -23,6 +24,10 @@
 #include "TObjArray.h"
 #include "TH1D.h"
 #include "TH2D.h"
+
+#include "DataFormats/MuonDetId/interface/DTChamberId.h"
+#include "DataFormats/L1DTTrackFinder/interface/L1MuDTChambPhContainer.h"
+#include "DataFormats/L1DTTrackFinder/interface/L1MuDTChambThContainer.h"
 
 #include "DataFormats/MuonDetId/interface/RPCDetId.h"
 #include "DataFormats/RPCRecHit/interface/RPCRecHitCollection.h"
@@ -37,11 +42,13 @@
 SynchroCheck::SynchroCheck(const edm::ParameterSet & cfg, edm::ConsumesCollector cColl)
   : theLctToken( cColl.consumes(cfg.getParameter<edm::InputTag>("srcCSC"))),
     theRpcDigiToken( cColl.consumes(cfg.getParameter<edm::InputTag>("srcRPC"))),
+    theDtDigiToken( cColl.consumes(cfg.getParameter<edm::InputTag>("srcDT"))),
     theCscToken( cColl.consumes(edm::InputTag("csc2DRecHits"))),
     theRpcToken( cColl.consumes(edm::InputTag("rpcRecHits"))),
     theGeomteryToken( cColl.esConsumes()), 
     theCscGeomToken( cColl.esConsumes()),
     theRpcGeomToken( cColl.esConsumes()),
+    theDtGeomToken( cColl.esConsumes()),
     theFieldToken( cColl.esConsumes()),
     thePropagatorAnyToken( cColl.esConsumes(edm::ESInputTag("","SteppingHelixPropagatorAny")))
 { 
@@ -69,6 +76,12 @@ void SynchroCheck::initHistos( TObjArray & histos)
   hME13P_Inside = new TH2D("hME13P_Inside","hME13P_Inside",36,0.5,36.5, 7,-3.5,3.5);  histos.Add(hME13P_Inside);
   hME13N_Inside = new TH2D("hME13N_Inside","hME13N_Inside",36,0.5,36.5, 7,-3.5,3.5);  histos.Add(hME13N_Inside);
   hCscDistr = new TH2D("hCscDistr","hCscDistr",100,-100.,100.,120,-120.,120.); histos.Add(hCscDistr);
+
+  hDtBxQ2 = new TH1D("hDtBxQ2","hDtBxQ2",7,-3.5,3.5); histos.Add(hDtBxQ2);
+  hDtBxQ4 = new TH1D("hDtBxQ4","hDtBxQ4",7,-3.5,3.5); histos.Add(hDtBxQ4);
+  //hDtPhi = new TH2D("hDtPhi","hDtPhi",100,-M_PI,M_PI, 100, -1500.,1500.); histos.Add(hDtPhi);
+  hDtPhi = new TH2D("hDtPhi","hDtPhi",90,0.,2*M_PI, 90, 0.,2*M_PI); histos.Add(hDtPhi);
+  hDtDPhi = new TH1D("hDtDPhi","hDtDPhi",120,-0.3,0.3); histos.Add(hDtDPhi);
 
   histos.Add(theDetBxStat);
   histos.Add(theDetPullXStat);
@@ -188,6 +201,56 @@ void SynchroCheck::checkHitCsc(const reco::Muon *muon, const edm::Event &ev, con
     if (debug) std::cout <<"CSC dist: " << trackAtCSC.localPosition().x()-hit.localPosition().x()<<std::endl;
     hCscHitDistX->Fill(trackAtCSC.localPosition().x()-hit.localPosition().x());
     hCscHitDistPhi->Fill(deltaPhi((double)globalGeometry.idToDet(cscDetId)->toGlobal(hit.localPosition()).phi(), (double)trackAtCSC.globalPosition().phi()));
+  }
+}
+
+void SynchroCheck::checkDigiDt(const reco::Muon *muon, const edm::Event &ev, const edm::EventSetup &es)
+{
+  if (!muon) return;
+
+  bool debug = 0;
+  if (debug) std::cout << "------------- HERE SYNCHRO DT--------------" << std::endl;
+
+  auto const & globalGeometry = es.getData(theGeomteryToken);
+  auto const & geomDt         = es.getData(theDtGeomToken);
+  auto const & magField       = es.getData(theFieldToken);
+
+  TrajectoryStateOnSurface muTSOS = trajectoryStateTransform::outerStateOnSurface(*(muon->track()), globalGeometry, &magField);
+  if (!muTSOS.isValid()) return;
+  const L1MuDTChambPhContainer & digiCollectionDT =  ev.get(theDtDigiToken);
+  if (debug) std::cout <<" #### DTPh digis from BMTF " << digiCollectionDT.getContainer()->size()<< std::endl;
+  for (const auto & chDigi : *digiCollectionDT.getContainer()) {
+    if (abs(chDigi.whNum()) != 2) continue;
+    if (chDigi.stNum() ==4) continue;
+    if (chDigi.code()==7) continue;
+    DTChamberId dtChamberId(chDigi.whNum(),chDigi.stNum(),chDigi.scNum()+1);
+    GlobalPoint detPosition = globalGeometry.idToDet(dtChamberId)->position();
+    if (deltaR(muon->eta(), muon->phi(), detPosition.eta(), detPosition.phi()) > 1.0) continue;
+    if (debug) std::cout <<"det position  r: "<< detPosition.perp()<<", phi: "<<detPosition.phi()<<", z: "<<detPosition.z() << std::endl;
+    const DTChamber * chamber = geomDt.chamber(dtChamberId);
+    const Propagator & propagator = es.getData(thePropagatorAnyToken);
+    TrajectoryStateOnSurface stateAtLayer =  propagator.propagate(muTSOS, chamber->surface());
+    if (!stateAtLayer.isValid()) continue;
+    bool inside = chamber->surface().bounds().inside(stateAtLayer.localPosition());
+    if (inside && chDigi.code() >=2 ) {
+      if (debug) std::cout <<" SegmentPhi: "<<chDigi.phi() 
+                <<" global: "<<stateAtLayer.globalPosition().phi()
+                <<" local: "<<stateAtLayer.localPosition().phi() << std::endl;
+      double phiStub = chDigi.phi()/1024.*M_PI/12+(chDigi.scNum()+0)*M_PI/6;
+      if (phiStub<0.) phiStub += 2.*M_PI;
+      if (phiStub>2*M_PI) phiStub -= 2.*M_PI;
+      double phiGlb = stateAtLayer.globalPosition().phi();
+      if (phiGlb <0.) phiGlb += 2*M_PI;
+      hDtPhi->Fill(phiGlb, phiStub);
+      double deltaPhi = reco::deltaPhi(phiGlb,phiStub);
+      hDtDPhi->Fill(deltaPhi);
+      if (fabs(deltaPhi) < 0.05) { 
+        DetSpecObj det(DetSpecObj::DET::DT,chDigi.whNum(),chDigi.stNum(),chDigi.scNum());
+        theDetBxStat->bxStat(det).incrementBx(chDigi.bxNum()); 
+        if (chDigi.code() >=2 ) hDtBxQ2->Fill(chDigi.bxNum());
+        if (chDigi.code() >=4 ) hDtBxQ4->Fill(chDigi.bxNum());
+      }
+    }
   }
 }
 

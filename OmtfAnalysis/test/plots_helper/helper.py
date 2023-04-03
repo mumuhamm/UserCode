@@ -3,8 +3,9 @@
 from ROOT import *
 gROOT.Reset()
 #f = TFile('../omtfHelper.root');
-#f = TFile('../../jobs/v9_Muon/crab_Run2022G_from362755/omtfHelper.root');
-f = TFile('../../jobs/v6_Express/crab_Run2022G_from362755/omtfHelper.root');
+#f = TFile('../../jobs/vc_Muon/crab_Run2022G/omtfHelper.root');
+f = TFile('../../jobs/vd_JetMET/crab_Run2022G/omtfHelper.root');
+#f = TFile('../../jobs/v6_Express/crab_Run2022G_from362755/omtfHelper.root');
 f.ls();
 
 
@@ -46,7 +47,7 @@ hP.GetYaxis().SetNdivisions(107)
 hP.SetYTitle(" BX ")
 hP.SetXTitle(" chamber ")
 hP.DrawCopy('box text')
-table(hP)
+#table(hP)
 
 c1.cd(2)
 hN=gROOT.FindObject("hME13N_Inside")
@@ -55,7 +56,7 @@ hN.SetYTitle(" BX ")
 hN.SetXTitle(" chamber ")
 hN.GetYaxis().SetNdivisions(107)
 hN.DrawCopy('box text')
-table(hN)
+#table(hN)
 c1.Update()
 c1.Print(c1.GetName()+".png","png")
 
@@ -166,7 +167,32 @@ h.DrawCopy()
 c6.Update()
 c6.Print(c6.GetName()+".png","png")
 
+c7=TCanvas("cDtBxQ","cDtBxQ",1000,500)
+c7.Divide(2,1)
+c7.cd(1)
+h=gROOT.FindObject("hDtBxQ2")
+h.DrawCopy()
+h.Print("all")
+c7.cd(2)
+h=gROOT.FindObject("hDtBxQ4")
+h.DrawCopy()
+h.Print("all")
+c7.Update()
+c7.Print(c7.GetName()+".png","png")
+
+c8=TCanvas("cDtPhi","cDtPhi",1000,500)
+c8.Divide(2,1)
+c8.cd(1)
+h=gROOT.FindObject("hDtPhi")
+h.DrawCopy()
+c8.cd(2)
+h=gROOT.FindObject("hDtDPhi")
+h.DrawCopy()
+c8.Update()
+c8.Print(c8.GetName()+".png","png")
+
 #f.ls()
+
 
 plot_chambers('CSC',  -4, 2) 
 plot_chambers('CSC',  -3, 2) 
@@ -296,7 +322,7 @@ def plot_BxStatCSC() :
   c.Print(c.GetName()+".png")
   input("press a key")
 
-#plot_BxStatRPC()
+plot_BxStatRPC()
 plot_BxStatCSC()
 
 input("press a key")

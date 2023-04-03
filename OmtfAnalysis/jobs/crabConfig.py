@@ -2,30 +2,29 @@ from WMCore.Configuration import Configuration
 config = Configuration()
 
 config.section_("General")
-config.General.requestName = 'Run2022G_from362755'
+config.General.requestName = 'Run2022G'
 #config.General.workArea = 'v5_JetMET'
-config.General.workArea = 'v6_Express'
+#config.General.workArea = 'v6_Express'
 #config.General.workArea = 'v7_EGamma'
 #config.General.workArea = 'v8_MuonEG'
-#config.General.workArea = 'v9_Muon'
+config.General.workArea = 'vc_Muon'
+#config.General.workArea = 'vd_JetMET'
 config.General.transferLogs = True 
 config.General.transferOutputs = True 
 
 config.section_("Data")
-#config.Data.inputDataset = '/Muon/Run2022D-ZMu-PromptReco-v2/RAW-RECO'
+config.Data.inputDataset = '/Muon/Run2022G-ZMu-PromptReco-v1/RAW-RECO'
 #config.Data.inputDataset = '/JetMET/Run2022G-JetHTJetPlusHOFilter-PromptReco-v1/RAW-RECO'
-config.Data.inputDataset = '/ExpressPhysics/Run2022G-Express-v1/FEVT'
+#config.Data.inputDataset = '/ExpressPhysics/Run2022G-Express-v1/FEVT'
 #config.Data.inputDataset = '/EGamma/Run2022G-ZElectron-PromptReco-v1/RAW-RECO'
 #config.Data.inputDataset = '/MuonEG/Run2022G-TopMuEG-PromptReco-v1/RAW-RECO'
-#config.Data.inputDataset = '/Muon/Run2022G-ZMu-PromptReco-v1/RAW-RECO'
 
-#config.Data.lumiMask='Cert_Collisions2022_eraG_from362755.json'
 config.Data.lumiMask='Cert_Collisions2022_eraG_362433_362760_Golden.json'
 #config.Data.lumiMask='Cert_Collisions2022_eraD_357538_357900_Golden.json'
 #config.Data.lumiMask='Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
 #config.Data.lumiMask='Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
 
-config.Data.runRange = '362719-362760'
+#config.Data.runRange = '362719-362760'
 #config.Data.runRange = '295606'
 
 config.Data.useParent = False 

@@ -21,10 +21,12 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
-#       "omtfTree.root"
+#         "omtfTree.root"
+# "../jobs/vc_Muon/crab_Run2022G/omtfTree.root"
+  "../jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
 #  "../jobs/v5_JetMET/omtfTree.root"
 #  "../jobs/v7_EGamma/omtfTree.root"
-    "../jobs/v9_Muon/crab_Run2022G_from362755/omtfTree.root"
+#   "../jobs/v9_Muon/crab_Run2022G_from362755/omtfTree.root"
 #    "../jobs/v2_SM2018D/omtfTree.root"
 #   "../jobs/v3_SM2017F/omtfTree.root"
 #    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeB.root"
@@ -108,9 +110,9 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
     acceptHLT_Names                  = cms.vstring("HLT_Jet","HLT_HT","HLT_PFJet","HLT_PFHT"),
   ),
 
-   anaDataEmul =  cms.PSet(bxMin=cms.int32(-3),bxMax=cms.int32(4)),
+   anaDataEmul =  cms.PSet( bxMin=cms.int32(-3), bxMax=cms.int32(4)),
    anaEff =  cms.PSet(),     
-   anaTime = cms.PSet(),
+   anaTime = cms.PSet( maxPt = cms.double(21.99), minPt = cms.double(0.)),
    anaSynch = cms.PSet(),
    anaDiMu = cms.PSet(),
    anaL1Distribution = cms.PSet(),
