@@ -62,8 +62,7 @@ def customize_extra_outputCommands(process):
                                                                       'keep *_standAloneMuons_*_*',
                                                                       'keep *_muons_*_*',
                                                                       'keep TrackingRecHitsOwned_*_*_*',
-                                                                      'keep csctfTrackStubCSCTriggerContainer_*_*_*',
-                                                                      'keep edmTriggerResults_*_*_*',                                                                       
+                                                                      'keep csctfTrackStubCSCTriggerContainer_*_*_*',                                                       
                                                                       'keep *DtChamber*_*_*_*',
                                                                       'keep  L1Mu*_*_*_**',                                                                      
                                                                       'keep  DTLayerId*_*_*_*',
@@ -71,7 +70,9 @@ def customize_extra_outputCommands(process):
                                                                       'keep  csc*_*_*_*',  
                                                                       'keep  intL1*_*_*_*',
                                                                       'keep *_omtfStage2Digis_*_*',
-                                                                      'keep *_offlineBeamSpot_*_*'
+                                                                      'keep *_offlineBeamSpot_*_*',
+                                                                      'keep *_TriggerResults_*_*_*',   
+                                                                      'keep *_hltTriggerSummaryAOD_*_*'
     ))
     return process
 ##########################################
