@@ -117,10 +117,9 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   // create other objects structure
   //
   muonColl = new MuonObjColl (theBestMuonFinder.muons(ev,es));
-//  muonColl = new MuonObjColl;
+  genColl = new GenObjColl( theGenParticleFinder.genparticles(ev,es) ) ;
   l1ObjColl = new L1ObjColl;
   l1PhaseIIObjColl = new L1PhaseIIObjColl;
-
   bitsL1 = new TriggerMenuResultObj();
   bitsHLT = new TriggerMenuResultObj();
 
