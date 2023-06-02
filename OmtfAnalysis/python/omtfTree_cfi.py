@@ -5,12 +5,13 @@ import FWCore.ParameterSet.Config as cms
 #
 omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   histoFileName = cms.string("omtfHelper.root"),
-  treeFileName = cms.string("omtfTree.root"),
+  treeFileName = cms.string("omtfTree_mc.root"),
 
   menuInspector = cms.PSet( 
     namesCheckHltMuMatch = cms.vstring(
       "HLT_IsoMu20_v","HLT_IsoMu24_v","HLT_IsoMu27_v"
     ),
+
     warnNoColl = cms.untracked.bool(False) 
   ),
 
@@ -33,12 +34,18 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
    ),
   
   l1ObjMaker = cms.PSet(
+    #omtfEmulSrc = cms.InputTag('simOmtfDigis','OMTF',''),
+    #bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
+    #emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
+    #gmtEmulSrc = cms.InputTag('simGmtStage2Digis','',''),    
+    #data---
     #omtfEmulSrc = cms.InputTag('omtfEmulator','OMTF',''),
     omtfDataSrc = cms.InputTag('gmtStage2Digis','OMTF'),
     emtfDataSrc = cms.InputTag('gmtStage2Digis','EMTF'),
     bmtfDataSrc = cms.InputTag('gmtStage2Digis','BMTF'),
     gmtDataSrc = cms.InputTag('gmtStage2Digis','Muon'),
-    #gmtEmulSrc = cms.InputTag('emulGmtStage2Digis',''),     
+    #gmtEmulSrc = cms.InputTag('emulGmtStage2Digis',''),
+    #------------     
     warnNoColl = cms.untracked.bool(True)
   ),
   l1PhaseIIObjMaker = cms.PSet(

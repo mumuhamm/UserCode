@@ -113,7 +113,7 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
       //for goes up to .size()-1, since the last is "Final" decision.
       for (unsigned int idx =0;  idx < theHltConfig.size()-1; idx++) {
         std::string name = theHltConfig.triggerName(idx);
-//        std::cout <<" HLT index: "<< idx << "name: "<< name << std::endl;
+       // std::cout <<" HLT index: "<< idx << "name: "<< name << std::endl;
         theNamesAlgoHLT.push_back( name );
         for (auto & im : theNamesCheckHltMuMatchIdx) if (name.find(im.first) != std::string::npos) im.second = idx; 
       }
@@ -216,7 +216,7 @@ std::vector<unsigned int>  MenuInspector::runFiredAlgosL1(const edm::Event&ev, c
   edm::Handle<GlobalAlgBlkBxCollection> ugt;
   ev.getByToken(theGlobalAlgToken, ugt);
   if (!ugt.isValid()) {
-     if (theWarnNoColl) std::cout << " PROBLEM, record uGT not OK " << std::endl;
+     //if (theWarnNoColl) std::cout << " PROBLEM, record uGT not OK " << std::endl;
     return result;
   }
 

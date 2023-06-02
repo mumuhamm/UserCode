@@ -48,7 +48,7 @@ void GenParticlefinder::getGenParticles(const edm::Event &ev){
   
   for (reco::GenParticleCollection::const_iterator im = genparticles->begin(); im != genparticles->end(); ++im) {
     
-    
+    if(abs(im->pdgId()) !=13)continue;    
     GenObj genObj(im->pt(),im->eta(),im->phi(),im->mass(),im->charge(),
 		  im->pdgId(),im->status(),im->vx(),im->vy(),im->vz(),0);
     theGenObjs.push_back(genObj);
