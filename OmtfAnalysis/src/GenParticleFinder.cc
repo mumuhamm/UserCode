@@ -33,7 +33,26 @@ GenParticlefinder::GenParticlefinder(const edm::ParameterSet& cfg, edm::Consumes
     edm::InputTag trackingPartTag =  theConfig.getParameter<edm::InputTag>("trackingParticle");
     cColl.consumes<TrackingParticleCollection>(trackingPartTag);
   }  
+  
+   if (theConfig.exists("simVertex")){
+    edm::InputTag simVertexTag =  theConfig.getParameter<edm::InputTag>("simVertex");
+    cColl.consumes<TrackingParticleCollection>(simVertexTag);
+  }  
+  
+  
 }
+void GenParticlefinder::getSimVertex(const edm::Event &ev){
+
+  edm::Handle<edm::SimVertexContainer> simVertices;
+  edm::InputTag simVertexTag =  theConfig.getParameter<edm::InputTag>("simVertex");
+  ev.getByLabel(simVertexTag, simVertices);
+  if (!simVertices.isValid()) return;
+
+ for (auto aSimVertex: *simVertices) {
+  std::cout<<aSimVertex<<std::endl;
+}
+}
+
 
 void GenParticlefinder::getGenParticles(const edm::Event &ev){
 
@@ -86,7 +105,7 @@ bool GenParticlefinder::run(const edm::Event &ev, const edm::EventSetup &es)
   theGenPart = 0;
   theGenObjs.clear();
 
-
+  if(theConfig.exists("simVertex")) getSimVertex(ev);
   if(theConfig.exists("genColl")) getGenParticles(ev);
   if(theConfig.exists("trackingParticle")) getTrackingParticles(ev);
      

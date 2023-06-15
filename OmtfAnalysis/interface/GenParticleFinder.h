@@ -11,6 +11,9 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
+#include "SimDataFormats/Vertex/interface/SimVertex.h"
+#include "SimDataFormats/Vertex/interface/SimVertexContainer.h"
+
 
 namespace edm { class Event; class EventSetup; }
 namespace reco { class Muon; }
@@ -31,6 +34,7 @@ public:
 
 private:
 
+  void getSimVertex(const edm::Event &ev);
   void getGenParticles(const edm::Event &ev);
   void getTrackingParticles(const edm::Event &ev);
   
@@ -43,6 +47,7 @@ private:
   
   unsigned int theAllParticles;
   const reco::GenParticle* theGenPart;
+  const SimVertex theSimVertex;
   std::vector<GenObj> theGenObjs; 
 
 
