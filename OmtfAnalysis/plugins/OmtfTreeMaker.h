@@ -1,7 +1,7 @@
 #ifndef OmtfTreeMaker_H
 #define OmtfTreeMaker_H
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "DataFormats/L1TMuon/interface/RegionalMuonCand.h"
@@ -52,7 +52,7 @@ namespace reco { class Muon; }
  class TTree;
 class TFile;
 
-class OmtfTreeMaker : public edm::EDAnalyzer {
+class OmtfTreeMaker : public edm::one::EDAnalyzer {
 public:
   OmtfTreeMaker(const edm::ParameterSet& cfg);
   virtual ~OmtfTreeMaker();

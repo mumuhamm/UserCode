@@ -3,11 +3,11 @@
 
 #include <string>
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 class RPCReadOutMapping;
 
-class OmtfAngleAnalyzer : public edm::EDAnalyzer {
+class OmtfAngleAnalyzer : public edm::one::EDAnalyzer {
 public:
   OmtfAngleAnalyzer (const edm::ParameterSet & cfg);
   virtual ~OmtfAngleAnalyzer(){}

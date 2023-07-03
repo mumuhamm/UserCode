@@ -1,7 +1,7 @@
 #ifndef OmtfTreeAnalysis_H
 #define OmtfTreeAnalysis_H
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "UserCode/OmtfAnalysis/interface/AnaGenEff.h"
@@ -21,7 +21,7 @@ class AnaL1Distribution;
 
 namespace edm { class Event; class EventSetup; }
 
-class OmtfTreeAnalysis : public edm::EDAnalyzer {
+class OmtfTreeAnalysis : public edm::one::EDAnalyzer {
 public:
   OmtfTreeAnalysis(const edm::ParameterSet & cfg);
   virtual ~OmtfTreeAnalysis(){}

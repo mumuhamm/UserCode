@@ -1,7 +1,7 @@
 #ifndef MenuInspector_H
 #define MenuInspector_H
 
-#include "FWCore/Framework/interface/EDFilter.h"
+#include "FWCore/Framework/interface/one/EDFilter.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "DataFormats/Provenance/interface/RunID.h"
@@ -34,7 +34,7 @@ class L1TUtmTriggerMenu;
 
 namespace edm {class ParameterSet; class Event; class EventSetup; class Run; }
 
-class MenuInspector :  public edm::EDFilter {
+class MenuInspector :  public edm::one::EDFilter {
 public:
   explicit MenuInspector(const edm::ParameterSet&, edm::ConsumesCollector cColl);
 //, edm::esConsumes<edm::Transition::BeginRun> && esConsum);
