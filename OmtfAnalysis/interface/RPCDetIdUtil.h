@@ -57,7 +57,7 @@ public:
 
   RPCDetId rpdDetIt() { return theRpcDet; }
 
-  void print(const edm::EventSetup& es);
+//  void print(const edm::EventSetup& es); 
      
 private:
   RPCDetId theRpcDet;

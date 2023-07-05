@@ -23,7 +23,8 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   treeFileNames = cms.vstring(
 #         "omtfTree.root"
 # "../jobs/vc_Muon/crab_Run2022G/omtfTree.root"
-  "../jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
+# "../jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
+  "/afs/cern.ch/work/k/konec/CMSSW_12_4_8.ana/src/UserCode/OmtfAnalysis/jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
 #  "../jobs/v5_JetMET/omtfTree.root"
 #  "../jobs/v7_EGamma/omtfTree.root"
 #   "../jobs/v9_Muon/crab_Run2022G_from362755/omtfTree.root"

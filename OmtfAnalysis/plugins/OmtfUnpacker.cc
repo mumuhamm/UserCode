@@ -420,6 +420,8 @@ private:
   unsigned long eventCounter_;
 
   edm::EDGetTokenT<FEDRawDataCollection> fedToken_;
+  edm::ESGetToken<RPCEMap, RPCEMapRcd> theRPCEMapToken;
+  edm::ESGetToken<RPCAMCLinkMap, RPCOMTFLinkMapRcd> theAmcMappingToken;
 
   std::map<OmtfEleIndex, LinkBoardElectronicIndex> omtf2rpc_;
   std::map<OmtfEleIndex, CSCDetId> omtf2csc_;
@@ -438,11 +440,15 @@ OmtfUnpackerPriv::OmtfUnpackerPriv(const edm::ParameterSet& pset) : theConfig(ps
   produces<L1MuDTChambThContainer>("OmtfUnpack");
 
   fedToken_ = consumes<FEDRawDataCollection>(pset.getParameter<edm::InputTag>("InputLabel"));
+  theRPCEMapToken = esConsumes<edm::Transition::BeginRun>();
+  theAmcMappingToken = esConsumes<edm::Transition::BeginRun>();
+ 
 }
 
 void OmtfUnpackerPriv::beginRun(const edm::Run &run, const edm::EventSetup& es) {
-  edm::ESTransientHandle<RPCEMap> readoutMapping;
-  es.get<RPCEMapRcd>().get(readoutMapping);
+//  edm::ESTransientHandle<RPCEMap> readoutMapping;
+//  es.get<RPCEMapRcd>().get(readoutMapping);
+  edm::ESTransientHandle<RPCEMap> readoutMapping = es.getTransientHandle(theRPCEMapToken);
   const RPCReadOutMapping * cabling= readoutMapping->convert();
   theCabling = cabling;
   LogDebug("OmtfUnpackerPriv") <<" Has readout map, VERSION: " << cabling->version() << std::endl;
@@ -454,9 +460,10 @@ void OmtfUnpackerPriv::beginRun(const edm::Run &run, const edm::EventSetup& es) 
     edm::FileInPath fip(theConfig.getParameter<string>("rpcConnectionFile"));
     omtfLink2Ele.init(fip.fullPath());
   } else {
-    edm::ESHandle<RPCAMCLinkMap> amcMapping;
-    es.get<RPCOMTFLinkMapRcd>().get(amcMapping);
-    omtfLink2Ele.init(amcMapping->getMap());
+//    edm::ESHandle<RPCAMCLinkMap> amcMapping;
+//    es.get<RPCOMTFLinkMapRcd>().get(amcMapping);
+    auto const& amcMapping = es.getData(theAmcMappingToken);
+    omtfLink2Ele.init(amcMapping.getMap());
   }
 
   std::vector<const DccSpec*> dccs = cabling->dccList();

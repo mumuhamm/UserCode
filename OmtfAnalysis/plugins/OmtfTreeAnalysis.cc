@@ -140,7 +140,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
   for (int ev=0; ev<nentries; ev++) {
 
     chain.GetEntry(ev);
-    std::cout <<"---------------------------------------#"<<ev<<", event: "<< *event << std::endl;
+ //   std::cout <<"---------------------------------------#"<<ev<<", event: "<< *event << std::endl;
 
     if (theAnaMenu) theAnaMenu->updateMenu(bitsL1->names, bitsHLT->names);
 
@@ -190,7 +190,7 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
     theAnaMenu->debug=false;
     theAnaEff->debug=false;
 */
-    if (theAnaDataEmul) theAnaDataEmul->debug = true; 
+//    if (theAnaDataEmul) theAnaDataEmul->debug = true; 
 
     //
     // Analyses

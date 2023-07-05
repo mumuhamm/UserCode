@@ -1,7 +1,8 @@
 #ifndef OmtfTreeMaker_H
 #define OmtfTreeMaker_H
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
+//#include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "DataFormats/L1TMuon/interface/RegionalMuonCand.h"
@@ -43,13 +44,16 @@ namespace reco { class Muon; }
 class TTree;
 class TFile;
 
-class OmtfTreeMaker : public edm::EDAnalyzer {
+class OmtfTreeMaker : public edm::one::EDAnalyzer<edm::one::WatchRuns> {
+//class OmtfTreeMaker : public edm::one::EDAnalyzer<edm::one::SharedResources> {
+//class OmtfTreeMaker : public edm::EDAnalyzer {
 public:
-  OmtfTreeMaker(const edm::ParameterSet& cfg);
+  explicit OmtfTreeMaker(const edm::ParameterSet& cfg);
   virtual ~OmtfTreeMaker();
   virtual void beginJob();
   virtual void beginRun(const edm::Run &ru, const edm::EventSetup &es);
   virtual void analyze(const edm::Event &ev, const edm::EventSetup &es);
+  virtual void endRun(edm::Run const&, edm::EventSetup const&) {}
   virtual void endJob();
 
   //call back to register consumes. Alternatively possible to declare friend class and call it therein

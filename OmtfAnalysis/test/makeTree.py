@@ -55,14 +55,16 @@ fileNames = cms.untracked.vstring(
 #  '/store/data/Run2022G/JetMET/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v1/000/362/437/00000/cc10cdfb-6a8c-455d-a441-960522112238.root',
 #   '/store/data/Run2022G/Muon/MINIAOD/PromptReco-v1/000/362/760/00000/01cd8e14-f3a9-412e-8548-3f17ea13040b.root',
 #  '/store/data/Run2022G/JetMET/MINIAOD/PromptReco-v1/000/362/760/00000/110404fa-abee-41ad-9ff3-25756fa54d58.root',
+ '/store/data/Run2023D/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/369/870/00000/42f402f5-c1ce-433f-8d92-7af6cb2004d5.root',
+ '/store/data/Run2023D/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/369/956/00000/50d95203-d831-4a5f-8e47-f9147cfc0e7f.root',
   ),
 #skipEvents =  cms.untracked.uint32(764)
 #skipEvents =  cms.untracked.uint32(19177)
 #skipEvents =  cms.untracked.uint32(19177+1117)
 #skipEvents =  cms.untracked.uint32(19177+1332)
 )
-process.source.fileNames = files
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+#process.source.fileNames = files
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(101) )
 
 #
 # import of standard configurations

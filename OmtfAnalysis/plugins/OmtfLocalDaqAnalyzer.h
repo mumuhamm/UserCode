@@ -5,11 +5,11 @@
 #include "UserCode/OmtfAnalysis/interface/OmtfAlgoHit.h"
 
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 
-class OmtfLocalDaqAnalyzer : public edm::EDAnalyzer {
+class OmtfLocalDaqAnalyzer : public edm::one::EDAnalyzer<> {
 
 struct OmtfData {
   int number;

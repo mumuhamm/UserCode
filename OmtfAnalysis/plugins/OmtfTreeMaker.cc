@@ -50,7 +50,9 @@ vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
 
 void OmtfTreeMaker::beginRun(const edm::Run &ru, const edm::EventSetup &es)
 {
+  std::cout <<"**** HERE BEGIN RUN!" << std::endl;
   theMenuInspector.checkRun(ru,es);
+  std::cout <<"**** HERE BEGIN RUN! - end" << std::endl;
 }
 
 void OmtfTreeMaker::beginJob()
@@ -129,6 +131,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
 
   //
   // fill algoBits info
+  //
   //
   static edm::RunNumber_t lastRun = 0;
   if (ev.run() != lastRun) {

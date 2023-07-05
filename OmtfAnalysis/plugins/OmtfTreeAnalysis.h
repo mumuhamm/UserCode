@@ -1,7 +1,7 @@
 #ifndef OmtfTreeAnalysis_H
 #define OmtfTreeAnalysis_H
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "TObjArray.h"
@@ -19,12 +19,13 @@ class AnaL1Distribution;
 
 namespace edm { class Event; class EventSetup; }
 
-class OmtfTreeAnalysis : public edm::EDAnalyzer {
+class OmtfTreeAnalysis : public edm::one::EDAnalyzer<edm::one::WatchRuns> {
 public:
   OmtfTreeAnalysis(const edm::ParameterSet & cfg);
   virtual ~OmtfTreeAnalysis(){}
   virtual void beginJob();
   virtual void beginRun(const edm::Run&,  const edm::EventSetup& es);
+  virtual void   endRun(const edm::Run&,  const edm::EventSetup& es) { }
   virtual void analyze(const edm::Event&, const edm::EventSetup& es);
   virtual void endJob();
 

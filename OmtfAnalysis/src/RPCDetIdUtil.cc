@@ -6,6 +6,7 @@
 #include "TrackingTools/Records/interface/TrackingComponentsRecord.h"
 #include "DataFormats/GeometryVector/interface/GlobalPoint.h"
 
+/*
 void RPCDetIdUtil::print(const edm::EventSetup &es)
 {
   edm::ESHandle<RPCGeometry> rpcGeometry;
@@ -19,6 +20,7 @@ void RPCDetIdUtil::print(const edm::EventSetup &es)
                        <<" consecutiveLayer: "<<layer(position.eta())
                        << std::endl;
 }
+*/
 
 std::ostream & operator<< (std::ostream &out, const RPCDetIdUtil &o) {
   out <<"DetId: "<<o.theRpcDet.rawId()
