@@ -28,7 +28,7 @@
 #include "DataFormats/Common/interface/Handle.h"
 
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 TH1D *hPhiDT, *hPhiCSC, *hPhiRPC, *hDeltaPhiDT, *hDeltaPhiCSC, *hDeltaPhiRPC;
