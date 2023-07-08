@@ -15,14 +15,14 @@ process.load('Configuration.Geometry.GeometryExtended2017Reco_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag.globaltag = '113X_dataRun3_Express_v2'
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_mc_FULL', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 
 
 process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
-#       "omtfTree.root"
-   "/eos/user/a/almuhamm/OMTF_UW/merged_output_data/DoubleMuon_MonteCarlo/DoubleMuon_MC.root"
+       "omtfTree.root"
+#   "/eos/home-a/almuhamm/OMTF_UW/merged_output_data/omtfTree_EraB.root"
 #  "../jobs/v5_JetMET/omtfTree.root"
 #  "../jobs/v7_EGamma/omtfTree.root"
    # "../jobs/v9_Muon/crab_Run2022G_from362755/omtfTree.root"

@@ -1,7 +1,7 @@
 #ifndef MenuInspector_H
 #define MenuInspector_H
 
-#include "FWCore/Framework/interface/EDFilter.h"
+//#include "FWCore/Framework/interface/one/EDFilter.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "DataFormats/Provenance/interface/RunID.h"
@@ -34,9 +34,9 @@ class L1TUtmTriggerMenu;
 
 namespace edm {class ParameterSet; class Event; class EventSetup; class Run; }
 
-class MenuInspector :  public edm::EDFilter {
+class MenuInspector {// :  public edm::one::EDFilter
 public:
-  explicit MenuInspector(const edm::ParameterSet&, edm::ConsumesCollector cColl);
+  MenuInspector(const edm::ParameterSet&, edm::ConsumesCollector cColl);
 //, edm::esConsumes<edm::Transition::BeginRun> && esConsum);
   virtual ~MenuInspector();
 
@@ -76,7 +76,7 @@ private:
   std::vector<unsigned int> theFiredL1;
   std::map<std::string, int> theNamesCheckHltMuMatchIdx;
 
-  const edm::ESGetToken<L1TUtmTriggerMenu,L1TUtmTriggerMenuRcd> theL1MenuToken;
+  //const edm::ESGetToken<L1TUtmTriggerMenu,L1TUtmTriggerMenuRcd> theL1MenuToken;
 
 };
 #endif

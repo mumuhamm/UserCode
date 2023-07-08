@@ -8,7 +8,7 @@
 #include <string>
 
 // user include files
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "FWCore/Utilities/interface/InputTag.h"
@@ -88,7 +88,7 @@ namespace {
 
 
 
-class OmtfDigiCompare : public edm::EDAnalyzer {
+class OmtfDigiCompare : public edm::one::EDAnalyzer<edm::one::SharedResources> {
 public:
   OmtfDigiCompare (const edm::ParameterSet & cfg);
   virtual ~OmtfDigiCompare(){ 

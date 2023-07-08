@@ -37,9 +37,7 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
     theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()), 
     theBestMuonFinder(cfg.getParameter<edm::ParameterSet>("bestMuonFinder"), consumesCollector()),
     theL1ObjMaker(cfg.getParameter<edm::ParameterSet>("l1ObjMaker"), consumesCollector()), 
-#if 0
     theL1PhaseIIObjMaker(cfg.getParameter<edm::ParameterSet>("l1PhaseIIObjMaker"), consumesCollector()),
-#endif
     theGenParticleFinder(cfg.getParameter<edm::ParameterSet>("genObjectFinder"), consumesCollector()),
     theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector()),
     theSynchroCheck(cfg.getParameter<edm::ParameterSet>("synchroCheck"), consumesCollector())
@@ -120,7 +118,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   genColl = new GenObjColl( theGenParticleFinder.genparticles(ev,es) ) ;
   l1ObjColl = new L1ObjColl;
   l1PhaseIIObjColl = new L1PhaseIIObjColl;
-
   bitsL1 = new TriggerMenuResultObj();
   bitsHLT = new TriggerMenuResultObj();
 
@@ -153,7 +150,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1ObjColl->set( std::vector<double>(l1Objs.size(),0.));
   }
   
-#if 0
+
    // get L1 candidates new class PhaseII
   std::vector<L1PhaseIIObj> l1PhaseIIObjs = theL1PhaseIIObjMaker(ev);
   if (l1PhaseIIObjs.size()) {
@@ -161,7 +158,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1PhaseIIObjColl->set( std::vector<bool>(l1PhaseIIObjs.size(),false));
     l1PhaseIIObjColl->set( std::vector<double>(l1PhaseIIObjs.size(),0.));
   }
-#endif
+
 
 //
 bool debug=0;
@@ -186,7 +183,7 @@ bool debug=0;
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
 
-  L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::uGMT_emu);
+  L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::OMTF);
   if (phaseIIColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, phaseIIColl.getL1PhaseIIObjs().front().etaValue(), 
 						     phaseIIColl.getL1PhaseIIObjs().front().phiValue());

@@ -3,7 +3,7 @@ config = Configuration()
 config.section_('General')
 config.General.transferLogs = False
 config.General.transferOutputs = True
-config.General.workArea = 'OMTF_DrellYanMLL50MC'
+config.General.workArea = '/eos/user/a/almuhamm/ZMu_Test/crab_logs/OMTF_DrellYanMLL50MC'
 config.General.requestName = 'DrellYanMLL50MC_OMTFL1T'
 config.section_('JobType')
 config.JobType.psetName = '/eos/user/a/almuhamm/01.MuonTech/CMSSW_12_6_3/src/UserCode/OmtfAnalysis/test/makeTree_SingleMuZMu_Displaced.py'

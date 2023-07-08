@@ -80,7 +80,7 @@ struct OmtfAlgoMuon {
     for(unsigned int i = 0; i < firedLayers.size(); i++) { if(firedLayers[i]) firedLayersOstr<<i<<", "; }
     std::stringstream flayers;
     for (unsigned int i=0; i < firedLayers.size(); i++) {
-      switch (i) { case(6): case (10): flayers<<" "; default: if(firedLayers[i])flayers<<i%10; else flayers<<".";}
+      switch (i) { case(6): case (10): flayers<<" "; [[fallthrough]]; default: if(firedLayers[i])flayers<<i%10; else flayers<<".";}
     }
     out <<"AlgoMuon: "
        <<(o.valid ? "v" : " ")<<std::setfill(' ')<<std::dec

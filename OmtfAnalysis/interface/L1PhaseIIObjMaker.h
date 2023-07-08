@@ -20,7 +20,7 @@ public:
 private:
   void run(const edm::Event &ev);
   bool makeGmtCandidates(const edm::Event &ev, L1PhaseIIObj::TYPE t, std::vector<L1PhaseIIObj> &result);
-
+  bool makeRegCandidates(const edm::Event &iEvent,  L1PhaseIIObj::TYPE type, std::vector<L1PhaseIIObj> &result);
 private:
   edm::ParameterSet   theConfig;
   std::vector<L1PhaseIIObj>  theL1PhaseIIObjs;

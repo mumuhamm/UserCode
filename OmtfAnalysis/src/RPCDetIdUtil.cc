@@ -3,15 +3,27 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "Geometry/RPCGeometry/interface/RPCGeometry.h"
+#include "Geometry/Records/interface/MuonGeometryRecord.h"
 #include "TrackingTools/Records/interface/TrackingComponentsRecord.h"
 #include "DataFormats/GeometryVector/interface/GlobalPoint.h"
 
 void RPCDetIdUtil::print(const edm::EventSetup &es)
 {
-  edm::ESHandle<RPCGeometry> rpcGeometry;
-  es.get<MuonGeometryRecord>().get(rpcGeometry);
+ // edm::ESHandle<RPCGeometry> rpcGeometry;
+ // es.get<MuonGeometryRecord>().get(rpcGeometry);
 
-  GlobalPoint position = rpcGeometry->idToDet(theRpcDet)->position();
+
+ // idToDet() 
+
+    edm::ESGetToken<RPCGeometry, MuonGeometryRecord> rpcGeometry;
+    
+ // rpcGeometry(iC.esConsumes<RPCGeometry, MuonGeometryRecord>());
+ // GlobalPoint position = rpcGeometry->idToDet(theRpcDet)->position();
+ /////////En este estaba   GlobalPoint position =  &es.getData(rpcGeometry).idToDet(theRpcDet)->position();
+//  GlobalPoint position = (*rpcGeometry).idToDet(theRpcDet)->position();
+
+  const auto* positionPtr = &es.getData(rpcGeometry).idToDet(theRpcDet)->position();
+  GlobalPoint position = *positionPtr;
   
   std::cout << (*this) <<" R= "<<position.perp()
                        <<" Z= "<<position.z()

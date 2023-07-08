@@ -106,8 +106,9 @@ RPCRawSynchro::ProdItem SynchroCountsGrabber::counts(const edm::Event &ev, const
 
   if (theMapWatcher.check(es)) {
     delete theCabling;
-    edm::ESTransientHandle<RPCEMap> readoutMapping;
-    es.get<RPCEMapRcd>().get(readoutMapping);
+   // edm::ESTransientHandle<RPCEMap> readoutMapping;
+   // es.get<RPCEMapRcd>().get(readoutMapping);
+    edm::ESTransientHandle<RPCEMap> readoutMapping =  es.getTransientHandle(theReadoutMappingToken);
     theCabling = readoutMapping->convert();
     //LogTrace("") << "SynchroCountsGrabber - record has CHANGED!!, read map, VERSION: " << theCabling->version();
     std::cout << "SynchroCountsGrabber - record has CHANGED!!, read map, VERSION: " << theCabling->version() << std::endl;
@@ -122,8 +123,9 @@ RPCRawSynchro::ProdItem SynchroCountsGrabber::counts(const edm::Event &ev, const
     return result;
   }
 
-  edm::ESHandle<RPCGeometry> rpcGeometry;
-  es.get<MuonGeometryRecord>().get(rpcGeometry);
+  //edm::ESHandle<RPCGeometry> rpcGeometry;
+  //es.get<MuonGeometryRecord>().get(rpcGeometry);
+  const RPCGeometry & rpcGeometry = es.getData(theRPCGeometryToken);
 
 
   for(RPCRawSynchro::ProdItem::const_iterator it = synchroCounts->begin(); it != synchroCounts->end(); ++it) {
@@ -134,7 +136,7 @@ RPCRawSynchro::ProdItem SynchroCountsGrabber::counts(const edm::Event &ev, const
     for (std::vector<FebConnectorSpec>::const_iterator iif = febs.begin(); iif != febs.end(); ++iif) dets[iif->rawId()] = true;
     for ( std::map<uint32_t,bool>::const_iterator im = dets.begin(); im != dets.end(); ++im) {
       RPCDetId rpcDet(im->first);
-      const GeomDet *geomDet = rpcGeometry->idToDet(rpcDet);
+      const GeomDet *geomDet = rpcGeometry.idToDet(rpcDet);
       GlobalPoint detPosition = geomDet->position();
       if (deltaR(eta,phi, detPosition.eta(), detPosition.phi()) > deltaR_MuonToDetUnit_cutoff) continue;
       takeIt = true;

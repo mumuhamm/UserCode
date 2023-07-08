@@ -10,7 +10,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -53,21 +53,24 @@
 namespace {
   edm::EDGetTokenT<edm::TriggerResults> theTrigResultToken;
   edm::EDGetTokenT<GlobalAlgBlkBxCollection> theGlobalAlgToken;
+  edm::ESGetToken<L1TUtmTriggerMenu,L1TUtmTriggerMenuRcd> theL1MenuToken;
 }
 
 
 MenuInspector::MenuInspector(const edm::ParameterSet& cfg, edm::ConsumesCollector cColl)
   : lastEvent(0), lastRun(0),
     theCounterIN(0), theCounterL1(0), theCounterHLT(0),
-    theWarnNoColl(cfg.getUntrackedParameter<bool>("warnNoColl",true)),
-    theL1MenuToken(cColl.esConsumes<edm::Transition::BeginRun>())
+    theWarnNoColl(cfg.getUntrackedParameter<bool>("warnNoColl",true))
+   // theL1MenuToken(cColl.esConsumes<edm::Transition::BeginRun>())
 { 
   theTrigResultToken = cColl.consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
   theGlobalAlgToken  = cColl.consumes<GlobalAlgBlkBxCollection>(edm::InputTag("hltGtStage2Digis"));
   l1tUtmTriggerMenuToken = cColl.esConsumes<edm::Transition::BeginRun>();
 
   cColl.consumes<trigger::TriggerEvent>(edm::InputTag("hltTriggerSummaryAOD","","HLT"));
-
+ 
+  theL1MenuToken=cColl.esConsumes<edm::Transition::BeginRun>();
+  
   std::vector<std::string> names = cfg.getParameter<std::vector<std::string> >("namesCheckHltMuMatch");
   for (auto name : names) theNamesCheckHltMuMatchIdx[name]=-1;
 }
@@ -79,8 +82,8 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
   //
 //  edm::ESHandle<L1TUtmTriggerMenu> menu;
 //  es.get<L1TUtmTriggerMenuRcd>().get(menu);
-  auto const & menu = es.getData(theL1MenuToken);
-//  const L1TUtmTriggerMenu & menu = es.getData(theL1MenuToken);
+//  auto const & menu = es.getData(theL1MenuToken);
+  const L1TUtmTriggerMenu & menu = es.getData(theL1MenuToken);
 
   theNamesAlgoL1.clear();
   theNamesAlgoL1.resize(menu.getAlgorithmMap().size(),"");
@@ -92,7 +95,7 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
     if (index >= theNamesAlgoL1.size() ) theNamesAlgoL1.resize( index+1,"");  
     theNamesAlgoL1[index]=name;
   }
-//  std::cout <<" size of indexes: "<< theNamesAlgoL1.size() << std::endl;
+  std::cout <<" size of indexes: "<< theNamesAlgoL1.size() << std::endl;
 //  for (unsigned int i=0; i< theNamesAlgoL1.size(); ++i) std::cout <<" L1 indes: " << i << " algo: "<<theNamesAlgoL1[i] << std::endl;
 
   //
@@ -216,7 +219,7 @@ std::vector<unsigned int>  MenuInspector::runFiredAlgosL1(const edm::Event&ev, c
   edm::Handle<GlobalAlgBlkBxCollection> ugt;
   ev.getByToken(theGlobalAlgToken, ugt);
   if (!ugt.isValid()) {
-     //if (theWarnNoColl) std::cout << " PROBLEM, record uGT not OK " << std::endl;
+    // if (theWarnNoColl) std::cout << " PROBLEM, record uGT not OK " << std::endl;
     return result;
   }
 

@@ -12,7 +12,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
       "HLT_IsoMu20_v","HLT_IsoMu24_v","HLT_IsoMu27_v"
     ),
 
-    warnNoColl = cms.untracked.bool(False) 
+    #warnNoColl = cms.untracked.bool(False) 
   ),
 
    linkSynchroGrabber = cms.PSet(
@@ -49,7 +49,11 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     warnNoColl = cms.untracked.bool(True)
   ),
   l1PhaseIIObjMaker = cms.PSet(
-    gmtEmulSrc = cms.InputTag('l1tTkMuonsGmt','',''),   
+    #gmtEmulSrc = cms.InputTag('gmtStage2Digis','',''),   
+    omtfDataSrc = cms.InputTag('gmtStage2Digis','OMTF'),
+    emtfDataSrc = cms.InputTag('gmtStage2Digis','EMTF'),
+    bmtfDataSrc = cms.InputTag('gmtStage2Digis','BMTF'),
+    #gmtDataSrc = cms.InputTag('gmtStage2Digis','Muon'),
     warnNoColl = cms.untracked.bool(True)
   ),
   genObjectFinder = cms.PSet(
@@ -59,7 +63,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   ),                                 
   closestTrackFinder = cms.PSet(
     trackColl = cms.InputTag("generalTracks"),
-    warnNoColl = cms.untracked.bool(False)
+    warnNoColl = cms.untracked.bool(True)
   ),                         
 
   onlyBestMuEvents = cms.bool(False),

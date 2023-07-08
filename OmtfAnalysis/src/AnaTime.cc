@@ -121,6 +121,7 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
   //
   const std::vector<L1Obj> & l1mtfs = *l1Objs;
   const std::vector<MuonObj> & muons = *muonColl;
+
   bool printdeb = false;
   for (const auto & l1mtf : l1mtfs) {
     bool matched  = false;
@@ -141,7 +142,7 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
         if (l1mtf.bx == -2) hTimeDeltaR_QW_B2->Fill(deltaRW); 
         if (l1mtf.bx == -1) hTimeDeltaR_QW_B1->Fill(deltaRW); 
         if ( deltaR < 0.2 && l1mtf.bx < 0) {
-          printdeb = true;
+          printdeb = false;
           std::bitset<18> hitLayers(l1mtf.hits);
           for (unsigned int hitLayer=0; hitLayer<18;hitLayer++) if(hitLayers[hitLayer]) hTimeLayers->Fill(hitLayer);
         }

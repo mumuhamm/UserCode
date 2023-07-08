@@ -12,7 +12,7 @@
 
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "DataFormats/RPCDigi/interface/RPCRawSynchro.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 //#include "UserCode/OmtfAnalysis/interface/TrackAtSurface.h"

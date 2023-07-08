@@ -3,13 +3,13 @@
 
 #include "TObjArray.h"
 #include "UserCode/OmtfAnalysis/interface/OmtfAlgoHit.h"
+#include "UserCode/OmtfAnalysis/interface/OmtfGmtData.h"
 
-
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 
-class OmtfLocalDaqAnalyzer : public edm::EDAnalyzer {
+class OmtfLocalDaqAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources> {
 
 struct OmtfData {
   int number;

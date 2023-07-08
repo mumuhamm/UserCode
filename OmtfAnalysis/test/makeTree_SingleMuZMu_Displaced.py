@@ -30,20 +30,9 @@ process.source = cms.Source("PoolSource",
 			        #'root://cms-xrd-global.cern.ch//store/data/Run2022B/SingleMuon/RAW-RECO/ZMu-PromptReco-v1/000/355/558/00000/59b3ee22-5304-4dd0-bd4d-16d2b659c964.root'	
                                 #'root://cmsxrootd-kit.gridka.de:1094//store/data/Run2022B/SingleMuon/RAW-RECO/ZMu-PromptReco-v1/000/355/100/00000/672cc5a4-0957-45c3-a46a-a5e06d3a2e50.root'				
 				#'file:/eos/user/a/almuhamm/OMTF_UW/Simulated_Samples/ForMyStudy/Qm_4thApril/0000/SingleMu_OneOverPt_1_100_m_298.root'
-				#'root://cms-xrd-global.cern.ch//store/mc/Run3Winter22DRPremix/DYtoLL_NoTau_CP5_13p6TeV_amcatnloFXFX-pythia8/AODSIM/122X_mcRun3_2021_realistic_v9-v2/40000/00150c10-f741-4bbc-a79f-365650403448.root'
-                                #'root://cms-xrd-global.cern.ch//store/mc/Run3Winter22DRPremix/DYJetsToLL_M-50_TuneCP5_13p6TeV-madgraphMLM-pythia8/AODSIM/122X_mcRun3_2021_realistic_v9_ext2-v2/40000/0027e0ac-873f-4f49-884b-4c5b67c85724.root'
-
- 				#'root://cms-xrd-global.cern.ch//store/mc/Run3Summer22DRPremix/DYTo2L_MLL-4to50_TuneCP5_13p6TeV_pythia8/AODSIM/124X_mcRun3_2022_realistic_v12-v2/80000/0f61228c-5fce-4d3a-9fa4-929a43e6cdd8.root'
-                                #'root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EEDR/ZToMuMu_M-50To120_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/Poisson70KeepRAW_124X_mcRun3_2022_realistic_postEE_v1-v2/2820000/001d6ab4-7d04-409f-8c3b-6cbfd5ac0c11.root'
-  				
-
-
-'root://eoscms.cern.ch//eos/cms/store/mc/Run3Winter23Reco/DYTo2L_MLL-50_TuneCP5_13p6TeV_pythia8/GEN-SIM-RECO/KeepSi_RnD_126X_mcRun3_2023_forPU65_v1-v2/25410000/01192212-dfa7-4360-a352-f732aa529a92.root'
-#'root://cms-xrd-global.cern.ch//store/mc/Run3Winter23Reco/DYTo2L_MLL-50_TuneCP5_13p6TeV_pythia8/GEN-SIM-RECO/RnD_126X_mcRun3_2023_forPU65_v1-v2/2540000/0004b7a9-1ba7-442a-8b2e-9f2717ff5aca.root'
-#'root://eoscms.cern.ch//eos/cms/store/mc/Run3Winter23Reco/DYTo2L_MLL-4to50_TuneCP5_13p6TeV_pythia8/GEN-SIM-RECO/KeepSi_RnD_126X_mcRun3_2023_forPU65_v1-v2/50000/01519662-ccf1-4a2e-9f6c-874f1ee61e1d.root'
-				#'root://cms-xrd-global.cern.ch//store/mc/Run3Winter23Reco/DYTo2L_MLL-4to50_TuneCP5_13p6TeV_pythia8/GEN-SIM-RECO/RnD_126X_mcRun3_2023_forPU65_v1-v2/2560000/1ae8e3cf-e0f2-423f-be8b-75bb1e340512.root'
-				#'root://cms-xrd-global.cern.ch//store/mc/Run3Winter22DR/ZToMuMu_M-200To400_TuneCP5_13p6TeV-powheg-pythia8/GEN-SIM-RECO/L1TPU0to99FEVT_122X_mcRun3_2021_realistic_v9-v2/2560000/05ecbd7e-800e-457d-9d9a-a6f6e7dd7a09.root'
-
+				#'root://cms-xrd-global.cern.ch//store/mc/Run3Winter23Reco/DoubleMuon_Pt-1To1000_gun/GEN-SIM-RECO/126X_mcRun3_2023_forPU65_v1-v2/2560000/006cd832-bf41-4895-a97c-81ac6bbab7b9.root'
+                                'root://cms-xrd-global.cern.ch//store/data/Run2023B/Muon1/RAW-RECO/ZMu-PromptReco-v1/000/366/469/00000/70d9986d-9df0-46c8-b6be-9d96a8113ccc.root'
+  
 
 ),
                             secondaryFileNames = cms.untracked.vstring(),
@@ -59,13 +48,12 @@ process.source.fileNames = fileList
 '''
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(600)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(50)
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
-                                     #SkipEvent   = cms.untracked.vstring('ProductNotFound'))
 
 from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_mc_FULL','')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_mc_FULL','')
 ####Reco-Muon
 process.recomuon = cms.EDFilter("MuonRefSelector",
                                         src = cms.InputTag("muons"),
@@ -86,8 +74,22 @@ process.omtfEmulator.lctCentralBx = cms.int32(8);
 process.omtfEmulator.bxMin = cms.int32(-3)
 process.omtfEmulator.bxMax = cms.int32(4)
 
+#####OMTF phaseII EMulator
+import L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_cfi
+process.omtfEmulatorPhase2=L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_cfi.simOmtfPhase2Digis.clone()
+process.omtfEmulatorPhase2.srcDTPh = cms.InputTag('omtfStage2Digis')
+process.omtfEmulatorPhase2.srcDTTh = cms.InputTag('omtfStage2Digis')
+process.omtfEmulatorPhase2.srcCSC = cms.InputTag('omtfStage2Digis')
+process.omtfEmulatorPhase2.srcRPC = cms.InputTag('omtfStage2Digis')
+process.omtfEmulatorPhase2.lctCentralBx = cms.int32(8);
+process.omtfEmulatorPhase2.bxMin = cms.int32(-3)
+process.omtfEmulatorPhase2.bxMax = cms.int32(4)
+
+
+
+
 process.raw2digi_step = cms.Path(process.muonRPCDigis+process.muonCSCDigis+process.bmtfDigis+process.emtfStage2Digis+process.twinMuxStage2Digis+process.gmtStage2Digis+process.caloStage2Digis)
-process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfEmulator)
+process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfEmulator+process.omtfEmulatorPhase2)
 
 process.ntup = cms.Sequence(process.recomuon)
 
