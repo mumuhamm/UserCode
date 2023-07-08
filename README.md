@@ -1,4 +1,7 @@
 # Ntuple Production for the studies of  L1Trigger Efficiency 
+## Contributors
+- ```Marcin, Karol, Artur, Dario, Alibordi```
+(with update with full names soon)
 ### Generic steps : Clone & Run : 
 ```bash
 cmsrel CMSSW_13_1_0
