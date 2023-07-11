@@ -268,6 +268,25 @@ def cTimeDeltaR(canvas) :
   c.Update()
   return
 
+def cTimeEta(canvas) :
+  c=TCanvas("cTimeEta","cTimeEta",600,400)
+  canvas.Add(c)
+  c.SetLogy()
+  c.SetTickx()
+  frame=c.DrawFrame(-2.4, 1.e-4, 2.4, 1.02);
+  frame.SetYTitle("fraction")
+  frame.SetXTitle("\eta")
+  h0 = gROOT.FindObject("hTimeEta_Pt0").Clone("hTimeEta_Pt0")
+  h0.SetLineColor(2)
+  h10 = gROOT.FindObject("hTimeEta_Pt10").Clone("hTimeEta_Pt10")
+  h10.SetLineColor(3)
+  h22 = gROOT.FindObject("hTimeEta_Pt22").Clone("hTimeEta_Pt22")
+  h22.SetLineColor(4)
+  h0.Draw('same')
+  h10.Draw('same')
+  h22.Draw('same')
+  c.Update()
+  return 
 
 def plotAll(canvas) :
 #  cTimeMtfsCorr(canvas)
@@ -287,6 +306,7 @@ def plotAll(canvas) :
   cTimeDeltaR(canvas)
   cTimeLayers(canvas)
   cTimeEffPt(canvas)
+  cTimeEta(canvas)
   return
 
 

@@ -28,10 +28,10 @@ f.ls();
 canvas = TObjArray()
 #plotsEvent.plotAll(canvas)
 #plotsMuon.plotAll(canvas)
-plotsEff.plotAll(canvas)
+#plotsEff.plotAll(canvas)
 #plotsSecMuSel.plotAll(canvas)
 #plotsDataEmul.plotAll(canvas)
-#plotsTime.plotAll(canvas)
+plotsTime.plotAll(canvas)
 
 #plotsMenu.plotAll(canvas)
 #plotsSynch.plotAll(canvas)

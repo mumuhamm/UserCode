@@ -20,13 +20,15 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
-        "omtfTree.root"
+#       "omtfTree.root"
 #  "../jobs/Run2023B_JetMET/crab_JetMET0_jobVer2/omtfTree.root",
 #  "../jobs/Run2023B_JetMET/crab_JetMET1_jobVer2/omtfTree.root",
 #  "../jobs/Run2023C_JetMET/crab_JetMET0_jobVer2/omtfTree.root",
 #  "../jobs/Run2023C_JetMET/crab_JetMET1_jobVer2/omtfTree.root",
-#   "../jobs/Run2023C_Muon/crab_Muon0_jobVer2/omtfTree.root",
-#   "../jobs/Run2023C_Muon/crab_Muon1_jobVer2/omtfTree.root",
+    "../jobs/Run2023B_Muon/crab_Muon0_jobVer3/omtfTree.root",
+    "../jobs/Run2023B_Muon/crab_Muon1_jobVer3/omtfTree.root",
+    "../jobs/Run2023C_Muon/crab_Muon0_jobVer3/omtfTree.root",
+    "../jobs/Run2023C_Muon/crab_Muon1_jobVer3/omtfTree.root",
 # "../jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
 #  "/afs/cern.ch/work/k/konec/CMSSW_12_4_8.ana/src/UserCode/OmtfAnalysis/jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
 #  "../jobs/v5_JetMET/omtfTree.root"
@@ -53,11 +55,11 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
        requireUnique       = cms.bool(True),
        requireHLT          = cms.bool(True),
        requireIsoForHLTIso = cms.bool(True),
-       minAcceptMuPtVal    = cms.double(20.),
+       minAcceptMuPtVal    = cms.double(24.),
        minMatchStations    = cms.uint32(2),
        maxMuEtaVal         = cms.double(2.4),
        minAcceptL1PtVal    = cms.double(22.0),
-       maxL1DeltaR         = cms.double(0.05),
+       maxL1DeltaR         = cms.double(0.1),
        minAccepL1Q         = cms.int32(12), 
      ),
     probeMuon = cms.PSet (
@@ -96,17 +98,17 @@ process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
     minNumberRpcDtCscHits = cms.uint32(2),
   ),
 
-  filterByAnaMenu = cms.bool(False),
+  filterByAnaMenu = cms.bool(True),
   anaMenu = cms.PSet( #OR of conditions for L1 and separately for HLT
 #   acceptL1_Names  = cms.vstring("any"),
-#   acceptL1_Names  = cms.vstring("L1_IsolatedBunch","L1_FirstBunchInTrain","L1_FirstCollisionInOrbit","L1_FirstCollisionInTrain"),
-#   acceptHLT_Names = cms.vstring("any"),
+    acceptL1_Names  = cms.vstring("L1_IsolatedBunch","L1_FirstBunchInTrain","L1_FirstCollisionInOrbit","L1_FirstCollisionInTrain"),
+    acceptHLT_Names = cms.vstring("any"),
 #   acceptHLT_Names = cms.vstring("HLT_AK8PF","HLT_Jet","HLT_HT","HLT_PFJet","HLT_PFHT"),
   ),
 
    anaDataEmul =  cms.PSet( bxMin=cms.int32(-3), bxMax=cms.int32(4)),
    anaEff =  cms.PSet(),     
-   anaTime = cms.PSet( maxPt = cms.double(21.99), minPt = cms.double(0.), requireOtherMuTrg = cms.bool(False)),
+   anaTime = cms.PSet( maxPt = cms.double(21.99), minPt = cms.double(0.), requireOtherMuTrg = cms.bool(True)),
    anaSynch = cms.PSet(),
    anaDiMu = cms.PSet(),
    anaL1Distribution = cms.PSet(),
