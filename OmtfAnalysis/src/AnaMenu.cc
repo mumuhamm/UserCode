@@ -80,7 +80,7 @@ void AnaMenu::resume(TObjArray& histos)
     ibin++;
     hMenuAlgosL1->GetXaxis()->SetBinLabel(ibin, (*it).first.c_str());
     hMenuAlgosL1->SetBinContent(ibin, (*it).second);
-    std::cout <<" BIN "<<ibin<<" LABEL: "<<(*it).first.c_str()<<" ENTRIES:"<<(*it).second<<std::endl;
+//    std::cout <<" BIN "<<ibin<<" LABEL: "<<(*it).first.c_str()<<" ENTRIES:"<<(*it).second<<std::endl;
   }
   ibin = 0;
   std::cout <<" SIZE OF HLT ALGOS: " << sizeHLT << std::endl;

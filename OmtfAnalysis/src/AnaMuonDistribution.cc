@@ -40,13 +40,13 @@ AnaMuonDistribution::AnaMuonDistribution(const edm::ParameterSet& cfg)
 
 void AnaMuonDistribution::init(TObjArray& histos) 
 {
-  hMuonPt_DIS  = new TH1D("hMuonPt_DIS","All global muons Pt;Glb.muon p_{T} [GeV];Muons / bin",L1PtScale::nPtBins,L1PtScale::ptBins);  histos.Add(hMuonPt_DIS);
-  hMuonEta_DIS = new TH1D("hMuonEta_DIS","All global muons Eta;Glb.muon #eta;Muons / bin",96, -2.4, 2.4);  histos.Add(hMuonEta_DIS);
-  hMuonPhi_DIS = new TH1D("hMuonPhi_DIS","All global muons Phi;Glb.muon #phi [rad];Muons / bin",90,-M_PI,M_PI);  histos.Add(hMuonPhi_DIS);
+  hMuonPt_DIS  = new TH1D("hMuonPt_DIS","All global muons Pt; RECO muon p_{T} [GeV];Muons / bin",L1PtScale::nPtBins,L1PtScale::ptBins);  histos.Add(hMuonPt_DIS);
+  hMuonEta_DIS = new TH1D("hMuonEta_DIS","All global muons Eta; RECO muon #eta;Muons / bin",96, -2.4, 2.4);  histos.Add(hMuonEta_DIS);
+  hMuonPhi_DIS = new TH1D("hMuonPhi_DIS","All global muons Phi; RECO muon #phi [rad];Muons / bin",90,-M_PI,M_PI);  histos.Add(hMuonPhi_DIS);
 
-  hMuonPt_MEN  = new TH1D("hMuonPt_MEN","All global muons Pt;Glb.muon p_{T} [GeV];Muons / bin",L1PtScale::nPtBins,L1PtScale::ptBins); histos.Add(hMuonPt_MEN);
-  hMuonEta_MEN = new TH1D("hMuonEta_MEN","All global muons Eta;Glb.muon #eta;Muons / bin",96, -2.4, 2.4);  histos.Add(hMuonEta_MEN);
-  hMuonPhi_MEN = new TH1D("hMuonPhi_MEN","All global muons Phi;Glb.muon #phi [rad];Muons / bin",90,-M_PI,M_PI);  histos.Add(hMuonPhi_MEN);
+  hMuonPt_MEN  = new TH1D("hMuonPt_MEN","All global muons Pt; RECO muon p_{T} [GeV];Muons / bin",L1PtScale::nPtBins,L1PtScale::ptBins); histos.Add(hMuonPt_MEN);
+  hMuonEta_MEN = new TH1D("hMuonEta_MEN","All global muons Eta; RECO muon #eta;Muons / bin",96, -2.4, 2.4);  histos.Add(hMuonEta_MEN);
+  hMuonPhi_MEN = new TH1D("hMuonPhi_MEN","All global muons Phi; RECO muon #phi [rad];Muons / bin",90,-M_PI,M_PI);  histos.Add(hMuonPhi_MEN);
 
   hMuonPtVsEta_Tk = new TH2D("hMuonPtVsEta_Tk","hMuonPtVsEta_Tk", L1RpcEtaScale::nEtaBins, L1RpcEtaScale::etaBins, L1PtScale::nPtBins, L1PtScale::ptBins); histos.Add(hMuonPtVsEta_Tk);
   hMuonPtVsEta_Ma = new TH2D("hMuonPtVsEta_Ma","hMuonPtVsEta_Ma", L1RpcEtaScale::nEtaBins, L1RpcEtaScale::etaBins, L1PtScale::nPtBins, L1PtScale::ptBins); histos.Add(hMuonPtVsEta_Ma);

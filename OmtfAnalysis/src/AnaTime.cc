@@ -116,15 +116,19 @@ void AnaTime::init(TObjArray& histos)
   hTimeOmtfTrackBX1 = new TH1D("hTimeOmtfTrackBX1", "hTimeOmtfTrackBX1", 50,0.,25.); histos.Add(hTimeOmtfTrackBX1);
   hTimeOmtfDrTrackMuon = new TH2D("hTimeOmtfDrTrackMuon","hTimeOmtfDrTrackMuon",50,0.,25.,50, -1.,1.); histos.Add(hTimeOmtfDrTrackMuon);
 
-  double xbins[]={0.,4., 8., 12., 16., 22., 300.};
+  double xbins[]={0.,4., 8., 12., 16., 22., 30.};
   hTimeEffPt_BMTF = new TEfficiency("hTimeEffPt_BMTF","hTimeEffPt_BMTF: BX=-1,-2/(BX==-1,-2 or BX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_BMTF);
   hTimeEffPt_EMTF = new TEfficiency("hTimeEffPt_EMTF","hTimeEffPt_EMTF: BX=-1,-2/(BX==-1,-2 or BX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_EMTF);
   hTimeEffPt_OMTF = new TEfficiency("hTimeEffPt_OMTF","hTimeEffPt_OMTF: BX=-1,-2/(BX==-1,-2 or BX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_OMTF);
   hTimeEffPt_OMTF_emu = new TEfficiency("hTimeEffPt_OMTF_emu","hTimeEffPt_OMTF_emu: BX=-1,-2/(BX==-1,-2 or BX==0); L1 p_{T}; fraction",6,xbins); histos.Add(hTimeEffPt_OMTF_emu);
 
-  hTimeEta_Pt0  = new TEfficiency( "hTimeEta_Pt0", "hTimeEta_Pt0",12,-2.4,2.4); histos.Add(hTimeEta_Pt0);
-  hTimeEta_Pt10 = new TEfficiency("hTimeEta_Pt10","hTimeEta_Pt10",12,-2.4,2.4); histos.Add(hTimeEta_Pt10);
-  hTimeEta_Pt22 = new TEfficiency("hTimeEta_Pt22","hTimeEta_Pt22",12,-2.4,2.4); histos.Add(hTimeEta_Pt22);
+  double etas[]={-2.4,-2.0,-1.6,-1.24,-0.83,-0.5,-0.15,0.15,0.5,0.83,1.24,1.6,2.0,2.4};
+//  hTimeEta_Pt0  = new TEfficiency( "hTimeEta_Pt0", "hTimeEta_Pt0",24, -2.4, 2.4); histos.Add(hTimeEta_Pt0);
+//  hTimeEta_Pt10 = new TEfficiency("hTimeEta_Pt10","hTimeEta_Pt10",24, -2.4, 2.4); histos.Add(hTimeEta_Pt10);
+//  hTimeEta_Pt22 = new TEfficiency("hTimeEta_Pt22","hTimeEta_Pt22",24, -2.4, 2.4); histos.Add(hTimeEta_Pt22);
+  hTimeEta_Pt0  = new TEfficiency( "hTimeEta_Pt0", "hTimeEta_Pt0",13,etas); histos.Add(hTimeEta_Pt0);
+  hTimeEta_Pt10 = new TEfficiency("hTimeEta_Pt10","hTimeEta_Pt10",13,etas); histos.Add(hTimeEta_Pt10);
+  hTimeEta_Pt22 = new TEfficiency("hTimeEta_Pt22","hTimeEta_Pt22",13,etas); histos.Add(hTimeEta_Pt22);
 }
 
 void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackObj* track, const L1ObjColl * l1Objs)
@@ -193,9 +197,15 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
     }
     if (qualOK && matched && (l1mtf.bx == -2 || l1mtf.bx == -1 || l1mtf.bx == 0)) {
       bool pref = (l1mtf.bx == -1 || l1mtf.bx == -2);
-      if (hE) { hE->Fill(pref, l1mtf.ptValue()); }
-      if (l1mtf.type==L1Obj::uGMT) {
-        bool pref = (l1mtf.bx == -1 || l1mtf.bx == -2);
+      double ptValue = l1mtf.ptValue()> 25 ? 25. : l1mtf.ptValue();
+//      if (ptValue >= 22 && pref && l1mtf.type==L1Obj::EMTF) {
+//        if (muonColl) std::cout << *muonColl << std::endl;
+//        if (l1Objs)  std::cout << *l1Objs<< std::endl;
+//      }
+      if (hE) { hE->Fill(pref, ptValue); }
+//     if (l1mtf.type==L1Obj::uGMT) {
+      if (l1mtf.type==L1Obj::OMTF || l1mtf.type==L1Obj::BMTF || l1mtf.type==L1Obj::EMTF) {
+//        muonEta = l1mtf.etaValue();
         if (l1mtf.ptValue()<10) hTimeEta_Pt0->Fill(pref, muonEta);
         else if (l1mtf.ptValue()<22.) hTimeEta_Pt10->Fill(pref, muonEta);
         else hTimeEta_Pt22->Fill(pref, muonEta);
@@ -238,93 +248,5 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
     if (muonColl) std::cout << *muonColl << std::endl;
     if (l1Objs)  std::cout << *l1Objs<< std::endl;
   } 
-
-/*
-
-  //
-  // track/muon matching to l1omtf
-  //
-  typedef std::vector<L1Obj> L1ObjVec;
-  L1ObjVec omtfVec = l1Objs->selectByType(L1Obj::OMTF).selectByBx(0,0);
-  double detaM = 9999.;
-  double dphiM = 9999.;
-  double dR = 9999;
-  for (auto & l1Omtf : omtfVec) {
-
-//  if (track->pt() > 1. && omtfColl) {
-//    L1Obj l1Omtf = omtfColl.getL1Objs().front();
-//    double dphiT =  reco::deltaPhi(l1Omtf.phiValue(),track->phi())*track->charge(); 
-//    double detaT =  (l1Omtf.etaValue() - track->eta())*sgn(track->eta());
-//    hTimeOmtfTrackDPhiT->Fill(track->pt(), dphiT);
-//    hTimeOmtfTrackDEtaT->Fill(track->pt(), detaT);
-//    hTimeOmtfTrackBXT->Fill(track->pt(), l1Omtf.bx);
-//    if(l1Omtf.bx==0)hTimeOmtfTrackBX0->Fill(track->pt());
-//    if(l1Omtf.bx==1)hTimeOmtfTrackBX1->Fill(track->pt());
-
-    if (muon && ( (fabs(muon->l1Eta)-1.04) < 0.3) ){
-
-      double aDeta =  (l1Omtf.etaValue() - muon->l1Eta)*sgn(muon->eta());
-      double aDphi =  reco::deltaPhi(l1Omtf.phiValue(),muon->l1Phi)*muon->charge(); 
-      double aDR = reco::deltaR(l1Omtf.etaValue(), l1Omtf.phiValue(), muon->l1Eta, muon->l1Phi);
-//      std::cout <<" L1: "<<l1Omtf.etaValue()<<", "<<l1Omtf.phiValue()<<"    muon: "<<muon->l1Eta<<", "<< muon->l1Phi <<"   dR: "<<aDR<<std::endl;
-      if (aDR < dR) {
-        dR = aDR;
-        detaM = aDeta;
-        dphiM = aDphi;
-      } 
-
-//      hTimeOmtfTrackBXM->Fill(muon->pt(), l1Omtf.bx);
-//      hTimeOmtfDrTrackMuon->Fill(track->pt(), reco::deltaR(track->eta(), track->phi(), muon->eta(), muon->phi()));
-    }
-  } 
-  if (muon) {
-    hTimeOmtfTrackDRM->Fill(dR);
-    hTimeOmtfTrackDPhiM->Fill(muon->pt(), dphiM);
-    hTimeOmtfTrackDEtaM->Fill(muon->pt(), detaM);
-  }
-
-//  L1ObjColl omtfColl = l1Objs->selectByType(L1Obj::OMTF).selectByBx(0,0);
-//  if (track->pt() > 1. && omtfColl) {
-//    L1Obj l1Omtf = omtfColl.getL1Objs().front();
-//    double dphiT =  reco::deltaPhi(l1Omtf.phiValue(),track->phi())*track->charge(); 
-//    double detaT =  (l1Omtf.etaValue() - track->eta())*sgn(track->eta());
-//    hTimeOmtfTrackDPhiT->Fill(track->pt(), dphiT);
-//    hTimeOmtfTrackDEtaT->Fill(track->pt(), detaT);
-//    hTimeOmtfTrackBXT->Fill(track->pt(), l1Omtf.bx);
-//    if(l1Omtf.bx==0)hTimeOmtfTrackBX0->Fill(track->pt());
-//    if(l1Omtf.bx==1)hTimeOmtfTrackBX1->Fill(track->pt());
-//    if(muon) {
-//      double detaM =  (l1Omtf.etaValue() - muon->eta())*sgn(muon->eta());
-//      double dphiM =  reco::deltaPhi(l1Omtf.phiValue(),muon->phi())*muon->charge(); 
-//      hTimeOmtfTrackDPhiM->Fill(muon->pt(), dphiM);
-//      hTimeOmtfTrackDEtaM->Fill(muon->pt(), detaM);
-//      hTimeOmtfTrackBXM->Fill(muon->pt(), l1Omtf.bx);
-//      hTimeOmtfDrTrackMuon->Fill(track->pt(), reco::deltaR(track->eta(), track->phi(), muon->eta(), muon->phi()));
-//    }
-//  } 
-
-  //
-  // triggers matched to muons
-  //
-//  if (!muon || !muon->isValid()) return;
-//  for (const auto & mtf : mtfs) {
-//    std::vector<L1Obj> l1mtfs = l1Objs->selectByType(mtf);
-//    if (l1mtfs.size()==0) continue;
-//    for (const auto & l1mtf : l1mtfs) {
-//      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon->eta(), muon->phi());
-////      std::cout <<"TIME: "<< l1mtf<< " deltaR: "<< deltaR << std::endl;
-//      if (fabs(l1mtf.etaValue() - muon->eta()) > 0.2) continue;
-//      if (deltaR > 0.8) continue;
-////    if (l1mtf.q <12) continue;
-////      if (l1mtf.bx !=0) std::cout <<"xxxxxx" << std::endl;
-//      switch (mtf) {
-//        case (L1Obj::BMTF) : hTimeBmtf->Fill(l1mtf.bx); break; 
-//        case (L1Obj::OMTF) : hTimeOmtf->Fill(l1mtf.bx); break; 
-//        case (L1Obj::EMTF) : hTimeEmtf->Fill(l1mtf.bx); break; 
-//        default: ;
-//      }
-//    }
-//  }
-*/
 
 }

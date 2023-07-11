@@ -76,13 +76,14 @@ def cTimeEffPt(canvas):
   c=TCanvas("cTimeEffPt","cTimeEffPt",1200,400)
   canvas.Add(c)
   c.Divide(3)
-  hNull=TH1D("hNull","hNull;L1 p_{T};fraction",6,0.,30.);
+  hNull=TH1D("hNull","hNull;L1 p_{T};fraction",6,0.,29.9);
   hNull.SetMaximum(1.5)
-  hNull.SetMinimum(1.e-4)
+  hNull.SetMinimum(1.e-5)
   hNull.SetStats(0)
 
   pad1 = c.cd(1)
   pad1.SetLogy()
+  pad1.SetTicky()
   hEffPt1 = gROOT.FindObject("hTimeEffPt_BMTF").Clone("hTimeEffPt_BMTF_Copy")
   hNull.SetTitle(hEffPt1.GetTitle())
   hNull.DrawCopy()
@@ -90,6 +91,7 @@ def cTimeEffPt(canvas):
 
   pad2 = c.cd(2)
   pad2.SetLogy()
+  pad2.SetTicky()
   hEffPt2 = gROOT.FindObject("hTimeEffPt_OMTF").Clone("hTimeEffPt_OMTF_Copy")
   hNull.SetTitle(hEffPt2.GetTitle())
   hNull.DrawCopy()
@@ -97,6 +99,7 @@ def cTimeEffPt(canvas):
 
   pad3 = c.cd(3)
   pad3.SetLogy()
+  pad3.SetTicky()
   hEffPt3 = gROOT.FindObject("hTimeEffPt_EMTF").Clone("hTimeEffPt_EMTF_Copy")
   hNull.SetTitle(hEffPt3.GetTitle())
   hNull.DrawCopy()
@@ -272,16 +275,22 @@ def cTimeEta(canvas) :
   c=TCanvas("cTimeEta","cTimeEta",600,400)
   canvas.Add(c)
   c.SetLogy()
-  c.SetTickx()
-  frame=c.DrawFrame(-2.4, 1.e-4, 2.4, 1.02);
+  c.SetTicky()
+  frame=c.DrawFrame(-2.4, 1.e-6, 2.4, 1.02);
   frame.SetYTitle("fraction")
   frame.SetXTitle("\eta")
   h0 = gROOT.FindObject("hTimeEta_Pt0").Clone("hTimeEta_Pt0")
   h0.SetLineColor(2)
+  h0.SetMarkerStyle(24)
+  h0.SetMarkerColor(2)
   h10 = gROOT.FindObject("hTimeEta_Pt10").Clone("hTimeEta_Pt10")
   h10.SetLineColor(3)
+  h10.SetMarkerStyle(25)
+  h10.SetMarkerColor(3)
   h22 = gROOT.FindObject("hTimeEta_Pt22").Clone("hTimeEta_Pt22")
   h22.SetLineColor(4)
+  h22.SetMarkerStyle(26)
+  h22.SetMarkerColor(4)
   h0.Draw('same')
   h10.Draw('same')
   h22.Draw('same')

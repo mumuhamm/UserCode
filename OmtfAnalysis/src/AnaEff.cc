@@ -151,144 +151,6 @@ void AnaEff::init(TObjArray& histos)
 
 }
 
-/*
-void AnaEff::run(  const EventObj* event, const MuonObj* muon, const L1ObjColl *l1Coll)
-{
-  if (!muon) return;
-  double etaMu = muon->eta();
-  double ptMu  = muon->pt();  
-  //std::cout <<" MUON: " << *muon << std::endl;
-  if (!l1Coll) return;
-  if (!l1Coll || l1Coll->getL1Objs().size()==0) return;
-//  if (muon && l1Coll) std::cout <<*event << std::endl << *muon<< std::endl<<*l1Coll<<std::endl<<std::endl;
-
-  //
-  // best (closest) L1Obj to muon
-  //
-  L1Obj::TYPE typeBMTF = L1Obj::BMTF;
-  L1Obj::TYPE typeOMTF = L1Obj::OMTF_emu;
-  L1Obj::TYPE typeEMTF = L1Obj::EMTF;
-  L1Obj::TYPE typeuGMT = L1Obj::uGMT_emu;
-  BestL1Obj bestOMTF, bestBMTF, bestEMTF, bestuGMT;
-  std::vector<L1Obj> l1s = (l1Coll->selectByType(typeBMTF)+l1Coll->selectByType(typeOMTF)+l1Coll->selectByType(typeEMTF)+l1Coll->selectByType(typeuGMT) ).selectByBx(0,0);
-  for (auto l1 : l1s) {
-    BestL1Obj cand(l1,muon);
-    cand.deltaR = 0.; // FIXME temporary!
-//    std::cout <<"HERE, cand: "<< cand << std::endl;
-    double dRMax = 0.5;
-    if (cand.q > 12) cand.q = 12;
-    if (cand.type==typeBMTF && (cand.q > bestBMTF.q || (cand.q==bestBMTF.q && cand.pt>bestBMTF.pt)) && cand.deltaR < dRMax) bestBMTF = cand;
-    if (cand.type==typeOMTF && (cand.q > bestOMTF.q || (cand.q==bestOMTF.q && cand.pt>bestOMTF.pt)) && cand.deltaR < dRMax) bestOMTF = cand;
-    if (cand.type==typeEMTF && (cand.q > bestEMTF.q || (cand.q==bestEMTF.q && cand.pt>bestEMTF.pt)) && cand.deltaR < dRMax) bestEMTF = cand;
-//    if (cand.type==typeuGMT && (cand.q > bestuGMT.q || (cand.q==bestuGMT.q && cand.pt>bestuGMT.pt)) && cand.deltaR < dRMax) bestuGMT = cand;
-
-//   if (cand.type==L1Obj::uGMT && (cand.q > bestuGMT.q || (cand.q==bestuGMT.q && cand.pt>bestuGMT.pt)) && cand.deltaR < 0.5) bestuGMT = cand;
-   if (cand.type==L1Obj::OMTF_emu && (cand.q > bestuGMT.q || (cand.q==bestuGMT.q && cand.pt>bestuGMT.pt)) && cand.deltaR < 0.5) bestuGMT = cand;
-
-  }
-  if (debug && bestuGMT.isValid()) std::cout <<bestuGMT << std::endl;
-  if (debug && bestBMTF.isValid()) std::cout <<bestBMTF << std::endl;
-  if (debug && bestOMTF.isValid()) std::cout <<bestOMTF << std::endl;
-  if (debug && bestEMTF.isValid()) std::cout <<bestEMTF << std::endl;
-
-  //
-  // control histos for bestOMTF
-  //
-  BestL1Obj best = bestuGMT;
-  if (best.isValid() && fabs(etaMu) > 0.83 && fabs(etaMu) < 1.24) {
-    hEffDeltaR->Fill(best.deltaR); 
-    hEffDeltaPhi->Fill(reco::deltaPhi(best.phiValue(),muon->l1Phi)); 
-    hEffDeltaEta->Fill(best.etaValue()-muon->l1Eta); 
-  } 
-  if ( fabs(etaMu) > 0.3 && fabs(etaMu) < 1.74) {
-    if (bestuGMT.fired()) hEffEtaMuVsEtauGMT->Fill(muon->l1Eta, bestuGMT.etaValue());
-    if (bestOMTF.pt>0)    hEffEtaMuVsEtaOMTF->Fill(muon->l1Eta, bestOMTF.etaValue());
-  }
-
-  //
-  // efficiency vs Eta
-  //
-  if (ptMu > 7.) {
-    TH1D* h_N = (etaMu > 0 ) ? hEffEtaOMTFp : hEffEtaOMTFn; 
-    TH1D* h_D = (etaMu > 0 ) ? hEffEtaOMTFp_D : hEffEtaOMTFn_D; 
-    h_D->Fill(etaMu); 
-    if (bestOMTF.fired()) h_N->Fill(etaMu);
-    hEffEtaAll_D->Fill(etaMu);
-    if (bestBMTF.fired() || bestEMTF.fired() || bestOMTF.fired() ) hEffEtaAll->Fill(etaMu);
-  }
-
-  //
-  // OMTF efficiency history 
-  //
-  if ( ptMu > 7. && fabs(etaMu) < 1.24 && fabs(etaMu) > 0.83 ) theRunMap.addEvent(event->run, bestOMTF.fired()); 
-
-
-  //
-  // efficiency with ptCut for each region
-  //
-  unsigned int iregion;
-  if ( fabs(etaMu) < 0.83) iregion = 0;
-  else if ( fabs(etaMu) < 1.24) iregion = 1;
-  else iregion = 2;
-
-
-  theHistoMap["hEff_PtCutDenom"+reg[iregion]]->Fill(ptMu);
-  for (unsigned int icut=0; icut < nPtCuts; icut++) { 
-    double threshold = ptCuts[icut];
-//  if (    (iregion==0 && bestBMTF.fired(threshold)) 
-//       || (iregion==1 && bestOMTF.fired(threshold)) 
-//       || (iregion==2 && bestEMTF.fired(threshold)) ) {
-    if ( bestuGMT.fired(threshold,1,9999.) ) {
-       std::ostringstream strPt;  strPt  << "hEff_uGmtPtCut"<<  ptCuts[icut]<<reg[iregion];
-       theHistoMap[strPt.str()]->Fill(ptMu);
-    } 
-  }
-  if (muon && l1Coll && !bestuGMT.fired(0.,0, 99999.)) {
-     std::cout <<*event << std::endl << *muon<< std::endl<<bestuGMT<<std::endl<<*l1Coll<<std::endl<<std::endl;
-     exit(123);
-  }
-//  if (ptMu < 12. &&  bestuGMT.fired(25)) std::cout<<std::endl <<*event<<std::endl<<*muon<<std::endl<<*l1Coll<<std::endl;
-
-
-  double threshold = ptCuts[2];
-  double ptMuPlat = 1.5*threshold; 
-  if (ptMu >= ptMuPlat) {
-    std::ostringstream strEtaDenom;  strEtaDenom  << "hEff_EtaDenom"<<  threshold;
-    theHistoMap[strEtaDenom.str()]->Fill(muon->eta()); 
-
-    if ( bestuGMT.fired(threshold) ) {
-       std::ostringstream strEtaCut;  strEtaCut  << "hEff_EtaCut"<<  threshold <<"_uGmt";
-       theHistoMap[strEtaCut.str()]->Fill(muon->eta()); 
-    }
-    if ( bestBMTF.fired(threshold) ) {
-       std::ostringstream strEtaCut;  strEtaCut  << "hEff_EtaCut"<<  threshold <<"_Bmtf";
-       theHistoMap[strEtaCut.str()]->Fill(muon->eta()); 
-    }
-    if ( bestOMTF.fired(threshold) ) {
-       std::ostringstream strEtaCut;  strEtaCut  << "hEff_EtaCut"<<  threshold <<"_Omtf";
-       theHistoMap[strEtaCut.str()]->Fill(muon->eta()); 
-    }
-    if ( bestEMTF.fired(threshold) ) {
-       std::ostringstream strEtaCut;  strEtaCut  << "hEff_EtaCut"<<  threshold <<"_Emtf";
-       theHistoMap[strEtaCut.str()]->Fill(muon->eta()); 
-    }
-    if ( bestOMTF.fired(threshold, 4) ) {
-       std::ostringstream strEtaCut;  strEtaCut  << "hEff_EtaCut"<<  threshold <<"_OmtfQ4";
-       theHistoMap[strEtaCut.str()]->Fill(muon->eta()); 
-    }
-
-    if ( fabs(muon->eta()) > 1.6 && bestuGMT.fired(threshold) && !bestEMTF.fired(threshold) ) {
-    std::cout <<" Muon: " << *muon << std::endl;
-    std::cout <<*l1Coll << std::endl;
-    std::cout <<" BestuGMT: " << bestuGMT << std::endl;
-    std::cout <<" BestEMTF: " << bestEMTF<< std::endl;
-    }
-  }
-  
-}	
-*/
-
-
 void AnaEff::run(  const EventObj* event, const MuonObj* muon, const L1ObjColl *l1Coll)
 {
   if (!muon) return;
@@ -297,7 +159,7 @@ void AnaEff::run(  const EventObj* event, const MuonObj* muon, const L1ObjColl *
 //std::cout <<" MUON: " << *muon << std::endl;
   if (ptMu < 0.1) return;
   if (!l1Coll || l1Coll->getL1Objs().size()==0) return;
-//if (muon && l1Coll) std::cout <<*event << std::endl << *muon<< std::endl<<*l1Coll<<std::endl<<std::endl;
+//  if (muon && l1Coll) std::cout <<*event << std::endl << *muon<< std::endl<<*l1Coll<<std::endl<<std::endl;
 
   //
   // best (closest)  MTF L1Obj to muon
@@ -397,14 +259,12 @@ void AnaEff::run(  const EventObj* event, const MuonObj* muon, const L1ObjColl *
        std::ostringstream strEtaCut;  strEtaCut  << "hEff_EtaCut"<<  threshold <<"_Emtf";
        theHistoMap[strEtaCut.str()]->Fill(muon->eta()); 
     }
-/*
-    if ( fabs(muon->eta()) > 1.6 && bestuGMT.fired(threshold) && !bestEMTF.fired(threshold) ) {
-    std::cout <<" Muon: " << *muon << std::endl;
-    std::cout <<*l1Coll << std::endl;
-    std::cout <<" BestuGMT: " << bestuGMT << std::endl;
-    std::cout <<" BestEMTF: " << bestEMTF<< std::endl;
-    }
-*/
+//    if ( fabs(muon->eta()) < 0.6 && !bestuGMT.fired(threshold) && bestBMTF.fired(threshold) ) {
+//    std::cout <<" Muon: " << *muon << std::endl;
+//    std::cout <<*l1Coll << std::endl;
+//    std::cout <<" BestuGMT: " << bestuGMT << std::endl;
+//    std::cout <<" BestBMTF: " << bestBMTF<<" fired: "<< bestBMTF.fired(threshold)<< std::endl;
+//    }
 
   }
 }	
