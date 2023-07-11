@@ -50,9 +50,8 @@ vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
 
 void OmtfTreeMaker::beginRun(const edm::Run &ru, const edm::EventSetup &es)
 {
-  std::cout <<"**** HERE BEGIN RUN!" << std::endl;
+  std::cout <<"**** BEGIN RUN called!" << std::endl;
   theMenuInspector.checkRun(ru,es);
-  std::cout <<"**** HERE BEGIN RUN! - end" << std::endl;
 }
 
 void OmtfTreeMaker::beginJob()
@@ -206,9 +205,9 @@ if (debug) std::cout << " pt_sim: " << pt_sim <<" eta_sim: "<<eta_sim<<" phi_sim
 //
 bool debug=0;
   if (debug) { // || l1ObjColl->selectByType(L1Obj::OMTF_emu)) {
-  std::cout << *muonColl << std::endl;
-  std::cout << *l1ObjColl << std::endl;
-  std::cout << std::endl;
+    std::cout << *muonColl << std::endl;
+    std::cout << *l1ObjColl << std::endl;
+    std::cout << std::endl;
   }
   theSynchroCheck.checkInside(theMuon, ev, es);
   theSynchroCheck.checkStripCsc(theMuon, ev, es);

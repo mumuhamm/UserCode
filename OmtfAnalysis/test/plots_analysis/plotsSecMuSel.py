@@ -8,8 +8,6 @@ from plotsUtils import *
 def cSecMuSelPtDis(canvas) :
   c = TCanvas('cSecMuSelPtDis','cSecMuSelPtDis',600,600)
   canvas.Add(c)
-#  c.SetLogx()
-#  c.SetLogy()
   c.SetRightMargin(0.14);
   c.SetLeftMargin(0.11);
 
@@ -25,13 +23,27 @@ def cSecMuSelPtDis(canvas) :
 def cSecMuSelEtaDis(canvas) :
   c = TCanvas('cSecMuSelEtaDis','cSecMuSelEtaDis',600,600)
   canvas.Add(c)
-  c.SetLogx()
-  c.SetLogy()
+# c.SetLogx()
+# c.SetLogy()
   h = gROOT.FindObject('hSecMuEtaDis')
   h.SetXTitle('trg~{\eta}')
   h.SetYTitle("probe~ \eta")
   h.SetStats(0)
   h.DrawCopy('colz')
+  c.Update()
+  return
+
+def cSecMuMinDeltaR(canvas) :
+  c = TCanvas('cSecMuMinDelatR','cSecMuMinDeltaR',600,600)
+  canvas.Add(c)
+#  c.SetLogy()
+  h = gROOT.FindObject('hSecMuMinDeltaR')
+  h.SetYTitle('#ev')
+  h.SetXTitle("\Delta R")
+  h.SetStats(1)
+  h.GetXaxis().SetRange(1,40)
+  h.SetMinimum(0.7)
+  h.DrawCopy()
   c.Update()
   return
 
@@ -44,7 +56,7 @@ def cSecMuSelDiff(canvas) :
   h = gROOT.FindObject('hSecMuDeltaR')
   h.SetXTitle("Delta R")
   h.SetYTitle(" #ev")
-  h.SetStats(0)
+  h.SetStats(1)
   h.DrawCopy()
   p2 = c.cd(2)
   p2.SetLogy()
@@ -68,4 +80,5 @@ def plotAll(canvas) :
   cSecMuSelPtDis(canvas)
   cSecMuSelEtaDis(canvas)
   cSecMuSelDiff(canvas)
+  cSecMuMinDeltaR(canvas)
   return

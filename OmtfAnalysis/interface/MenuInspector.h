@@ -71,6 +71,7 @@ private:
   std::vector<unsigned int> theFiredHLT;
   std::vector<unsigned int> theFiredL1;
   std::map<std::string, int> theNamesCheckHltMuMatchIdx;
+  std::map<std::string, int> theNamesIndicesMarkedPrescaled;
 
 };
 #endif

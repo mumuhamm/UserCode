@@ -357,11 +357,12 @@ void SynchroCheck::checkStripCsc(const reco::Muon *muon, const edm::Event &ev, c
       if (inside && fabs(distX) < 10. && fabs(pullX) < 1.) {
         theDetBxStat->bxStat(detSpec).incrementBx(digi->getBX()-8);
 
-        TH2D* h = (cscDetId.endcap()==1) ? hME13P_Strip : hME13N_Strip;
-        if (debug) std::cout <<" HERE FILL STRIP event:"<<ev.id().event()<<" Dist: "<<distX<<std::endl; //", det: "<<cscDetId<<", digi:"<<*digi<<std::endl; 
-        h->Fill(cscDetId.chamber(),digi->getBX()-8);
+        if (cscDetId.ring()==3) {
+          TH2D* h = (cscDetId.endcap()==1) ? hME13P_Strip : hME13N_Strip;
+          if (debug) std::cout <<" HERE FILL STRIP event:"<<ev.id().event()<<" Dist: "<<distX<<std::endl; //", det: "<<cscDetId<<", digi:"<<*digi<<std::endl; 
+          h->Fill(cscDetId.chamber(),digi->getBX()-8);
+        }
       } 
-
     }
   }
 }

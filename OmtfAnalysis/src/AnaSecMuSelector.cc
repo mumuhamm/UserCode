@@ -18,6 +18,7 @@ namespace {
   TH2D *hSecMuPtDis;
   TH2D *hSecMuEtaDis;
   TH1D *hSecMuDeltaPhi, *hSecMuDeltaEta, *hSecMuDeltaR;
+  TH1D *hSecMuMinDeltaR;
 }
 
 AnaSecMuSelector::AnaSecMuSelector(const edm::ParameterSet& cfg)
@@ -31,9 +32,10 @@ void AnaSecMuSelector::init(TObjArray& histos)
 //  hSecMuPtDis = new TH2D("hSecMuPtDis","hSecMuPtDis",L1PtScale::nPtBins,L1PtScale::ptBins, L1PtScale::nPtBins,L1PtScale::ptBins); histos.Add(hSecMuPtDis);
   hSecMuPtDis = new TH2D("hSecMuPtDis","hSecMuPtDis", 99, 1.,100., 99, 1., 100.); histos.Add(hSecMuPtDis);
   hSecMuEtaDis = new TH2D("hSecMuEtaDis","hSecMuEtaDis",32, -2.4, 2.4, 32, -2.4, 2.4); histos.Add(hSecMuEtaDis);
-  hSecMuDeltaEta = new TH1D("hSecMuDeltaEta","hSecMuDeltaEta",100,-3.2,3.2);  histos.Add(hSecMuDeltaEta);
-  hSecMuDeltaPhi = new TH1D("hSecMuDeltaPhi","hSecMuDeltaPhi",100,-3.2,3.2);  histos.Add(hSecMuDeltaPhi);
-  hSecMuDeltaR = new TH1D("hSecMuDeltaR","hSecMuDeltaR",100,0,6.4);       histos.Add(hSecMuDeltaR);
+  hSecMuDeltaEta = new TH1D("hSecMuDeltaEta","hSecMuDeltaEta",160,-3.2,3.2);  histos.Add(hSecMuDeltaEta);
+  hSecMuDeltaPhi = new TH1D("hSecMuDeltaPhi","hSecMuDeltaPhi",160,-3.2,3.2);  histos.Add(hSecMuDeltaPhi);
+  hSecMuDeltaR = new TH1D("hSecMuDeltaR","hSecMuDeltaR",320,0,6.4);       histos.Add(hSecMuDeltaR);
+  hSecMuMinDeltaR = new TH1D("hSecMuMinDeltaR","hSecMuMinDeltaR",60,0,0.6);       histos.Add(hSecMuMinDeltaR);
 }
 
 MuonObj AnaSecMuSelector::run( 
@@ -44,9 +46,8 @@ MuonObj AnaSecMuSelector::run(
   // check for triggering muon
   //
   MuonObj trg;
-  unsigned int imuon =0;
   for (const auto & muon : muons) {
-    imuon++;
+    double minDeltaR=3.;
     if (   theCfgTrg.exists("requireCharge")
         && theCfgTrg.getParameter<int>("requireCharge") != muon.charge() ) continue;
     if (   theCfgTrg.exists("requireEtaSign")
@@ -69,11 +70,14 @@ MuonObj AnaSecMuSelector::run(
     for (const auto & ugmt : uGMTs) {
       if (ugmt.q < theCfgTrg.getParameter<int>("minAccepL1Q")) continue;
       if (ugmt.ptValue() < theCfgTrg.getParameter<double>("minAcceptL1PtVal") ) continue;
-      double deltaR = reco::deltaR( ugmt.etaValue(), ugmt.phiValue(), muon.eta(), muon.phi());
+//    double deltaR = reco::deltaR( ugmt.etaValue(), ugmt.phiValue(), muon.eta(), muon.phi());
+      double deltaR = reco::deltaR( ugmt.etaValue(), ugmt.phiValue(), muon.l1Eta, muon.l1Phi);
+      if ( deltaR < minDeltaR) minDeltaR=deltaR;
       if (deltaR > theCfgTrg.getParameter<double>("maxL1DeltaR") ) continue;
       trg = muon;
       break; 
     } 
+    hSecMuMinDeltaR->Fill(minDeltaR);
     if (trg.isValid()) break;  
   }
   if (!trg.isValid()) return MuonObj();
@@ -104,6 +108,5 @@ MuonObj AnaSecMuSelector::run(
     hSecMuDeltaEta->Fill(trg.eta()-prb.eta());
     hSecMuDeltaPhi->Fill( reco::deltaPhi(trg.phi(),prb.phi()) );
   }
-
   return prb;
 }

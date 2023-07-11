@@ -98,7 +98,7 @@ def cTimeEffPt(canvas):
   pad3 = c.cd(3)
   pad3.SetLogy()
   hEffPt3 = gROOT.FindObject("hTimeEffPt_EMTF").Clone("hTimeEffPt_EMTF_Copy")
-  hNull.SetTitle(hEffPt2.GetTitle())
+  hNull.SetTitle(hEffPt3.GetTitle())
   hNull.DrawCopy()
   hEffPt3.Draw('same')
   c.Update()
