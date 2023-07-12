@@ -145,7 +145,7 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
     bool matched  = false;
     bool matchedW = false;
     bool qualOK = (l1mtf.q >= 12);
-    bool ptOK = (l1mtf.ptValue()<= theCfg.getParameter<double>("maxPt") && l1mtf.ptValue() >= theCfg.getParameter<double>("minPt") );
+    bool ptOK = (l1mtf.ptValue()< theCfg.getParameter<double>("maxPt") && l1mtf.ptValue() >= theCfg.getParameter<double>("minPt") );
     bool hasRequiredTrigger = theCfg.exists("requireOtherMuTrg") ? !theCfg.getParameter<bool>("requireOtherMuTrg") : true;
 
     double muonEta = 9999.;
@@ -166,6 +166,7 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
         if (l1mtf.bx == -2) hTimeDeltaR_QW_B2->Fill(deltaRW); 
         if (l1mtf.bx == -1) hTimeDeltaR_QW_B1->Fill(deltaRW); 
         if ( deltaR < 0.2 && l1mtf.bx < 0 && l1mtf.type==L1Obj::OMTF) {
+//      if ( deltaR < 0.2 && l1mtf.bx == 0 && l1mtf.type==L1Obj::OMTF) {
           printdeb = false;
           std::bitset<18> hitLayers(l1mtf.hits);
           for (unsigned int hitLayer=0; hitLayer<18;hitLayer++) if(hitLayers[hitLayer]) hTimeLayers->Fill(hitLayer);
