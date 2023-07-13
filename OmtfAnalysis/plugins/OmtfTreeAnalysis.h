@@ -19,6 +19,7 @@ class AnaL1Distribution;
 
 namespace edm { class Event; class EventSetup; }
 
+//class OmtfTreeAnalysis : public edm::one::EDAnalyzer<edm::one::SharedResources,edm::one::WatchRuns> {
 class OmtfTreeAnalysis : public edm::one::EDAnalyzer<edm::one::WatchRuns> {
 public:
   OmtfTreeAnalysis(const edm::ParameterSet & cfg);

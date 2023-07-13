@@ -141,18 +141,42 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
   const std::vector<MuonObj> & muons = *muonColl;
 
   bool printdeb = false;
+  double deltaRMatching = theCfg.getParameter<double>("deltaRMatching");
+
+  //
+  // find if muon has corresponding triggering L1 -> muonsExt
+  //
+  std::vector<std::pair<MuonObj,bool> > muonsExt;
+  for (const MuonObj & muon : muons) {
+    bool hasTriggeringL1 = false;
+    if (!muon.isValid()) continue;
+    for (const auto & l1mtf : l1mtfs) {
+      if (!l1mtf.isValid()) continue;
+      if (l1mtf.q < 12) continue;
+      if (l1mtf.pt < theCfg.getParameter<double>("requireOtherMuTrgL1Pt")) continue;
+      if (l1mtf.bx != 0) continue;
+      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
+      if (deltaR < deltaRMatching) hasTriggeringL1 = true;
+    }
+    muonsExt.push_back(std::make_pair(muon,hasTriggeringL1));
+  }    
+
+
+//
+// for each L1 
+//
   for (const auto & l1mtf : l1mtfs) {
     bool matched  = false;
     bool matchedW = false;
     bool qualOK = (l1mtf.q >= 12);
-    bool ptOK = (l1mtf.ptValue()< theCfg.getParameter<double>("maxPt") && l1mtf.ptValue() >= theCfg.getParameter<double>("minPt") );
+    bool ptOK = (l1mtf.ptValue()< theCfg.getParameter<double>("maxPtForDistributions") && l1mtf.ptValue() >= theCfg.getParameter<double>("minPtForDistributions") );
     bool hasRequiredTrigger = theCfg.exists("requireOtherMuTrg") ? !theCfg.getParameter<bool>("requireOtherMuTrg") : true;
 
-    double muonEta = 9999.;
-    for (const MuonObj & muon : muons) {
+    for (const auto & muonExt : muonsExt) {
+      const MuonObj & muon = muonExt.first;
+      bool muon_associatedTriggeringL1 = muonExt.second; 
       if (!muon.isValid()) continue;
 
-//      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.eta(), muon.phi());
       double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
 //    double deltaRW = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), -muon.l1Eta, muon.l1Phi+M_PI/2.);
       double deltaRW = reco::deltaR(-l1mtf.etaValue(), l1mtf.phiValue()+M_PI/2., muon.l1Eta, muon.l1Phi);
@@ -172,9 +196,9 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
           for (unsigned int hitLayer=0; hitLayer<18;hitLayer++) if(hitLayers[hitLayer]) hTimeLayers->Fill(hitLayer);
         }
       }
-      if (deltaR  < 0.3) { matched=true; muonEta = muon.l1Eta; }
-      if (deltaRW < 0.3) matchedW=true;
-      if (deltaR  > 0.8 && (muon.isMatchedHlt || muon.isMatchedIsoHlt)) hasRequiredTrigger = true; 
+      if (deltaR  < deltaRMatching) matched=true; 
+      if (deltaRW < deltaRMatching) matchedW=true;
+      if (deltaR  > 2.*deltaRMatching && (muon.isMatchedHlt || muon.isMatchedIsoHlt) && muon_associatedTriggeringL1) hasRequiredTrigger = true; 
     }
     if (!hasRequiredTrigger) continue;
 
@@ -199,17 +223,12 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
     if (qualOK && matched && (l1mtf.bx == -2 || l1mtf.bx == -1 || l1mtf.bx == 0)) {
       bool pref = (l1mtf.bx == -1 || l1mtf.bx == -2);
       double ptValue = l1mtf.ptValue()> 25 ? 25. : l1mtf.ptValue();
-//      if (ptValue >= 22 && pref && l1mtf.type==L1Obj::EMTF) {
-//        if (muonColl) std::cout << *muonColl << std::endl;
-//        if (l1Objs)  std::cout << *l1Objs<< std::endl;
-//      }
       if (hE) { hE->Fill(pref, ptValue); }
-//     if (l1mtf.type==L1Obj::uGMT) {
+//    if (l1mtf.type==L1Obj::uGMT) {
       if (l1mtf.type==L1Obj::OMTF || l1mtf.type==L1Obj::BMTF || l1mtf.type==L1Obj::EMTF) {
-//        muonEta = l1mtf.etaValue();
-        if (l1mtf.ptValue()<10) hTimeEta_Pt0->Fill(pref, muonEta);
-        else if (l1mtf.ptValue()<22.) hTimeEta_Pt10->Fill(pref, muonEta);
-        else hTimeEta_Pt22->Fill(pref, muonEta);
+        if (l1mtf.ptValue()<10) hTimeEta_Pt0->Fill(pref, l1mtf.etaValue());
+        else if (l1mtf.ptValue()<22.) hTimeEta_Pt10->Fill(pref, l1mtf.etaValue());
+        else hTimeEta_Pt22->Fill(pref, l1mtf.etaValue());
       }
     }
   }
