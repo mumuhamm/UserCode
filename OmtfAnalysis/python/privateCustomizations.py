@@ -71,7 +71,7 @@ def customize_extra_outputCommands(process):
                                                                       'keep  intL1*_*_*_*',
                                                                       'keep *_omtfStage2Digis_*_*',
                                                                       'keep *_offlineBeamSpot_*_*',
-                                                                      'keep *_TriggerResults_*_*_*',   
+                                                                      'keep *_TriggerResults_*_*',   
                                                                       'keep *_hltTriggerSummaryAOD_*_*'
     ))
     return process
