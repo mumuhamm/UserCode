@@ -64,14 +64,15 @@ fileNames = cms.untracked.vstring(
 #'file:/eos/home-k/konec/data/Run2023D-Muon_ZMu-PromptReco-v1_RAW-RECO/run_369956_5cf85633-fce3-48cc-962e-8bce11540a67.root',
 #'/store/data/Run2023D/JetMET0/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v1/000/369/869/00000/7b83920b-1b4f-4961-83dd-94fbda7c3ff8.root',
 #'file:/eos/home-k/konec/data/Run2023D-JetMET_JetHTJetPlusHOFilter-PromptReco-v1_RAW-RECO/run_369870_81f7355b-2ac5-4469-ab0a-d9b413c9152b.root',
+ 'root://xrootd-cms.infn.it//store/data/Run2023B/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/367/079/00000/b01b794e-9075-4d42-b273-85b2bc66f13a.root',
   ),
-#skipEvents =  cms.untracked.uint32(764)
+skipEvents =  cms.untracked.uint32(220)
 #skipEvents =  cms.untracked.uint32(19177)
 #skipEvents =  cms.untracked.uint32(19177+1117)
 #skipEvents =  cms.untracked.uint32(19177+1332)
 )
-process.source.fileNames = files
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+#process.source.fileNames = files
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 
 #
 # import of standard configurations
@@ -109,7 +110,7 @@ process.GlobalTag.globaltag = '130X_dataRun3_Prompt_v3'
 # message logger
 #
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.MessageLogger.cerr.enableStatistics = False
 process.MessageLogger.cout.enable =False 
 #process.MessageLogger.cerr.threshold = "DEBUG"
@@ -182,14 +183,14 @@ process.omtfEmulator.srcCSC = cms.InputTag('omtfStage2Digis')
 process.omtfEmulator.srcRPC = cms.InputTag('omtfStage2Digis')
 #process.omtfEmulator.patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_0x00012_oldSample_3_30Files_grouped1_classProb17_recalib2.xml")
 #
-process.omtfEmulator.dumpResultToXML = cms.bool(False)
+process.omtfEmulator.dumpResultToXML = cms.bool(True)
 #process.omtfEmulator.dumpResultToROOT = cms.bool(False)
 #process.omtfEmulator.eventCaptureDebug = cms.bool(False)
 #
 #process.omtfEmulator.sorterType = cms.string("byLLH")
 #process.omtfEmulator.ghostBusterType = cms.string("GhostBusterPreferRefDt")
-process.omtfEmulator.minDtPhiQuality = cms.int32(2)
-process.omtfEmulator.minDtPhiBQuality = cms.int32(4)
+###process.omtfEmulator.minDtPhiQuality = cms.int32(2)
+###process.omtfEmulator.minDtPhiBQuality = cms.int32(4)
 #process.omtfEmulator.rpcMaxClusterSize = cms.int32(3)
 #process.omtfEmulator.rpcMaxClusterCnt = cms.int32(2)
 #process.omtfEmulator.rpcDropAllClustersIfMoreThanMax = cms.bool(True)

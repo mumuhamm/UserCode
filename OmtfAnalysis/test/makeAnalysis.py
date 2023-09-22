@@ -20,25 +20,15 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 process.omtfAnalysis = cms.EDAnalyzer("OmtfTreeAnalysis",
   histoFileName = cms.string("omtfAnalysis.root"),
   treeFileNames = cms.vstring(
-#       "omtfTree.root"
+        "omtfTree.root"
 #  "../jobs/Run2023B_JetMET/crab_JetMET0_jobVer3/omtfTree.root",
 #  "../jobs/Run2023B_JetMET/crab_JetMET1_jobVer3/omtfTree.root",
 #  "../jobs/Run2023C_JetMET/crab_JetMET0_jobVer3/omtfTree.root",
 #  "../jobs/Run2023C_JetMET/crab_JetMET1_jobVer3/omtfTree.root",
-    "../jobs/Run2023B_Muon/crab_Muon0_jobVer3/omtfTree.root",
-    "../jobs/Run2023B_Muon/crab_Muon1_jobVer3/omtfTree.root",
-    "../jobs/Run2023C_Muon/crab_Muon0_jobVer3/omtfTree.root",
-    "../jobs/Run2023C_Muon/crab_Muon1_jobVer3/omtfTree.root",
-# "../jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
-#  "/afs/cern.ch/work/k/konec/CMSSW_12_4_8.ana/src/UserCode/OmtfAnalysis/jobs/vd_JetMET/crab_Run2022G/omtfTree.root"
-#  "../jobs/v5_JetMET/omtfTree.root"
-#  "../jobs/v7_EGamma/omtfTree.root"
-#   "../jobs/v9_Muon/crab_Run2022G_from362755/omtfTree.root"
-#    "../jobs/v2_SM2018D/omtfTree.root"
-#   "../jobs/v3_SM2017F/omtfTree.root"
-#    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeB.root"
-#    "../jobs/v4_SingleMuon-17Nov2017/omtfTreeE.root"
-#   "../jobs/v4_SingleMuon-17Nov2017/omtfTreeC.root"
+#   "/afs/cern.ch/work/k/konec/CMSSW_13_1_0.ana/src/UserCode/OmtfAnalysis/jobs/Run2023B_Muon/crab_Muon0_jobVer3/omtfTree.root",
+#   "/afs/cern.ch/work/k/konec/CMSSW_13_1_0.ana/src/UserCode/OmtfAnalysis/jobs/Run2023B_Muon/crab_Muon1_jobVer3/omtfTree.root",
+#   "/afs/cern.ch/work/k/konec/CMSSW_13_1_0.ana/src/UserCode/OmtfAnalysis/jobs/Run2023C_Muon/crab_Muon0_jobVer3/omtfTree.root",
+#   "/afs/cern.ch/work/k/konec/CMSSW_13_1_0.ana/src/UserCode/OmtfAnalysis/jobs/Run2023C_Muon/crab_Muon1_jobVer3/omtfTree.root",
   ),
   filterByAnaEvent = cms.bool(True),
   anaEvent = cms.PSet(

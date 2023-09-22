@@ -153,7 +153,7 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
     for (const auto & l1mtf : l1mtfs) {
       if (!l1mtf.isValid()) continue;
       if (l1mtf.q < 12) continue;
-      if (l1mtf.pt < theCfg.getParameter<double>("requireOtherMuTrgL1Pt")) continue;
+      if (l1mtf.ptValue() < theCfg.getParameter<double>("requireOtherMuTrgL1Pt")) continue;
       if (l1mtf.bx != 0) continue;
       double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
       if (deltaR < deltaRMatching) hasTriggeringL1 = true;
@@ -220,10 +220,12 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
       if (matchedW) hW->Fill(l1mtf.bx);  
       if (qualOK && matchedW) hQW->Fill(l1mtf.bx);  
     }
-    if (qualOK && matched && (l1mtf.bx == -2 || l1mtf.bx == -1 || l1mtf.bx == 0)) {
-      bool pref = (l1mtf.bx == -1 || l1mtf.bx == -2);
-      double ptValue = l1mtf.ptValue()> 25 ? 25. : l1mtf.ptValue();
+//  bool pref = (l1mtf.bx == -1 || l1mtf.bx == -2);
+    bool pref = (l1mtf.bx == -1);
+    if (qualOK && matched && (pref || l1mtf.bx == 0)) {
+      double ptValue = l1mtf.ptValue()> 25. ? 25. : l1mtf.ptValue();
       if (hE) { hE->Fill(pref, ptValue); }
+      if (pref && ptValue>=22 && l1mtf.type==L1Obj::OMTF) printdeb=true;
 //    if (l1mtf.type==L1Obj::uGMT) {
       if (l1mtf.type==L1Obj::OMTF || l1mtf.type==L1Obj::BMTF || l1mtf.type==L1Obj::EMTF) {
         if (l1mtf.ptValue()<10) hTimeEta_Pt0->Fill(pref, l1mtf.etaValue());
@@ -263,8 +265,9 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
       }
     }
   }
+
   if (printdeb) {
-    std::cout <<"-------- PREFIRE debug: "<<std::endl; 
+    std::cout <<"-------- PREFIRE debug, event: "<<*ev<<std::endl; 
     if (muonColl) std::cout << *muonColl << std::endl;
     if (l1Objs)  std::cout << *l1Objs<< std::endl;
   } 
