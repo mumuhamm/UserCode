@@ -28,6 +28,7 @@ def cEffEtaOMTF(canvas):
   hp.SetYTitle("efficiency")
   hp.SetStats(0)
   hp.DrawCopy()
+  c.Update()
   return
 
 def cEffEtaAll(canvas):
@@ -46,6 +47,7 @@ def cEffEtaAll(canvas):
   one.SetLineStyle(2)
   one.SetLineColor(2)
   one.DrawLine(-2.,1.,2.,1.)
+  c.Update()
   return
 
 def cEffEta(canvas):
@@ -54,7 +56,7 @@ def cEffEta(canvas):
 
   c.SetTickx()
   c.SetTicky()
-  frame = c.DrawFrame(-2.4, 0.7, 2.4, 1.03)
+  frame = c.DrawFrame(-2.4, 0.5, 2.4, 1.02)
   frame.SetXTitle("eta")
   frame.SetYTitle("efficiency") 
   frame.SetStats(0)
@@ -64,12 +66,12 @@ def cEffEta(canvas):
   one.SetLineColor(1)
   one.DrawLine(-2.,1.,2.,1.)
   
-  legend = TLegend(-0.7, 0.71, 0.7, 0.79,"muon p_{T}^{reco} > 1.5*p_{T}L1, p_{T}L1=16GeV","")
+  legend = TLegend(-0.7, 0.51, 0.7, 0.69,"muon p_{T}^{reco} > 1.5*p_{T}L1, p_{T}L1=16GeV","")
   legend.SetName("lEffEta")
   canvas.Add(legend)
 
-  colors = [2,4,4,6] 
-  for index, opt in enumerate(['Bmtf','Omtf','OmtfQ4','Emtf']) :
+  colors = [2,4,6,3] 
+  for index, opt in enumerate(['Bmtf','Omtf','Emtf','uGmt']) :
     cut='16'
     color = colors[index]
     hn_D = gROOT.FindObject('hEff_EtaDenom'+cut)
@@ -83,10 +85,11 @@ def cEffEta(canvas):
     legend.AddEntry(hn,opt)
 
   legend.Draw()
+  c.Update()
   return
 
-def cEffPt(canvas):
-  c = TCanvas('cEffPt','cEffPt',1600,500)
+def cEffPt(canvas, mtf):
+  c = TCanvas('cEffPt_'+mtf,'cEffPt_'+mtf,1600,500)
   canvas.Add(c)
   c.Divide(3)
 
@@ -109,8 +112,8 @@ def cEffPt(canvas):
     frame.GetXaxis().SetTitleOffset(1.4)
     frame.SetYTitle("efficiency") 
     frame.SetTitle(region)
-    frame.GetXaxis().SetRange(12,37)
-#    frame.GetXaxis().SetRange(5,27)
+#   frame.GetXaxis().SetRange(12,37)
+    frame.GetXaxis().SetRange(6,37)
     frame.DrawCopy()
 
     one = TLine()
@@ -127,7 +130,7 @@ def cEffPt(canvas):
     colors = [2,3,4,6] 
     for index, cut in enumerate(['0','10','16','25']) :
       color = colors[index]
-      hn = gROOT.FindObject('hEff_uGmtPtCut'+cut+'_'+region[0:3])
+      hn = gROOT.FindObject('hEff_'+mtf+'PtCut'+cut+'_'+region[0:3])
       if (hn==None) :  continue
       hn.Divide(hn,hDenom,1.,1.,'B')
       hn.SetLineColor(color)
@@ -187,6 +190,7 @@ def cEffDelta(canvas):
   pad1 = c.cd(3)
   h = gROOT.FindObject('hEffDeltaEta')
   h.DrawCopy()
+  c.Update()
   return
 
 def cEffEtaVsEta(canvas):
@@ -220,13 +224,14 @@ def cEffEtaVsEta(canvas):
   return
 
 def plotAll(canvas) :
-#  cEffHistory(canvas)
-  cEffEtaOMTF(canvas)
-  cEffDelta(canvas)
-  cEffEtaVsEta(canvas)
-  cEffEtaAll(canvas)
-  cEffPt(canvas)
+# cEffHistory(canvas)
+# cEffRunAver(canvas)
+# cEffDelta(canvas)
+# cEffEtaVsEta(canvas)
+# cEffEtaOMTF(canvas)
+# cEffEtaAll(canvas)
+  cEffPt(canvas,'Omtf')
+  cEffPt(canvas,'uGmt')
   cEffEta(canvas)
-  cEffRunAver(canvas)
   return
 

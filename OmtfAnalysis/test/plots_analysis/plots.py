@@ -1,9 +1,7 @@
-#!/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/CMSSW_12_4_8/external/slc7_amd64_gcc10/bin/python3
+#!/cvmfs/cms.cern.ch/slc7_amd64_gcc11/cms/cmssw/CMSSW_13_2_4/external/slc7_amd64_gcc11/bin/python3
 
-#import ROOT
 import sys
 import math
-#import libPyROOT
 from ROOT import *
 
 import plotsDataEmul
@@ -31,7 +29,7 @@ canvas = TObjArray()
 #plotsEvent.plotAll(canvas)
 #plotsMuon.plotAll(canvas)
 #plotsEff.plotAll(canvas)
-#    plotsSecMuSel.plotAll(canvas)
+#plotsSecMuSel.plotAll(canvas)
 #plotsDataEmul.plotAll(canvas)
 plotsTime.plotAll(canvas)
 

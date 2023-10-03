@@ -10,12 +10,13 @@ def plot1(hIn):
   integral = max(1.,h.Integral())
   h.Scale(1./integral)
   h.SetMaximum(1.2)
-  h.SetMinimum(1./integral/1.2)
+#  h.SetMinimum(1./integral/1.2)
+  h.SetMinimum(5.e-4)
   h.SetStats(0);
   t=TLatex(); t.SetNDC(0); t.SetTextSize(0.04); t.SetTextColor(2)
   entries="#Ev: {0:1.3E}".format(integral)
   h.DrawCopy('hist e')
-  t.DrawLatex(0.78, 0.9, entries)
+  t.DrawLatex(0.78, 0.8, entries)
   return
 
 def cTimeLayers(canvas):
@@ -70,6 +71,42 @@ def cTimeMtfs(canvas, what1, what2, what3):
  
   c.Update()
   return
+
+def cTimeEffPt(canvas):
+  c=TCanvas("cTimeEffPt","cTimeEffPt",1200,400)
+  canvas.Add(c)
+  c.Divide(3)
+  hNull=TH1D("hNull","hNull;L1 p_{T};fraction",6,0.,29.9);
+  hNull.SetMaximum(1.5)
+  hNull.SetMinimum(1.e-5)
+  hNull.SetStats(0)
+
+  pad1 = c.cd(1)
+  pad1.SetLogy()
+  pad1.SetTicky()
+  hEffPt1 = gROOT.FindObject("hTimeEffPt_BMTF").Clone("hTimeEffPt_BMTF_Copy")
+  hNull.SetTitle(hEffPt1.GetTitle())
+  hNull.DrawCopy()
+  hEffPt1.Draw('same')
+
+  pad2 = c.cd(2)
+  pad2.SetLogy()
+  pad2.SetTicky()
+  hEffPt2 = gROOT.FindObject("hTimeEffPt_OMTF").Clone("hTimeEffPt_OMTF_Copy")
+  hNull.SetTitle(hEffPt2.GetTitle())
+  hNull.DrawCopy()
+  hEffPt2.Draw('same')
+
+  pad3 = c.cd(3)
+  pad3.SetLogy()
+  pad3.SetTicky()
+  hEffPt3 = gROOT.FindObject("hTimeEffPt_EMTF").Clone("hTimeEffPt_EMTF_Copy")
+  hNull.SetTitle(hEffPt3.GetTitle())
+  hNull.DrawCopy()
+  hEffPt3.Draw('same')
+  c.Update()
+  return
+
 
 def cTimeMtf(canvas, what):
   c = TCanvas("cTimeMtf" + what, "cTimeMTF" + what, 1100, 500)
@@ -137,6 +174,7 @@ def cTimeMtf(canvas, what):
   hTime_QM.SetLineColor(9)
   hTime_QM.SetFillColor(9)
   hTime_QM.SetFillStyle(3545)
+  hTime_QM.Print("all")
   hTime_QM.DrawCopy('hist same')
 
   hTime_QW = gROOT.FindObject("hTime" + what+"_QW").Clone("hTime" + what+"_QW")
@@ -233,6 +271,31 @@ def cTimeDeltaR(canvas) :
   c.Update()
   return
 
+def cTimeEta(canvas) :
+  c=TCanvas("cTimeEta","cTimeEta",600,400)
+  canvas.Add(c)
+  c.SetLogy()
+  c.SetTicky()
+  frame=c.DrawFrame(-2.4, 1.e-6, 2.4, 1.02);
+  frame.SetYTitle("fraction")
+  frame.SetXTitle("\eta")
+  h0 = gROOT.FindObject("hTimeEta_Pt0").Clone("hTimeEta_Pt0")
+  h0.SetLineColor(2)
+  h0.SetMarkerStyle(24)
+  h0.SetMarkerColor(2)
+  h10 = gROOT.FindObject("hTimeEta_Pt10").Clone("hTimeEta_Pt10")
+  h10.SetLineColor(3)
+  h10.SetMarkerStyle(25)
+  h10.SetMarkerColor(3)
+  h22 = gROOT.FindObject("hTimeEta_Pt22").Clone("hTimeEta_Pt22")
+  h22.SetLineColor(4)
+  h22.SetMarkerStyle(26)
+  h22.SetMarkerColor(4)
+  h0.Draw('same')
+  h10.Draw('same')
+  h22.Draw('same')
+  c.Update()
+  return 
 
 def plotAll(canvas) :
   cTimeMtfsCorr(canvas)
@@ -240,15 +303,19 @@ def plotAll(canvas) :
 #  cTimeMtfs(canvas,'Bmtf_Q','Omtf_Q','Emtf_Q')
 #  cTimeMtfs(canvas,'Bmtf_M','Omtf_M','Emtf_M')
   cTimeMtfs(canvas,'Bmtf_QM','Omtf_QM','Emtf_QM')
+#  cTimeMtfs(canvas,'Omtf_Q','Omtf_QM','Omtf_emu_QM')
 #  cTimeMtfs(canvas,'Bmtf_W','Omtf_W','Emtf_W')
 #  cTimeMtfs(canvas,'Bmtf_QW','Omtf_QW','Emtf_QW')
-  cTimeMtf(canvas,'Bmtf')
+#  cTimeMtf(canvas,'Bmtf')
   cTimeMtf(canvas,'Omtf')
-  cTimeMtf(canvas,'Emtf')
+  cTimeMtf(canvas,'Omtf_emu')
+#  cTimeMtf(canvas,'Emtf')
 #  cTimeTrackPt(canvas)
 #  cTimeTrackBX(canvas)
   cTimeDeltaR(canvas)
   cTimeLayers(canvas)
+  cTimeEffPt(canvas)
+  cTimeEta(canvas)
   return
 
 

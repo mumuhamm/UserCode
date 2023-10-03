@@ -49,6 +49,7 @@ vertexSim = consumes<edm::SimVertexContainer>(edm::InputTag("g4SimHits"));
 
 void OmtfTreeMaker::beginRun(const edm::Run &ru, const edm::EventSetup &es)
 {
+  std::cout <<"**** BEGIN RUN called!" << std::endl;
   theMenuInspector.checkRun(ru,es);
 }
 
@@ -130,6 +131,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   //
   // fill algoBits info
   //
+  //
   static edm::RunNumber_t lastRun = 0;
   if (ev.run() != lastRun) {
     lastRun = ev.run();
@@ -163,15 +165,16 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
 //
 bool debug=0;
   if (debug) { // || l1ObjColl->selectByType(L1Obj::OMTF_emu)) {
-  std::cout << *muonColl << std::endl;
-  std::cout << *l1ObjColl << std::endl;
-  std::cout << std::endl;
+    std::cout << *muonColl << std::endl;
+    std::cout << *l1ObjColl << std::endl;
+    std::cout << std::endl;
   }
   
   /* AK synchroCheck has collections names hardcoded
   theSynchroCheck.checkInside(theMuon, ev, es);  
   theSynchroCheck.checkStripCsc(theMuon, ev, es);
   theSynchroCheck.checkStripRpc(theMuon, ev, es);
+  theSynchroCheck.checkDigiDt(theMuon, ev, es);
   theSynchroCheck.checkHitRpc(theMuon, ev, es);
   theSynchroCheck.checkHitCsc(theMuon, ev, es);
   */
@@ -179,13 +182,6 @@ bool debug=0;
   if (omtfColl) {
     reco::Track track = theClosestTrackFinder.result(ev,es, omtfColl.getL1Objs().front().etaValue(), 
                                                             omtfColl.getL1Objs().front().phiValue());
-    closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
-  }
-  
-  L1PhaseIIObjColl phaseIIColl = l1PhaseIIObjColl->selectByType(L1PhaseIIObj::uGMT_emu);
-  if (phaseIIColl) {
-    reco::Track track = theClosestTrackFinder.result(ev,es, phaseIIColl.getL1PhaseIIObjs().front().etaValue(), 
-						     phaseIIColl.getL1PhaseIIObjs().front().phiValue());
     closestTrack->setKine(track.pt(), track.eta(), track.phi(), track.charge());
   }
 

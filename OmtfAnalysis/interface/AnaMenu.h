@@ -14,7 +14,7 @@ class TriggerMenuResultObj;
 
 class AnaMenu {
 public:
-  AnaMenu(const edm::ParameterSet& cfg) : debug(false), theConfig(cfg) {}
+  AnaMenu(const edm::ParameterSet& cfg);
   void init(TObjArray& histos);
   void updateMenu(const std::vector<std::string> & menuL1, const std::vector<std::string> & menuHLT);
   bool filter( const EventObj* ev, const MuonObj* muon, 
@@ -28,6 +28,8 @@ private:
   AlgoMap theAlgosL1, theAlgosHLT;
   std::vector<std::string>  theMenuL1, theMenuHLT;
   edm::ParameterSet theConfig;
+
+   std::vector<std::string> acceptL1_Names, acceptHLT_Names;
 
 };
 

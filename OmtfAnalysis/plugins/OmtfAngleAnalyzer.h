@@ -3,16 +3,17 @@
 
 #include <string>
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 class RPCReadOutMapping;
 
-class OmtfAngleAnalyzer : public edm::EDAnalyzer {
+class OmtfAngleAnalyzer : public edm::one::EDAnalyzer<edm::one::WatchRuns> {
 public:
   OmtfAngleAnalyzer (const edm::ParameterSet & cfg);
   virtual ~OmtfAngleAnalyzer(){}
   virtual void beginJob();
   virtual void beginRun(const edm::Run&,  const edm::EventSetup& es);
+  virtual void endRun(const edm::Run&,  const edm::EventSetup& es) {}
 
   virtual void analyze(const edm::Event&, const edm::EventSetup& es) { }
 

@@ -47,7 +47,7 @@
 #include "CondFormats/RPCObjects/interface/TriggerBoardSpec.h"
 #include "CondFormats/RPCObjects/interface/LinkBoardSpec.h"
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 
@@ -69,8 +69,21 @@ int eta_bit(float eta) { return bounds.rend() - std::lower_bound (bounds.rbegin(
 
 typedef std::vector< std::pair< LinkBoardElectronicIndex, LinkBoardPackedStrip> > RawDataFrames;
 
+namespace {
+  edm::ESGetToken<CSCGeometry, MuonGeometryRecord> theCscGeomToken;
+  edm::ESGetToken<RPCGeometry, MuonGeometryRecord> theRpcGeomToken;
+  edm::ESGetToken<DTGeometry, MuonGeometryRecord> theDtGeomToken;
+  edm::ESGetToken<RPCEMap, RPCEMapRcd> theRPCEMapToken;
 
-OmtfAngleAnalyzer::OmtfAngleAnalyzer (const edm::ParameterSet & cfg) {}
+}
+
+
+OmtfAngleAnalyzer::OmtfAngleAnalyzer (const edm::ParameterSet & cfg) {
+  theRpcGeomToken = esConsumes<RPCGeometry, MuonGeometryRecord>();
+  theCscGeomToken = esConsumes<CSCGeometry, MuonGeometryRecord>();
+  theDtGeomToken  = esConsumes<DTGeometry, MuonGeometryRecord>();
+  theRPCEMapToken = esConsumes<RPCEMap, RPCEMapRcd>();
+}
 
 void OmtfAngleAnalyzer::beginJob() { std::cout << "begin Job" << std::endl; }
 
@@ -87,9 +100,8 @@ void OmtfAngleAnalyzer::beginRun(const edm::Run&,  const edm::EventSetup& es)
 void OmtfAngleAnalyzer::dt2omtf(const edm::EventSetup& es)
 {
   double hsPhiPitch = 2*M_PI/5400.;
-  edm::ESHandle<DTGeometry> dtGeometry;
-  es.get<MuonGeometryRecord>().get(dtGeometry);
-  const std::vector<const DTChamber*> & chambers = dtGeometry->chambers();
+  const DTGeometry & dtGeometry = es.getData(theDtGeomToken); 
+  const std::vector<const DTChamber*> & chambers = dtGeometry.chambers();
   std::cout <<"Size of chambers: " << chambers.size() << std::endl;
 
   for (int posneg=-1; posneg <=1; posneg+=2) {
@@ -119,9 +131,8 @@ void OmtfAngleAnalyzer::dt2omtf(const edm::EventSetup& es)
 
 void OmtfAngleAnalyzer::csc2omtf(const edm::EventSetup& es)
 {
-  edm::ESHandle<CSCGeometry> cscGeometry;
-  es.get<MuonGeometryRecord>().get(cscGeometry);
-  const std::vector<const CSCChamber*> & chambers = cscGeometry->chambers();
+  const CSCGeometry & cscGeometry = es.getData(theCscGeomToken); 
+  const std::vector<const CSCChamber*> & chambers = cscGeometry.chambers();
   std::cout <<"Size of chambers: " << chambers.size() << std::endl;
 /*
   for (auto chamber:chambers) {
@@ -251,9 +262,9 @@ void OmtfAngleAnalyzer::csc2omtf(const edm::EventSetup& es)
 void OmtfAngleAnalyzer::rpc2omtf(const edm::EventSetup& es)
 {
 
-  edm::ESHandle<RPCGeometry> rpcGeometry;
-  es.get<MuonGeometryRecord>().get(rpcGeometry);
-  const std::vector<const RPCRoll*>& rolls = rpcGeometry->rolls();
+  const RPCGeometry & rpcGeometry = es.getData(theRpcGeomToken);
+
+  const std::vector<const RPCRoll*>& rolls = rpcGeometry.rolls();
 
   const double hsPhiPitch = 2*M_PI/5400.;
   
@@ -314,8 +325,8 @@ void OmtfAngleAnalyzer::rpc2omtf(const edm::EventSetup& es)
   //
   //  
   //
-  edm::ESTransientHandle<RPCEMap> readoutMapping;
-  es.get<RPCEMapRcd>().get(readoutMapping);
+  edm::ESTransientHandle<RPCEMap> readoutMapping =  es.getTransientHandle(theRPCEMapToken);
+
   const RPCReadOutMapping * cabling= readoutMapping->convert();
   std::cout <<" Has readout map, VERSION: " << cabling->version() << std::endl;
 
@@ -340,7 +351,7 @@ void OmtfAngleAnalyzer::rpc2omtf(const edm::EventSetup& es)
       int strip = duFrame.second;
 
       if (rawDetId && strip) {
-        const RPCRoll * roll = rpcGeometry->roll(rawDetId);
+        const RPCRoll * roll = rpcGeometry.roll(rawDetId);
         GlobalPoint stripPosition = roll->toGlobal(roll->centreOfStrip(strip));
         double angle = stripPosition.phi(); 
         double eta_value = stripPosition.eta();
@@ -369,7 +380,7 @@ void OmtfAngleAnalyzer::rpc2omtf(const edm::EventSetup& es)
               //
               // barrel
               //
-              const RPCRoll* rollN = rpcGeometry->roll(rawDetIdN);
+              const RPCRoll* rollN = rpcGeometry.roll(rawDetIdN);
               GlobalPoint stripPositionN = rollN->toGlobal(rollN->centreOfStrip(stripN));
               angleN = stripPositionN.phi(); 
             } else {      

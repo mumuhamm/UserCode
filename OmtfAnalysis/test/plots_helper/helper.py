@@ -1,10 +1,11 @@
-#!/cvmfs/cms.cern.ch/slc7_amd64_gcc10/cms/cmssw/CMSSW_12_4_8/external/slc7_amd64_gcc10/bin/python3
+#!/cvmfs/cms.cern.ch/slc7_amd64_gcc11/cms/cmssw/CMSSW_13_1_0/external/slc7_amd64_gcc11/bin/python3
 
 from ROOT import *
 gROOT.Reset()
 #f = TFile('../omtfHelper.root');
-#f = TFile('../../jobs/v9_Muon/crab_Run2022G_from362755/omtfHelper.root');
-f = TFile('../../jobs/v6_Express/crab_Run2022G_from362755/omtfHelper.root');
+#f = TFile('../../jobs/Run2023C_Muon/crab_Muon1_jobVer1/omtfHelper.root');
+#f = TFile('../../jobs/omtfHelper_Mu.root');
+f = TFile('../../jobs/omtfHelper_JM.root');
 f.ls();
 
 
@@ -37,7 +38,7 @@ def table (h):
     vp1= h.GetBinContent(bCh,h.GetYaxis().FindBin( 1))
     print ('{0:5s}/{1:2d} {2:6.0f} {3:6.0f} {4:6.0f}'.format(h.GetTitle()[1:6],bCh,vm1,v0,vp1))
    
-c1=TCanvas("cME13_Inside","cME13_Inside",1000,600)
+c1=TCanvas("cME13_Inside","cME13_Inside",1200,800)
 c1.Divide(1,2)
 c1.cd(1)
 hP=gROOT.FindObject("hME13P_Inside")
@@ -59,7 +60,7 @@ table(hN)
 c1.Update()
 c1.Print(c1.GetName()+".png","png")
 
-c2=TCanvas("cME13_Strip","cME13_Strip",1000,600)
+c2=TCanvas("cME13_Strip","cME13_Strip",1200,800)
 c2.Divide(1,2)
 c2.cd(1)
 hP=gROOT.FindObject("hME13P_Strip")
@@ -79,7 +80,7 @@ c2.Update()
 c2.Print(c2.GetName()+".png","png")
   
 def plot_chambers(name, wd, sr) :
-  print ('chambers:', name, wd, sr, DetSpecObj.DET.CSC)
+  print ('chambers:', name, wd, sr)
   if name=='RPCe' or name=='CSC' :
     maxch = 36
   else :
@@ -166,7 +167,32 @@ h.DrawCopy()
 c6.Update()
 c6.Print(c6.GetName()+".png","png")
 
+c7=TCanvas("cDtBxQ","cDtBxQ",1000,500)
+c7.Divide(2,1)
+c7.cd(1)
+h=gROOT.FindObject("hDtBxQ2")
+h.DrawCopy()
+h.Print("all")
+c7.cd(2)
+h=gROOT.FindObject("hDtBxQ4")
+h.DrawCopy()
+h.Print("all")
+c7.Update()
+c7.Print(c7.GetName()+".png","png")
+
+c8=TCanvas("cDtPhi","cDtPhi",1000,500)
+c8.Divide(2,1)
+c8.cd(1)
+h=gROOT.FindObject("hDtPhi")
+h.DrawCopy()
+c8.cd(2)
+h=gROOT.FindObject("hDtDPhi")
+h.DrawCopy()
+c8.Update()
+c8.Print(c8.GetName()+".png","png")
+
 #f.ls()
+
 
 plot_chambers('CSC',  -4, 2) 
 plot_chambers('CSC',  -3, 2) 
@@ -296,7 +322,7 @@ def plot_BxStatCSC() :
   c.Print(c.GetName()+".png")
   input("press a key")
 
-#plot_BxStatRPC()
+plot_BxStatRPC()
 plot_BxStatCSC()
 
 input("press a key")

@@ -15,16 +15,18 @@ process = cms.Process('OmtfTree')
 # (there is 255 file limit though). Can be empty for crab.
 #
 
-dataDir='/afs/cern.ch/work/k/konec/data/runs/'
+#dataDir='/afs/cern.ch/work/k/konec/data/runs/'
+#dataDir='/eos/home-k/konec/data/Run2023D-JetMET_JetHTJetPlusHOFilter-PromptReco-v1_RAW-RECO/'
+dataDir='/eos/home-k/konec/data/Run2023D-Muon_ZMu-PromptReco-v1_RAW-RECO/'
 #dataDir='/eos/cms/store/express/Run2022D/ExpressPhysics/FEVT/Express-v1/000/357/815/00000/'
 #dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/691/00000/'
 #dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/686/00000/'
 #dataDir='/eos/cms/store/express/Run2022E/ExpressPhysics/FEVT/Express-v1/000/359/685/00000/'
 #dataDir='/eos/cms/store/express/Run2022F/ExpressPhysics/FEVT/Express-v1/000/360/459/00000/'
 #dataDir='/eos/cms/store/express/Run2022G/ExpressPhysics/FEVT/Express-v1/000/362/728/00000/'
-#lsCommand='ls -1 '+dataDir+'|grep root'
+lsCommand='ls -1 '+dataDir+'|grep root'
+#lsCommand='ls -1 '+dataDir+'|grep run362728_Muon'
 #lsCommand='ls -1 '+dataDir+'|grep JetMET | grep 362437 |grep root'
-lsCommand='ls -1 '+dataDir+'|grep run362728_Muon'
 
 print ('command: ',lsCommand)
 lsOutput= subprocess.Popen(lsCommand, stdout=subprocess.PIPE, shell=True, text=True).communicate()[0]
@@ -49,25 +51,28 @@ fileNames = cms.untracked.vstring(
 #  'file:/afs/cern.ch/work/k/konec/data/runs/run321140_JetHT_00CAF0AF-5B9F-E811-9E6B-FA163EEA3181.root',
 #  'file:/afs/cern.ch/work/k/konec/data/runs/run322348_JetHT_A8C88C19-40B4-E811-9F14-02163E019EAF.root',
 # 'file:/eos/cms/store/express/Run2022D/ExpressPhysics/FEVT/Express-v1/000/357/815/00000/ffe8b95d-25cb-45cd-9f45-b96d8e18ed4f.root',
-#  '/store/data/Run2022G/Muon/RAW-RECO/ZMu-PromptReco-v1/000/362/728/00000/02c66efb-5541-4c9d-b2ac-952ce4ebdcd7.root',
+# '/store/data/Run2022G/Muon/RAW-RECO/ZMu-PromptReco-v1/000/362/728/00000/02c66efb-5541-4c9d-b2ac-952ce4ebdcd7.root',
 #  'file:/afs/cern.ch/work/k/konec/data/runs/run362728_Muon_02c66efb-5541-4c9d-b2ac-952ce4ebdcd7.root',
 #  '/store/data/Run2022G/JetMET/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v1/000/362/437/00000/7fa78eec-f7bf-47be-bbce-9264b8d5205e.root',
 #  '/store/data/Run2022G/JetMET/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v1/000/362/437/00000/cc10cdfb-6a8c-455d-a441-960522112238.root',
-#   '/store/data/Run2022G/Muon/AOD/PromptReco-v1/000/362/760/00000/00a1687e-de9a-4fd7-9fa5-386d66edb074.root',
 #   '/store/data/Run2022G/Muon/MINIAOD/PromptReco-v1/000/362/760/00000/01cd8e14-f3a9-412e-8548-3f17ea13040b.root',
-#    '/store/data/Run2022G/Muon/AOD/PromptReco-v1/000/362/760/00000/021cbe42-3d27-44aa-83fc-7f5f15552cfe.root',
-# '/store/data/Run2022G/Muon/ALCARECO/TkAlMuonIsolated-PromptReco-v1/000/362/760/00000/b9d6c199-1399-49bc-bf4f-af6fa6cf533a.root',
-#  '/store/data/Run2022G/EGamma/AOD/PromptReco-v1/000/362/760/00000/0242aec2-ddf7-4a43-87c1-827be4a2fadf.root',
-#  '/store/data/Run2022G/JetMET/NANOAOD/PromptNanoAODv10_v1-v1/2820000/869d807d-3acd-4aac-860e-da3ecf6b625f.root',
-  '/store/data/Run2022G/JetMET/MINIAOD/PromptReco-v1/000/362/760/00000/110404fa-abee-41ad-9ff3-25756fa54d58.root',
+#  '/store/data/Run2022G/JetMET/MINIAOD/PromptReco-v1/000/362/760/00000/110404fa-abee-41ad-9ff3-25756fa54d58.root',
+# '/store/data/Run2023D/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/369/870/00000/42f402f5-c1ce-433f-8d92-7af6cb2004d5.root',
+# '/store/data/Run2023D/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/369/956/00000/50d95203-d831-4a5f-8e47-f9147cfc0e7f.root',
+# '/store/data/Run2023D/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/369/956/00000/545cafa8-7c69-40c1-a355-6dffd539c0b6.root',
+# '/store/data/Run2023D/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/369/956/00000/548d4944-261b-499a-a9c7-8bdaf7991348.root',
+#'file:/eos/home-k/konec/data/Run2023D-Muon_ZMu-PromptReco-v1_RAW-RECO/run_369956_5cf85633-fce3-48cc-962e-8bce11540a67.root',
+#'/store/data/Run2023D/JetMET0/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v1/000/369/869/00000/7b83920b-1b4f-4961-83dd-94fbda7c3ff8.root',
+#'file:/eos/home-k/konec/data/Run2023D-JetMET_JetHTJetPlusHOFilter-PromptReco-v1_RAW-RECO/run_369870_81f7355b-2ac5-4469-ab0a-d9b413c9152b.root',
+ 'root://xrootd-cms.infn.it//store/data/Run2023B/Muon0/RAW-RECO/ZMu-PromptReco-v1/000/367/079/00000/b01b794e-9075-4d42-b273-85b2bc66f13a.root',
   ),
-#skipEvents =  cms.untracked.uint32(764)
+skipEvents =  cms.untracked.uint32(220)
 #skipEvents =  cms.untracked.uint32(19177)
 #skipEvents =  cms.untracked.uint32(19177+1117)
 #skipEvents =  cms.untracked.uint32(19177+1332)
 )
 #process.source.fileNames = files
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 
 #
 # import of standard configurations
@@ -76,10 +81,9 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 #process.load('Configuration.EventContent.EventContent_cff')
 #process.load('Configuration.Geometry.GeometryDB_cff')
-process.load('Configuration.Geometry.GeometryExtended2021Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023Reco_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('EventFilter.L1TRawToDigi.bmtfDigis_cfi')
@@ -95,23 +99,24 @@ process.load('EventFilter.L1TRawToDigi.caloStage2Digis_cfi')
 #
 # set proper GlobalTag
 #
-from Configuration.AlCa.GlobalTag import GlobalTag
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+#from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
-#process.GlobalTag.globaltag = '123X_dataRun3_Express_v5'
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
+process.GlobalTag.globaltag = '130X_dataRun3_Prompt_v3'
 
 #
 # message logger
 #
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
-#process.MessageLogger.cerr.threshold = "DEBUG"
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.MessageLogger.cerr.enableStatistics = False
+process.MessageLogger.cout.enable =False 
+#process.MessageLogger.cerr.threshold = "DEBUG"
 #process.MessageLogger.debugModules.append('muonRPCDigis')
 #process.MessageLogger.debugModules.append('omtfStage2Digis')
-#process.MessageLogger.suppressWarning  = cms.untracked.vstring('*')
-process.MessageLogger.cout.enable =False 
+process.MessageLogger.suppressWarning  = cms.untracked.vstring('*')
 
 process.digiCompare = cms.EDAnalyzer("OmtfDigiCompare",
   srcRPC_OMTF = cms.InputTag('omtfStage2Digis'),
@@ -178,14 +183,14 @@ process.omtfEmulator.srcCSC = cms.InputTag('omtfStage2Digis')
 process.omtfEmulator.srcRPC = cms.InputTag('omtfStage2Digis')
 #process.omtfEmulator.patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_0x00012_oldSample_3_30Files_grouped1_classProb17_recalib2.xml")
 #
-process.omtfEmulator.dumpResultToXML = cms.bool(False)
+process.omtfEmulator.dumpResultToXML = cms.bool(True)
 #process.omtfEmulator.dumpResultToROOT = cms.bool(False)
 #process.omtfEmulator.eventCaptureDebug = cms.bool(False)
 #
 #process.omtfEmulator.sorterType = cms.string("byLLH")
 #process.omtfEmulator.ghostBusterType = cms.string("GhostBusterPreferRefDt")
-#process.omtfEmulator.minDtPhiQuality = cms.int32(2)
-#process.omtfEmulator.minDtPhiBQuality = cms.int32(2)
+###process.omtfEmulator.minDtPhiQuality = cms.int32(2)
+###process.omtfEmulator.minDtPhiBQuality = cms.int32(4)
 #process.omtfEmulator.rpcMaxClusterSize = cms.int32(3)
 #process.omtfEmulator.rpcMaxClusterCnt = cms.int32(2)
 #process.omtfEmulator.rpcDropAllClustersIfMoreThanMax = cms.bool(True)
@@ -217,10 +222,10 @@ process.emulGmtStage2Digis = cms.EDProducer('L1TMuonProducer',
 )
 
 process.raw2digi_step = cms.Path(process.muonRPCDigis+process.muonCSCDigis+process.bmtfDigis+process.emtfStage2Digis+process.twinMuxStage2Digis+process.gmtStage2Digis+process.caloStage2Digis)
-#process.raw2digi_step = cms.Path(process.muonRPCDigis)
 process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfEmulator+process.digiCompare+process.emulGmtCaloSumDigis+process.emulGmtStage2Digis)
 #process.omtf_step = cms.Path(process.omtfStage2Digis+process.omtfStage2Raw+process.omtfStage2Digis2+process.digiComapre+process.omtfEmulator)
 process.endjob_step = cms.EndPath(process.endOfProcess)
+
 process.schedule = cms.Schedule(process.raw2digi_step, process.omtf_step, process.endjob_step)
 
 #
@@ -238,8 +243,9 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
 #      "HLT_Mu55_v", "HLT_IsoMu24_eta2p1_v", "HLT_IsoTkMu24_eta2p1_v"
 #    ),
     namesCheckHltMuMatch = cms.vstring(
-       "HLT_IsoMu24_v","HLT_IsoMu24_eta2p1_v","HLT_Mu50_v"
+       "HLT_IsoMu24_v","HLT_Mu50_v"
      ),
+    namesMarkedPrescaled = cms.vstring("L1_IsolatedBunch","L1_FirstBunchInTrain","L1_FirstCollisionInTrain"),
   ),
 
    linkSynchroGrabber = cms.PSet(
@@ -263,9 +269,11 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   l1ObjMaker = cms.PSet(
     omtfEmulSrc = cms.InputTag('omtfEmulator','OMTF'),
     omtfDataSrc = cms.InputTag('omtfStage2Digis'),
+    emtfDataSrc = cms.InputTag('emtfStage2Digis'),
+    bmtfDataSrc = cms.InputTag('bmtfDigis','BMTF'),
 #   omtfDataSrc = cms.InputTag('gmtStage2Digis','OMTF'),
-    emtfDataSrc = cms.InputTag('gmtStage2Digis','EMTF'),
-    bmtfDataSrc = cms.InputTag('gmtStage2Digis','BMTF'),
+#   emtfDataSrc = cms.InputTag('gmtStage2Digis','EMTF'),
+#   bmtfDataSrc = cms.InputTag('gmtStage2Digis','BMTF'),
     gmtDataSrc = cms.InputTag('gmtStage2Digis','Muon'),
     gmtEmulSrc = cms.InputTag('emulGmtStage2Digis',''),
   ),
@@ -302,6 +310,7 @@ process.omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   ),
 
   synchroCheck = cms.PSet(
+    srcDT  = cms.InputTag('omtfStage2Digis'),
     srcCSC = cms.InputTag('omtfStage2Digis'),
     srcRPC = cms.InputTag('omtfStage2Digis')
   ),

@@ -10,7 +10,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -53,14 +53,15 @@
 namespace {
   edm::EDGetTokenT<edm::TriggerResults> theTrigResultToken;
   edm::EDGetTokenT<GlobalAlgBlkBxCollection> theGlobalAlgToken;
+  edm::ESGetToken<L1TUtmTriggerMenu,L1TUtmTriggerMenuRcd> theL1MenuToken;
 }
 
 
 MenuInspector::MenuInspector(const edm::ParameterSet& cfg, edm::ConsumesCollector cColl)
   : lastEvent(0), lastRun(0),
     theCounterIN(0), theCounterL1(0), theCounterHLT(0),
-    theWarnNoColl(cfg.getUntrackedParameter<bool>("warnNoColl",true)),
-    theL1MenuToken(cColl.esConsumes<edm::Transition::BeginRun>())
+    theWarnNoColl(cfg.getUntrackedParameter<bool>("warnNoColl",true))
+//    theL1MenuToken(cColl.esConsumes<edm::Transition::BeginRun>())
 { 
   theTrigResultToken = cColl.consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
   theGlobalAlgToken  = cColl.consumes<GlobalAlgBlkBxCollection>(edm::InputTag("hltGtStage2Digis"));
@@ -68,8 +69,14 @@ MenuInspector::MenuInspector(const edm::ParameterSet& cfg, edm::ConsumesCollecto
 
   cColl.consumes<trigger::TriggerEvent>(edm::InputTag("hltTriggerSummaryAOD","","HLT"));
 
+  theL1MenuToken=cColl.esConsumes<edm::Transition::BeginRun>();
+
   std::vector<std::string> names = cfg.getParameter<std::vector<std::string> >("namesCheckHltMuMatch");
   for (auto name : names) theNamesCheckHltMuMatchIdx[name]=-1;
+
+  std::vector<std::string> namesPS = cfg.getParameter<std::vector<std::string> >("namesMarkedPrescaled");
+  for (auto namePS : namesPS) theNamesIndicesMarkedPrescaled[namePS]=-1;
+
 }
 
 bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
@@ -79,11 +86,13 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
   //
 //  edm::ESHandle<L1TUtmTriggerMenu> menu;
 //  es.get<L1TUtmTriggerMenuRcd>().get(menu);
-  auto const & menu = es.getData(theL1MenuToken);
-//  const L1TUtmTriggerMenu & menu = es.getData(theL1MenuToken);
+//  auto const & menu = es.getData(theL1MenuToken);
+  const L1TUtmTriggerMenu & menu = es.getData(theL1MenuToken);
 
   theNamesAlgoL1.clear();
   theNamesAlgoL1.resize(menu.getAlgorithmMap().size(),"");
+  for (auto item : theNamesIndicesMarkedPrescaled) { item.second=-1; }
+
 //  std::cout <<" size of indexes: "<< menu.getAlgorithmMap().size() << std::endl;
   for (auto const & keyval: menu.getAlgorithmMap()) {
     std::string const & name  = keyval.second.getName();
@@ -91,9 +100,13 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
 //    std::cout << " L1  Index: " << index << " name: " << name << std::endl;
     if (index >= theNamesAlgoL1.size() ) theNamesAlgoL1.resize( index+1,"");  
     theNamesAlgoL1[index]=name;
+
+    auto pos = theNamesIndicesMarkedPrescaled.find(name);
+    if (pos != theNamesIndicesMarkedPrescaled.end()) pos->second=index;
   }
-//  std::cout <<" size of indexes: "<< theNamesAlgoL1.size() << std::endl;
-//  for (unsigned int i=0; i< theNamesAlgoL1.size(); ++i) std::cout <<" L1 indes: " << i << " algo: "<<theNamesAlgoL1[i] << std::endl;
+  std::cout <<" size of L1 indices: "<< theNamesAlgoL1.size() << std::endl;
+//  for (unsigned int i=0; i< theNamesAlgoL1.size(); ++i) std::cout <<" L1 indices: " << i << " algo: "<<theNamesAlgoL1[i] << std::endl;
+//  for (auto item : theNamesIndicesMarkedPrescaled) { std::cout <<"map key: " << item.first<<" idx: "<<item.second << std::endl;} 
 
   //
   // HLT
@@ -102,18 +115,18 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
   theTriggerParSetID = theHltConfig.processPSet().id(); 
   if (theHltConfig.init(run,es,"HLT",changed)) {
     if (changed) {
-//      theHltConfig.dump("Streams");
-//      theHltConfig.dump("Datasets");
-//      theHltConfig.dump("Triggers");
-//      theHltConfig.dump("PrescaleTable");
-//      theHltConfig.dump("ProcessPSet");
+//    theHltConfig.dump("Streams");
+//    theHltConfig.dump("Datasets");
+//    theHltConfig.dump("Triggers");
+//    theHltConfig.dump("PrescaleTable");
+//    theHltConfig.dump("ProcessPSet");
       theNamesAlgoHLT.clear();
       for (auto & im : theNamesCheckHltMuMatchIdx) im.second = -1;
 
       //for goes up to .size()-1, since the last is "Final" decision.
       for (unsigned int idx =0;  idx < theHltConfig.size()-1; idx++) {
         std::string name = theHltConfig.triggerName(idx);
-//        std::cout <<" HLT index: "<< idx << "name: "<< name << std::endl;
+//      std::cout <<" HLT index: "<< idx << " name: "<< name << std::endl;
         theNamesAlgoHLT.push_back( name );
         for (auto & im : theNamesCheckHltMuMatchIdx) if (name.find(im.first) != std::string::npos) im.second = idx; 
       }
@@ -184,7 +197,7 @@ bool MenuInspector::associateHLT(const edm::Event &ev, const edm::EventSetup &es
       bool matched = false;
       for (auto & muon : muons) {
         double dR = reco::deltaR(muon, triggerObject);
-        if (dR < 0.1) { matched = true; if (isIsoAlgo) muon.isMatchedIsoHlt = true; else  muon.isMatchedHlt = true; }
+        if (dR < 0.01) { matched = true; if (isIsoAlgo) muon.isMatchedIsoHlt = true; else  muon.isMatchedHlt = true; }
       }
       if (debug) std::cout <<"--> ID: "<< triggerObject.id()<<" PT: "<<triggerObject.pt() <<" ETA: "<< triggerObject.eta() <<" PHI:"<< triggerObject.phi()<<" MATCHED: "<<matched << std::endl;
       
@@ -228,8 +241,13 @@ std::vector<unsigned int>  MenuInspector::runFiredAlgosL1(const edm::Event&ev, c
     bool isAccept = glbAlgBlk->getAlgoDecisionFinal(idx);
     if (isAccept) result.push_back(idx);
 //  line below prints name of fired algos
-//  if (isAccept) std::cout <<" FIRED: "<< theNamesAlgoL1[idx] << std::endl;
+//  if (isAccept) std::cout <<" FIRED L1: "<< theNamesAlgoL1[idx] << std::endl;
   } 
+  for (const auto & item : theNamesIndicesMarkedPrescaled) {
+    if (item.second < 0) continue;
+    unsigned int idx = item.second; 
+    if (glbAlgBlk->getAlgoDecisionInitial(idx)) result.push_back(idx);
+  }
 
   return result;
 }
@@ -270,7 +288,7 @@ std::vector<unsigned int> MenuInspector::runFiredAlgosHLT(const edm::Event&ev, c
     bool isAccept = triggerResults->accept(triggerIndex);
     if (isAccept) result.push_back(triggerIndex);
 //  line below prints HLT fired triggers
-//  if (isAccept) std::cout <<std::dec<<  triggerIndex <<" ("<< theHltConfig.triggerName(triggerIndex)<< std::endl;;
+//  if (isAccept) std::cout<<"fired HLT idx: " <<std::dec<< triggerIndex <<" ("<< theHltConfig.triggerName(triggerIndex)<<") "<< std::endl;;
   }
  
   return result;
