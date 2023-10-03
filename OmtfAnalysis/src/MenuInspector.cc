@@ -64,8 +64,7 @@ MenuInspector::MenuInspector(const edm::ParameterSet& cfg, edm::ConsumesCollecto
 //    theL1MenuToken(cColl.esConsumes<edm::Transition::BeginRun>())
 { 
   theTrigResultToken = cColl.consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
-  theGlobalAlgToken  = cColl.consumes<GlobalAlgBlkBxCollection>(edm::InputTag("hltGtStage2Digis"));
-  l1tUtmTriggerMenuToken = cColl.esConsumes<edm::Transition::BeginRun>();
+  theGlobalAlgToken  = cColl.consumes<GlobalAlgBlkBxCollection>(edm::InputTag("gtStage2Digis"));
 
   cColl.consumes<trigger::TriggerEvent>(edm::InputTag("hltTriggerSummaryAOD","","HLT"));
 
@@ -229,7 +228,7 @@ std::vector<unsigned int>  MenuInspector::runFiredAlgosL1(const edm::Event&ev, c
   edm::Handle<GlobalAlgBlkBxCollection> ugt;
   ev.getByToken(theGlobalAlgToken, ugt);
   if (!ugt.isValid()) {
-     if (theWarnNoColl) std::cout << " PROBLEM, record uGT not OK: "<< std::endl;
+    std::cout << " PROBLEM, record uGT not OK " << std::endl;
     return result;
   }
 

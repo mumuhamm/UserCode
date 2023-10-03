@@ -20,10 +20,6 @@
 #include "UserCode/OmtfDataFormats/interface/MuonObjColl.h"
 #include "UserCode/OmtfDataFormats/interface/L1Obj.h"
 #include "UserCode/OmtfDataFormats/interface/L1ObjColl.h"
-
-#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"       // My added classes
-#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObjColl.h"
-
 #include "UserCode/OmtfDataFormats/interface/TriggerMenuResultObj.h"
 #include "UserCode/OmtfDataFormats/interface/SynchroCountsObjVect.h"
 
@@ -39,15 +35,12 @@
 #include "UserCode/OmtfAnalysis/interface/AnaDiMu.h"
 #include "UserCode/OmtfAnalysis/interface/AnaL1Distribution.h"
 
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
-
 OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
   : theConfig(cfg),
     theAnaEvent(0), 
     theAnaMuonDistribution(0),
     theAnaMenu(0), 
     theAnaDataEmul(0), 
-    theAnaGenEff(0),
     theAnaEff(0),
     theAnaSecMu(0), 
     theAnaTime(0),
@@ -58,8 +51,7 @@ OmtfTreeAnalysis::OmtfTreeAnalysis(const edm::ParameterSet & cfg)
   if (theConfig.exists("anaEvent")) theAnaEvent = new   AnaEvent(cfg.getParameter<edm::ParameterSet>("anaEvent") );
   if (theConfig.exists("anaMuonDistribution")) theAnaMuonDistribution = new AnaMuonDistribution( cfg.getParameter<edm::ParameterSet>("anaMuonDistribution"));
   if (theConfig.exists("anaMenu")) theAnaMenu = new AnaMenu(theConfig.getParameter<edm::ParameterSet>("anaMenu"));
-  if (theConfig.exists("anaEff"))      theAnaEff    = new AnaEff   (cfg.getParameter<edm::ParameterSet>("anaEff") );
-  if (theConfig.exists("anaGenEff"))   theAnaGenEff = new AnaGenEff(cfg.getParameter<edm::ParameterSet>("anaGenEff"));
+  if (theConfig.exists("anaEff")) theAnaEff = new   AnaEff(cfg.getParameter<edm::ParameterSet>("anaEff") );
   if (theConfig.exists("anaDataEmul")) theAnaDataEmul = new AnaDataEmul(cfg.getParameter<edm::ParameterSet>("anaDataEmul"));
   if (theConfig.exists("anaSecMuSel")) theAnaSecMu = new AnaSecMuSelector(cfg.getParameter<edm::ParameterSet>("anaSecMuSel"));
   if (theConfig.exists("anaTime")) theAnaTime = new AnaTime(cfg.getParameter<edm::ParameterSet>("anaTime"));
@@ -78,7 +70,6 @@ void OmtfTreeAnalysis::beginJob()
   if (theAnaDiMu)             theAnaDiMu->init(theHistos);
   if (theAnaDataEmul)         theAnaDataEmul->init(theHistos);
   if (theAnaEff)              theAnaEff->init(theHistos);
-  if (theAnaGenEff)           theAnaGenEff->init(theHistos);
   if (theAnaTime)             theAnaTime->init(theHistos);
   if (theAnaSynch)            theAnaSynch->init(theHistos);
   if (theAnaSecMu)            theAnaSecMu->init(theHistos);
@@ -118,23 +109,17 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
   //
   EventObj * event = 0;
   MuonObjColl * muonColl = 0;
-  
   L1ObjColl* l1ObjColl = 0;
-
-  L1PhaseIIObjColl* l1PhaseIIObjColl = 0;   // Added
-
   TriggerMenuResultObj *bitsL1  = 0;
   TriggerMenuResultObj *bitsHLT = 0;
   SynchroCountsObjVect* synchroCounts = 0;
   TrackObj * closestTrack = 0;
-  GenObjColl* genColl;
+
   
 
   chain.SetBranchAddress("event",&event);
   chain.SetBranchAddress("muonColl",&muonColl);
-  chain.SetBranchAddress("genColl", &genColl);
   chain.SetBranchAddress("l1ObjColl",&l1ObjColl);
-  chain.SetBranchAddress("l1PhaseIIObjColl",&l1PhaseIIObjColl);   // Added class 
   chain.SetBranchAddress("bitsL1",&bitsL1);
   chain.SetBranchAddress("bitsHLT",&bitsHLT);
   chain.SetBranchAddress("synchroCounts",&synchroCounts);
@@ -213,7 +198,6 @@ void OmtfTreeAnalysis::analyze(const edm::Event&, const edm::EventSetup& es)
     if (theAnaMuonDistribution) theAnaMuonDistribution->run(&muon);
     if (theAnaEff)      theAnaEff->run ( event, &muon, l1ObjColl); 
     if (theAnaDataEmul) theAnaDataEmul->run(event, l1ObjColl); 
-    if (theAnaGenEff)   theAnaGenEff->run(event, genColl,l1ObjColl);
     if (theAnaTime)     theAnaTime->run( event, muonColl, closestTrack, l1ObjColl);
     if (theAnaSynch)    theAnaSynch->run( event, &muon, ConverterRPCRawSynchroSynchroCountsObj::toRawSynchro( synchroCounts->data));
 
@@ -240,7 +224,6 @@ void OmtfTreeAnalysis::endJob()
   delete theAnaEvent;
   delete theAnaMuonDistribution;
   delete theAnaEff;
-  delete theAnaGenEff;
   delete theAnaMenu;
   delete theAnaTime;
   delete theAnaSynch;

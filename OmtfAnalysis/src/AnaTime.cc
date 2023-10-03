@@ -99,20 +99,6 @@ void AnaTime::init(TObjArray& histos)
   for (unsigned int ibin=1; ibin<=nOmtfLayers; ibin++) hTimeLayers->GetXaxis()->SetBinLabel(ibin,omtfUtilities::layerNames[ibin-1].c_str());
 
 
-  hTimeDeltaR_Q = new TH1D("hTimeDeltaR_Q","hTimeDeltaR_Q",   100,0.,4.);  histos.Add(hTimeDeltaR_Q);
-  hTimeDeltaR_QW = new TH1D("hTimeDeltaR_QW","hTimeDeltaR_QW",100,0.,4.);  histos.Add(hTimeDeltaR_QW);
-  hTimeDeltaR_Q_B3 = new TH1D("hTimeDeltaR_Q_B3","hTimeDeltaR_Q_B3",100,0.,4.);  histos.Add(hTimeDeltaR_Q_B3);
-  hTimeDeltaR_Q_B2 = new TH1D("hTimeDeltaR_Q_B2","hTimeDeltaR_Q_B2",100,0.,4.);  histos.Add(hTimeDeltaR_Q_B2);
-  hTimeDeltaR_Q_B1 = new TH1D("hTimeDeltaR_Q_B1","hTimeDeltaR_Q_B1",100,0.,4.);  histos.Add(hTimeDeltaR_Q_B1);
-  hTimeDeltaR_QW_B3 = new TH1D("hTimeDeltaR_QW_B3","hTimeDeltaR_QW_B3",100,0.,4.);  histos.Add(hTimeDeltaR_QW_B3);
-  hTimeDeltaR_QW_B2 = new TH1D("hTimeDeltaR_QW_B2","hTimeDeltaR_QW_B2",100,0.,4.);  histos.Add(hTimeDeltaR_QW_B2);
-  hTimeDeltaR_QW_B1 = new TH1D("hTimeDeltaR_QW_B1","hTimeDeltaR_QW_B1",100,0.,4.);  histos.Add(hTimeDeltaR_QW_B1);
-
-  unsigned int nOmtfLayers =  omtfUtilities::layerNames.size();
-  hTimeLayers =  new TH1D("hTimeLayers","hTimeLayers", nOmtfLayers,-0.5,nOmtfLayers-0.5); histos.Add(hTimeLayers);
-  for (unsigned int ibin=1; ibin<=nOmtfLayers; ibin++) hTimeLayers->GetXaxis()->SetBinLabel(ibin,omtfUtilities::layerNames[ibin-1].c_str());
-
-
 
   hTimeBmtfOmtf = new TH2D("hTimeBmtfOmtf","hTimeBmtfOmtf",5,-2.5,2.5, 5,-2.5,2.5); histos.Add(hTimeBmtfOmtf);
   hTimeOmtfEmtf = new TH2D("hTimeOmtfEmtf","hTimeOmtfEmtf",5,-2.5,2.5, 5,-2.5,2.5); histos.Add(hTimeOmtfEmtf);
@@ -153,17 +139,69 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
   //
   const std::vector<L1Obj> & l1mtfs = *l1Objs;
   const std::vector<MuonObj> & muons = *muonColl;
+
+  bool printdeb = false;
+  double deltaRMatching = theCfg.getParameter<double>("deltaRMatching");
+
+  //
+  // find if muon has corresponding triggering L1 -> muonsExt
+  //
+  std::vector<std::pair<MuonObj,bool> > muonsExt;
+  for (const MuonObj & muon : muons) {
+    bool hasTriggeringL1 = false;
+    if (!muon.isValid()) continue;
+    for (const auto & l1mtf : l1mtfs) {
+      if (!l1mtf.isValid()) continue;
+      if (l1mtf.q < 12) continue;
+      if (l1mtf.ptValue() < theCfg.getParameter<double>("requireOtherMuTrgL1Pt")) continue;
+      if (l1mtf.bx != 0) continue;
+      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
+      if (deltaR < deltaRMatching) hasTriggeringL1 = true;
+    }
+    muonsExt.push_back(std::make_pair(muon,hasTriggeringL1));
+  }    
+
+
+//
+// for each L1 
+//
   for (const auto & l1mtf : l1mtfs) {
     bool matched  = false;
     bool matchedW = false;
-    for (const auto & muon : muons) { 
-      if (!muon.isValid()) continue;
-      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
-      double deltaRW = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), -muon.l1Eta, muon.l1Phi+M_PI/2.);
-      if (deltaR  < 0.4)  matched=true;
-      if (deltaRW < 0.4) matchedW=true;
-    }
     bool qualOK = (l1mtf.q >= 12);
+    bool ptOK = (l1mtf.ptValue()< theCfg.getParameter<double>("maxPtForDistributions") && l1mtf.ptValue() >= theCfg.getParameter<double>("minPtForDistributions") );
+    bool hasRequiredTrigger = theCfg.exists("requireOtherMuTrg") ? !theCfg.getParameter<bool>("requireOtherMuTrg") : true;
+
+    for (const auto & muonExt : muonsExt) {
+      const MuonObj & muon = muonExt.first;
+      bool muon_associatedTriggeringL1 = muonExt.second; 
+      if (!muon.isValid()) continue;
+
+      double deltaR = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), muon.l1Eta, muon.l1Phi);
+//    double deltaRW = reco::deltaR( l1mtf.etaValue(), l1mtf.phiValue(), -muon.l1Eta, muon.l1Phi+M_PI/2.);
+      double deltaRW = reco::deltaR(-l1mtf.etaValue(), l1mtf.phiValue()+M_PI/2., muon.l1Eta, muon.l1Phi);
+      if (qualOK && ptOK && l1mtf.type==L1Obj::OMTF) { 
+        hTimeDeltaR_Q->Fill(deltaR); 
+        hTimeDeltaR_QW->Fill(deltaRW); 
+        if (l1mtf.bx == -3) hTimeDeltaR_Q_B3->Fill(deltaR); 
+        if (l1mtf.bx == -2) hTimeDeltaR_Q_B2->Fill(deltaR); 
+        if (l1mtf.bx == -1) hTimeDeltaR_Q_B1->Fill(deltaR); 
+        if (l1mtf.bx == -3) hTimeDeltaR_QW_B3->Fill(deltaRW); 
+        if (l1mtf.bx == -2) hTimeDeltaR_QW_B2->Fill(deltaRW); 
+        if (l1mtf.bx == -1) hTimeDeltaR_QW_B1->Fill(deltaRW); 
+        if ( deltaR < 0.2 && l1mtf.bx < 0 && l1mtf.type==L1Obj::OMTF) {
+//      if ( deltaR < 0.2 && l1mtf.bx == 0 && l1mtf.type==L1Obj::OMTF) {
+          printdeb = false;
+          std::bitset<18> hitLayers(l1mtf.hits);
+          for (unsigned int hitLayer=0; hitLayer<18;hitLayer++) if(hitLayers[hitLayer]) hTimeLayers->Fill(hitLayer);
+        }
+      }
+      if (deltaR  < deltaRMatching) matched=true; 
+      if (deltaRW < deltaRMatching) matchedW=true;
+      if (deltaR  > 2.*deltaRMatching && (muon.isMatchedHlt || muon.isMatchedIsoHlt) && muon_associatedTriggeringL1) hasRequiredTrigger = true; 
+    }
+    if (!hasRequiredTrigger) continue;
+
     TH1D *hA, *hQ, *hM, *hQM, *hW, *hQW; 
     hA=hQ=hM=hQM=hW=hQW=0; 
     TEfficiency * hE=0;
@@ -227,11 +265,6 @@ void AnaTime::run(const EventObj* ev, const MuonObjColl *muonColl, const TrackOb
       }
     }
   }
-  if (printdeb) {
-    std::cout <<"-------- PREFIRE debug: "<<std::endl; 
-    if (muonColl) std::cout << *muonColl << std::endl;
-    if (l1Objs)  std::cout << *l1Objs<< std::endl;
-  } 
 
   if (printdeb) {
     std::cout <<"-------- PREFIRE debug, event: "<<*ev<<std::endl; 
