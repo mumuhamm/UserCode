@@ -32,12 +32,11 @@ OmtfTreeMaker::OmtfTreeMaker(const edm::ParameterSet& cfg)
   : theConfig(cfg), theCounter(0), theFile(0), theTree(0), 
     bitsL1(0), bitsHLT(0),
     event(0), 
-    muonColl(0), l1ObjColl(0), l1PhaseIIObjColl(0), genColl(0),
+    muonColl(0), l1ObjColl(0), genColl(0),
     synchroCounts(0), closestTrack(0),
     theMenuInspector(cfg.getParameter<edm::ParameterSet>("menuInspector"), consumesCollector()), 
     theBestMuonFinder(cfg.getParameter<edm::ParameterSet>("bestMuonFinder"), consumesCollector()),
     theL1ObjMaker(cfg.getParameter<edm::ParameterSet>("l1ObjMaker"), consumesCollector()), 
-    theL1PhaseIIObjMaker(cfg.getParameter<edm::ParameterSet>("l1PhaseIIObjMaker"), consumesCollector()),
     theGenParticleFinder(cfg.getParameter<edm::ParameterSet>("genObjectFinder"), consumesCollector()),
     theClosestTrackFinder(cfg.getParameter<edm::ParameterSet>("closestTrackFinder"), consumesCollector()),
     theSynchroCheck(cfg.getParameter<edm::ParameterSet>("synchroCheck"), consumesCollector())
@@ -62,7 +61,6 @@ void OmtfTreeMaker::beginJob()
   theTree->Branch("muonColl", "MuonObjColl", &muonColl, 32000,99);
   theTree->Branch("genColl", "GenObjColl", &genColl,32000,99);
   theTree->Branch("l1ObjColl","L1ObjColl",&l1ObjColl,32000,99);
-  theTree->Branch("l1PhaseIIObjColl","L1PhaseIIObjColl",&l1PhaseIIObjColl,32000,99);
   theTree->Branch("bitsL1" ,"TriggerMenuResultObj",&bitsL1 ,32000,99);
   theTree->Branch("bitsHLT","TriggerMenuResultObj",&bitsHLT,32000,99);
   theTree->Branch("synchroCounts","SynchroCountsObjVect",&synchroCounts,32000,99);
@@ -119,8 +117,7 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
   muonColl = new MuonObjColl (theBestMuonFinder.muons(ev,es));
   genColl = new GenObjColl( theGenParticleFinder.genparticles(ev,es) ) ;
   l1ObjColl = new L1ObjColl;
-  l1PhaseIIObjColl = new L1PhaseIIObjColl;
-
+ 
   bitsL1 = new TriggerMenuResultObj();
   bitsHLT = new TriggerMenuResultObj();
 
@@ -154,14 +151,6 @@ void OmtfTreeMaker::analyze(const edm::Event &ev, const edm::EventSetup &es)
     l1ObjColl->set( std::vector<double>(l1Objs.size(),0.));
   }
   
-  // get L1 candidates new class PhaseII
-  std::vector<L1PhaseIIObj> l1PhaseIIObjs = theL1PhaseIIObjMaker(ev);
-  if (l1PhaseIIObjs.size()) {
-    l1PhaseIIObjColl->set(l1PhaseIIObjs);
-    l1PhaseIIObjColl->set( std::vector<bool>(l1PhaseIIObjs.size(),false));
-    l1PhaseIIObjColl->set( std::vector<double>(l1PhaseIIObjs.size(),0.));
-  }
-
 //
 bool debug=0;
   if (debug) { // || l1ObjColl->selectByType(L1Obj::OMTF_emu)) {
@@ -196,7 +185,6 @@ bool debug=0;
   delete bitsL1;  bitsL1= 0;
   delete bitsHLT;  bitsHLT= 0;
   delete l1ObjColl; l1ObjColl = 0;
-  delete l1PhaseIIObjColl; l1PhaseIIObjColl = 0;
   delete closestTrack; closestTrack = 0;
 
 }

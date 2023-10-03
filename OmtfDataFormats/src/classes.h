@@ -12,9 +12,6 @@
 #include "UserCode/OmtfDataFormats/interface/GenObj.h"
 #include "UserCode/OmtfDataFormats/interface/GenObjColl.h"
 
-#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObj.h"
-#include "UserCode/OmtfDataFormats/interface/L1PhaseIIObjColl.h"
-
 #include "UserCode/OmtfDataFormats/interface/DetBxStatObj.h"
 #include "UserCode/OmtfDataFormats/interface/DetSpecObj.h"
 #include "UserCode/OmtfDataFormats/interface/BxStatObj.h"
@@ -28,9 +25,6 @@ namespace {
     MuonObjColl  aMuons;
     L1Obj aL1;
     L1ObjColl aL1Coll;
-
-    L1PhaseIIObj aL1PhaseII;
-    L1PhaseIIObjColl aL1PhaseIIColl;  
 
     TriggerMenuResultObj aMenuRes;
     SynchroCountsObj aSynch;
