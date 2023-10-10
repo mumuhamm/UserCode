@@ -11,6 +11,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     namesCheckHltMuMatch = cms.vstring(
       "HLT_IsoMu20_v","HLT_IsoMu24_v","HLT_IsoMu27_v"
     ),
+    namesMarkedPrescaled = cms.vstring("L1_IsolatedBunch","L1_FirstBunchInTrain","L1_FirstCollisionInTrain"),
     warnNoColl = cms.untracked.bool(False) 
   ),
 
@@ -33,14 +34,11 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
    ),
   
   l1ObjMaker = cms.PSet(
-    omtfEmulSrc = cms.InputTag('simOmtfDigis','OMTF',''),
+    omtfEmulSrc = cms.InputTag('omtfEmulator','OMTF',''),
     bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
     emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
-    gmtEmulSrc = cms.InputTag('simGmtStage2Digis','',''),      
-    warnNoColl = cms.untracked.bool(True)
-  ),
-  l1PhaseIIObjMaker = cms.PSet(
-    gmtEmulSrc = cms.InputTag('l1tTkMuonsGmt','',''),   
+    gmtEmulSrc = cms.InputTag('simGmtStage2Digis','',''), 
+    #gmtPhase2EmulSrc = cms.InputTag('l1tTkMuonsGmt','',''),   
     warnNoColl = cms.untracked.bool(True)
   ),
   genObjectFinder = cms.PSet(
@@ -57,7 +55,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   bestMuonFinder = cms.PSet(
     muonColl = cms.InputTag("muons"),
     beamSpot = cms.InputTag("offlineBeamSpot"),
-    warnNoColl = cms.untracked.bool(True),
+    warnNoColl = cms.untracked.bool(False),
     requireInnerTrack = cms.bool(True),
     requireOuterTrack = cms.bool(False),
     requireGlobalTrack = cms.bool(False),
@@ -76,7 +74,8 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
     minPtUnique = cms.double(2.0),
     looseUnique = cms.bool(True)
   ),
-   synchroCheck = cms.PSet(
+  synchroCheck = cms.PSet(
+    srcDT  = cms.InputTag('omtfStage2Digis'),
     srcCSC = cms.InputTag('omtfStage2Digis'),
     srcRPC = cms.InputTag('omtfStage2Digis')
   ),
