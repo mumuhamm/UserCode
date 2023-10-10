@@ -107,7 +107,8 @@ bool L1ObjMaker::makeRegCandidates(const edm::Event &iEvent,  L1Obj::TYPE type, 
     obj.eta = it->hwEta();  // eta = hwEta/240.*2.61
     obj.pt = it->hwPt();         // pt = (hwPt-1.)/2.
     obj.charge = it->hwSign();   // charge=  pow(-1,hwSign)
-
+    obj.ptUnconstrained =  it->hwPtUnconstrained(); //pt = hwPt (GeV)
+    obj.d0 = it->hwDXY(); //(4 bits) scale?
     std::map<int, int> hwAddrMap = it->trackAddress();
     obj.q   = it->hwQual();
     obj.hits   = hwAddrMap[0];

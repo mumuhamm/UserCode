@@ -29,6 +29,11 @@ double L1Obj::phiValue() const {
     else return 9999.;
   }
 int L1Obj::chargeValue() const { return type==uGMTPhase2_emu ? charge : pow(-1,charge); }
+
+double L1Obj::ptUnconstrainedValue() const { return ptUnconstrained;}
+double L1Obj::z0Value() const { return z0;}
+double L1Obj::d0Value() const { return d0;}
+
                
 
 std::ostream & operator<< (std::ostream &out, const L1Obj &o)
