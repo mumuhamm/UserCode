@@ -2,6 +2,24 @@
 #include <bitset>
 #include <iomanip>
 
+void GenObj::setVertexXYZ(double x, double y, double z){
+
+  _vx = x;
+  _vy = y;
+  _vz = z;
+}
+
+void GenObj::setPtEtaPhiM(double pt, double eta, double phi, double m){
+
+  _pt = pt;
+  _eta = eta;
+  _phi = phi;
+  _mass = m;
+  
+  double theta = 2.0*atan(exp(_eta));
+  double p = std::abs(_pt/sin(theta));
+  _beta = p/sqrt(p*p + _mass*_mass);
+}
 
 std::ostream & operator<< (std::ostream &out, const GenObj &o)
 {
@@ -10,12 +28,8 @@ std::ostream & operator<< (std::ostream &out, const GenObj &o)
   out<<" charge: "<<o.charge();
   out<<"pt: "<<o.pt()<<" eta: "<<o.eta()<<" phi: "<<o.phi();
   out<<" status: "<<o.status()<<" motherId: "<<o.motherId();
-  out<<" x coordinate of vertex position: "<<o.vx();
-  out<<" y coordinate of vertex position: "<<o.vy();
-  out<<" z coordinate of vertex position: "<<o.vz();
-
-
-
+  out<<" vertex: (";
+  out<<o.vx()<<", "<<o.vy()<<", "<<o.vz()<<")";
   out<<std::endl;
 
   return out;

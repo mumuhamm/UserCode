@@ -41,35 +41,19 @@ GenParticlefinder::GenParticlefinder(const edm::ParameterSet& cfg, edm::Consumes
   
   
 }
-void GenParticlefinder::getSimVertex(const edm::Event &ev){
-
-  edm::Handle<edm::SimVertexContainer> simVertices;
-  edm::InputTag simVertexTag =  theConfig.getParameter<edm::InputTag>("simVertex");
-  ev.getByLabel(simVertexTag, simVertices);
-  if (!simVertices.isValid()) return;
-
- for (auto aSimVertex: *simVertices) {
-  std::cout<<aSimVertex<<std::endl;
-}
-}
-
 
 void GenParticlefinder::getGenParticles(const edm::Event &ev){
 
-//get Muon
   edm::Handle<reco::GenParticleCollection> genparticles;
   edm::InputTag genCollTag =  theConfig.getParameter<edm::InputTag>("genColl");
   ev.getByLabel( genCollTag, genparticles);
   if (!genparticles.isValid()) return;
   
-  
-  theAllParticles = genparticles->size();
-  
   for (reco::GenParticleCollection::const_iterator im = genparticles->begin(); im != genparticles->end(); ++im) {
-    
-    
-    GenObj genObj(im->pt(),im->eta(),im->phi(),im->mass(),im->charge(),
-		  im->pdgId(),im->status(),0,im->vx(),im->vy(),im->vz(), im->p4().Beta());
+    int motherPdgId = im->numberOfMothers()>0 ? im->mother()->pdgId(): 0;
+    GenObj genObj(im->charge(),im->pdgId(),im->status(),motherPdgId);
+    genObj.setVertexXYZ(im->vx(),im->vy(),im->vz());
+    genObj.setPtEtaPhiM(im->pt(),im->eta(),im->phi(),im->mass());    
     theGenObjs.push_back(genObj);
   }  
 }
@@ -86,12 +70,11 @@ void GenParticlefinder::getTrackingParticles(const edm::Event &ev){
       
     if(iTP->eventId().bunchCrossing() != 0) continue;
     if (abs(iTP->pdgId()) != 13) continue;
-        
-    GenObj genObj(iTP->pt(), iTP->eta(), iTP->phi(), 
-                  iTP->mass(), iTP->charge(),
-		              iTP->pdgId(), iTP->status(), 0,
-		              iTP->vx(), iTP->vy(), iTP->vz(), 
-		              iTP->p4().Beta());
+    
+    int motherPdgId = 0;
+    GenObj genObj(iTP->charge(),iTP->pdgId(),iTP->status(),motherPdgId);
+    genObj.setVertexXYZ(iTP->vx(),iTP->vy(),iTP->vz());
+    genObj.setPtEtaPhiM(iTP->pt(),iTP->eta(),iTP->phi(),iTP->mass());    
     theGenObjs.push_back(genObj);
   }  
 }
@@ -105,7 +88,6 @@ bool GenParticlefinder::run(const edm::Event &ev, const edm::EventSetup &es)
   theGenPart = 0;
   theGenObjs.clear();
 
-  if(theConfig.exists("simVertex")) getSimVertex(ev);
   if(theConfig.exists("genColl")) getGenParticles(ev);
   if(theConfig.exists("trackingParticle")) getTrackingParticles(ev);
      

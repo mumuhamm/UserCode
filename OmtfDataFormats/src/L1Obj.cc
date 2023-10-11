@@ -30,7 +30,7 @@ double L1Obj::phiValue() const {
   }
 int L1Obj::chargeValue() const { return type==uGMTPhase2_emu ? charge : pow(-1,charge); }
 
-double L1Obj::ptUnconstrainedValue() const { return ptUnconstrained;}
+double L1Obj::ptUnconstrainedValue() const { return ptUnconstrained - 1;}
 double L1Obj::z0Value() const { return z0;}
 double L1Obj::d0Value() const { return d0;}
 
