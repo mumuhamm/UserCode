@@ -1,6 +1,6 @@
 # Ntuple Production for the studies of  L1Trigger Efficiency 
 ## Contributors
-- ```Marcin, Karol, Artur, Dario, Alibordi```
+- ```Marcin, Karol, Artur, Alibordi```
 (with update with full names soon)
 ### Generic steps : Clone & Run : 
 ```bash
