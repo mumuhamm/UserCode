@@ -3,7 +3,6 @@
 #include <ostream>
 
 #include "TObject.h"
-#include "DataFormats/Math/interface/LorentzVector.h"
 
 class GenObj : public TObject {
 public:
@@ -29,6 +28,8 @@ public:
   double vz() const { return _vz;}
   double beta() const { return _beta;}
 
+  double dxy() const;
+  double dz() const;
 
 private:  
   float _pt,_eta,_phi,_mass; 

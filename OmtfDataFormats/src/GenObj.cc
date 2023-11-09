@@ -1,6 +1,7 @@
 #include "UserCode/OmtfDataFormats/interface/GenObj.h"
 #include <bitset>
 #include <iomanip>
+#include <cmath>
 
 void GenObj::setVertexXYZ(double x, double y, double z){
 
@@ -19,6 +20,16 @@ void GenObj::setPtEtaPhiM(double pt, double eta, double phi, double m){
   double theta = 2.0*atan(exp(_eta));
   double p = std::abs(_pt/sin(theta));
   _beta = p/sqrt(p*p + _mass*_mass);
+}
+
+double GenObj::dxy() const{
+
+  return -(_vx*sin(_phi) - _vy*cos(_phi));
+}
+
+double GenObj::dz() const{
+
+  return _vz;
 }
 
 std::ostream & operator<< (std::ostream &out, const GenObj &o)
