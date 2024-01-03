@@ -30,7 +30,12 @@
 <use   name="TrackingTools/PatternTools"/>
 <use   name="SimTracker/TrackerHitAssociation"/>
 <use   name="SimDataFormats/TrackerDigiSimLink"/>
-
+<use   name="MuonAnalysis/MuonAssociators"/>
+<use   name="SimDataFormats/Vertex"/>
+<use   name="CondFormats/AlignmentRecord"/>
+<use   name="DataFormats/GeometryVector"/>
+<use   name="MagneticField/Engine"/>
+<use   name="MagneticField/Records"/>
 
 <use   name="FWCore/PluginManager"/>
 <use   name="UserCode/OmtfDataFormats"/>

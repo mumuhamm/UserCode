@@ -5,7 +5,7 @@ import FWCore.ParameterSet.Config as cms
 #
 omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   histoFileName = cms.string("omtfHelper.root"),
-  treeFileName = cms.string("omtfTree.root"),
+  treeFileName = cms.string("omtfTree_HTo2LLPTo4Mu_PhaseII.root"),
 
   menuInspector = cms.PSet( 
     namesCheckHltMuMatch = cms.vstring(
@@ -44,7 +44,31 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   genObjectFinder = cms.PSet(
       genColl = cms.InputTag("genParticles"),
       trackingParticle = cms.InputTag("mix","MergedTrackTruth"),
-      warnNoColl = cms.untracked.bool(True)
+      warnNoColl = cms.untracked.bool(True),
+      muProp1st = cms.PSet(
+         useTrack = cms.string("tracker"),
+         useState = cms.string("atVertex"),
+         useSimpleGeometry = cms.bool(True),
+         useStation2 = cms.bool(False),
+         fallbackToME1 = cms.bool(False),
+         cosmicPropagationHypothesis = cms.bool(False),
+         useMB2InOverlap = cms.bool(False),
+         propagatorAlong = cms.ESInputTag("", "SteppingHelixPropagatorAlong"),
+         propagatorAny = cms.ESInputTag("", "SteppingHelixPropagatorAny"),
+         propagatorOpposite = cms.ESInputTag("", "SteppingHelixPropagatorOpposite")
+      ),
+      muProp2nd = cms.PSet(
+          useTrack = cms.string("tracker"),  # 'none' to use Candidate P4; or 'tracker', 'muon', 'global'
+          useState = cms.string("atVertex"), # 'innermost' and 'outermost' require the TrackExtra
+          useSimpleGeometry = cms.bool(True),
+          useStation2 = cms.bool(True),
+          fallbackToME1 = cms.bool(False),
+          cosmicPropagationHypothesis = cms.bool(False),
+          useMB2InOverlap = cms.bool(False),
+          propagatorAlong = cms.ESInputTag("", "SteppingHelixPropagatorAlong"),
+          propagatorAny = cms.ESInputTag("", "SteppingHelixPropagatorAny"),
+          propagatorOpposite = cms.ESInputTag("", "SteppingHelixPropagatorOpposite")
+    )
   ),                                 
   closestTrackFinder = cms.PSet(
     trackColl = cms.InputTag("generalTracks"),
