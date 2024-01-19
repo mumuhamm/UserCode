@@ -49,8 +49,6 @@ GenParticlefinder::GenParticlefinder(const edm::ParameterSet& cfg, edm::Consumes
 
 void GenParticlefinder::getGenParticles(const edm::Event &ev, const edm::EventSetup &es){
   //getHandles(ev, es);
-  float genPart_etaAtSt2 = 0;
-  float genPart_phiAtSt2 = 0;
   muPropagator1st_ = muPropagatorSetup1st_.init(es);
   muPropagator2nd_ = muPropagatorSetup2nd_.init(es);
   const MagneticField &theBField = es.getData(theBFieldToken);
@@ -69,33 +67,15 @@ void GenParticlefinder::getGenParticles(const edm::Event &ev, const edm::EventSe
     TrajectoryStateOnSurface stateAtMuSt1 = muPropagator1st_.extrapolate(ftrajstate);
     TrajectoryStateOnSurface stateAtMuSt2 = muPropagator2nd_.extrapolate(ftrajstate);
     
-    if (stateAtMuSt1.isValid()) {
-    float genPart_etaAtSt1 = stateAtMuSt1.globalPosition().eta();
-    float genPart_phiAtSt1 = stateAtMuSt1.globalPosition().phi();
-
-    if (!std::isnan(genPart_etaAtSt1) && !std::isnan(genPart_phiAtSt1)) {
-
-        if (stateAtMuSt2.isValid()) {
-            float genPart_etaAtSt2_temp = stateAtMuSt2.globalPosition().eta();
-            float genPart_phiAtSt2_temp = stateAtMuSt2.globalPosition().phi();
-
-            if (!std::isnan(genPart_etaAtSt2_temp) && !std::isnan(genPart_phiAtSt2_temp)) {
-                genPart_etaAtSt2 = genPart_etaAtSt2_temp;
-                genPart_phiAtSt2 = genPart_phiAtSt2_temp;
-                //std::cout << "genPart_Propagatedeta_AtSt2 = " << genPart_etaAtSt2 << std::endl;
-                //std::cout << "genPart_Propagatedphi_AtSt2 = " << genPart_phiAtSt2 << std::endl;
-            }
-        }
-    }
-}
-
-
-
-    GenObj genObj(im->charge(),im->pdgId(),im->status(),motherPdgId);
-    genObj.setVertexXYZ(im->vx(),im->vy(),im->vz());
-    genObj.setPtEtaPhiM(im->pt(),genPart_etaAtSt2,genPart_phiAtSt2,im->mass());    
-    theGenObjs.push_back(genObj);
-  }  
+    if (stateAtMuSt1.isValid()&& stateAtMuSt2.isValid()) {
+            std::cout << "genPart_Propagatedeta_AtSt2 = " << stateAtMuSt2.globalPosition().eta() << std::endl;
+            std::cout << "genPart_Propagatedphi_AtSt2 = " << stateAtMuSt2.globalPosition().phi() << std::endl;
+            GenObj genObj(im->charge(),im->pdgId(),im->status(),motherPdgId);
+            genObj.setVertexXYZ(im->vx(),im->vy(),im->vz());
+            genObj.setPtEtaPhiM(im->pt(),stateAtMuSt2.globalPosition().eta(),stateAtMuSt2.globalPosition().phi(),im->mass());    
+            theGenObjs.push_back(genObj);
+  }
+ }  
 }
 
 void GenParticlefinder::getTrackingParticles(const edm::Event &ev){

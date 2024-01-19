@@ -26,7 +26,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1),
+    input = cms.untracked.int32(50000),
     output = cms.optional.untracked.allowed(cms.int32,cms.PSet)
 )
 
@@ -63,15 +63,15 @@ process.source = cms.Source("PoolSource",
 #prefixPath = '/eos/user/a/almuhamm/ZMu_Test/Simulated_Samples/ForMyStudy/Qp_4thApril/0000'
 #prefixPath = '/eos/user/a/almuhamm/ZMu_Test/Displaced13_1_0_23_11_2023/DisplacedMu_ch2_iPt2_Run2023_13_1_0_23_11_2023/13_1_0_23_11_2023/231123_094009/0000'
 #prefixPath = '/eos/user/a/almuhamm/ZMu_Test/Displaced13_1_0_04_11_2023/DisplacedMu_ch0_iPt0_Run2023_13_1_0_04_11_2023/13_1_0_04_11_2023/231104_145635/0000'
-prefixPath = '/eos/user/a/almuhamm/ZMu_Test/simPrivateProduction/Displaced_cTau5m_XTo2LLTo4Mu_condPhase2_realistic/XTo2LLPTo4Mu_CTau5m_Phase2Exotic/231203_175643/0000'
-fileList = glob.glob(prefixPath + '/*.root')
-fileList_mix = ['file:' + aFile for aFile in fileList]
-process.source.fileNames = fileList_mix
+#prefixPath = '/eos/user/a/almuhamm/ZMu_Test/simPrivateProduction/Displaced_cTau5m_XTo2LLTo4Mu_condPhase2_realistic/XTo2LLPTo4Mu_CTau5m_Phase2Exotic/231203_175643/0000'
+#fileList = glob.glob(prefixPath + '/*.root')
+#fileList_mix = ['file:' + aFile for aFile in fileList]
+#process.source.fileNames = fileList_mix
 
 
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(10000)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
 from Configuration.AlCa.GlobalTag import GlobalTag
