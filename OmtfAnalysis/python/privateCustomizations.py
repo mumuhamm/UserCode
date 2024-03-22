@@ -1,7 +1,18 @@
 import FWCore.ParameterSet.Config as cms
+import L1Trigger.L1TMuonOverlapPhase1.simOmtfDigis_extrapolSimple_cfi
+import L1Trigger.L1TMuonOverlapPhase1.fakeOmtfParams_cff
 
 ##########################################
 ##########################################
+def customize_GoldenPattern(process):
+    process.omtfEmulator = L1Trigger.L1TMuonOverlapPhase1.simOmtfDigis_extrapolSimple_cfi.simOmtfDigis.clone()
+    process.omtfParameter = L1Trigger.L1TMuonOverlapPhase1.fakeOmtfParams_cff.omtfParams.clone()
+    process.omtfEmulator.patternsXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/Patterns_ExtraplMB1nadMB2SimplifiedFP_t17_classProb17_recalib2_minDP0_v3.xml")
+    process.omtfParameter.configXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omtf_config/hwToLogicLayer_0x0009.xml")
+    return process
+############################################
+############################################
+
 def customize_L1TkMuonsGmt(process):
 
     process.CalibratedDigis.dtDigiTag = "simMuonDTDigis" 
@@ -45,7 +56,16 @@ def customize_outputCommands(process):
                                                                       'keep *_TTClustersFromPhase2TrackerDigis_*_*',
                                                                       'keep *_TTTracks*_*_*',                                                                      
                                                                       'keep *_globalMuons_*_*',                                        
-                                                                      'keep *_muons_*_*',                                                                      
+                                                                      'keep *_muons_*_*',
+                                                                      'keep *_g4SimHits_MuonCSCHits_*',
+                                                                      'keep *_g4SimHits_MuonDTHits_*',                                                                   
+                                                                      'keep *_g4SimHits_MuonRPCHits_*',                                                                                                                      
+                                                                      'keep *DtChamber*_*_*_*',                                                       
+                                                                      'keep  DTLayerId*_*_*_*',
+                                                                      'keep  CSCDetId*_*_*_*',
+                                                                      'keep *_offlineBeamSpot_*_*',
+                                                                      'keep *_TriggerResults_*_*',   
+                                                                      'keep *_hltTriggerSummaryAOD_*_*'                                                                    
     ))
     return process
 ##########################################
