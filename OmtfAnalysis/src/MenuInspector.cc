@@ -103,7 +103,7 @@ bool MenuInspector::checkRun(const edm::Run& run, const edm::EventSetup & es)
     auto pos = theNamesIndicesMarkedPrescaled.find(name);
     if (pos != theNamesIndicesMarkedPrescaled.end()) pos->second=index;
   }
-  std::cout <<" size of L1 indices: "<< theNamesAlgoL1.size() << std::endl;
+ // std::cout <<" size of L1 indices: "<< theNamesAlgoL1.size() << std::endl;
 //  for (unsigned int i=0; i< theNamesAlgoL1.size(); ++i) std::cout <<" L1 indices: " << i << " algo: "<<theNamesAlgoL1[i] << std::endl;
 //  for (auto item : theNamesIndicesMarkedPrescaled) { std::cout <<"map key: " << item.first<<" idx: "<<item.second << std::endl;} 
 

@@ -5,7 +5,8 @@ import FWCore.ParameterSet.Config as cms
 #
 omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
   histoFileName = cms.string("omtfHelper.root"),
-  treeFileName = cms.string("omtfTree_HTo2LLPTo4Mu_PhaseII.root"),
+  #treeFileName = cms.string("omtfTree_ZB200_ExtrapolFullAlgo.root"),
+  treeFileName = cms.string("omtfTree_Cosmics.root"),
 
   menuInspector = cms.PSet( 
     namesCheckHltMuMatch = cms.vstring(
@@ -34,16 +35,19 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
    ),
   
   l1ObjMaker = cms.PSet(
-    omtfEmulSrc = cms.InputTag('omtfEmulator','OMTF',''),
-    bmtfDataSrc = cms.InputTag('simKBmtfDigis','BMTF',''),
-    emtfDataSrc = cms.InputTag('simEmtfDigis','EMTF',''),
-    gmtEmulSrc = cms.InputTag('simGmtStage2Digis','',''), 
+     #omtfEmulSrc = cms.InputTag('omtfEmulatorPhase2', 'OMTF', ''),# phaseII Emulator  
+    omtfEmulSrc = cms.InputTag('omtfEmulator','OMTF',''), # phaseI Emulator
+    omtfDataSrc = cms.InputTag('gmtStage2Digis','OMTF',''),
+    bmtfDataSrc = cms.InputTag('gmtStage2Digis','BMTF',''),
+    emtfDataSrc = cms.InputTag('gmtStage2Digis','EMTF',''),
+    gmtDataSrc = cms.InputTag('gmtStage2Digis', 'Muon', ''),
+    #gmtEmulSrc = cms.InputTag('simGmtStage2Digis','',''),
     #gmtPhase2EmulSrc = cms.InputTag('l1tTkMuonsGmt','',''),   
     warnNoColl = cms.untracked.bool(True)
   ),
   genObjectFinder = cms.PSet(
-      genColl = cms.InputTag("genParticles"),
-      trackingParticle = cms.InputTag("mix","MergedTrackTruth"),
+     genColl = cms.InputTag("genParticles"),
+     trackingParticle = cms.InputTag("mix","MergedTrackTruth"),
       warnNoColl = cms.untracked.bool(True),
       muProp1st = cms.PSet(
          useTrack = cms.string("tracker"),
@@ -77,6 +81,7 @@ omtfTree = cms.EDAnalyzer("OmtfTreeMaker",
 
   onlyBestMuEvents = cms.bool(False),
   bestMuonFinder = cms.PSet(
+    #muonColl = cms.InputTag("slimmedMuons"), # miniAOD       
     muonColl = cms.InputTag("muons"),
     beamSpot = cms.InputTag("offlineBeamSpot"),
     warnNoColl = cms.untracked.bool(False),

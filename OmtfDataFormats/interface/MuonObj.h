@@ -11,7 +11,8 @@ public:
         isUnique(true), isLoose(false), isMedium(false), isTight(false), 
         isMatchedHlt(false), isMatchedIsoHlt(false),
         isTkIsolated(false), isPFIsolated(false),
-        chi2Norm(0.), l1Eta(9999.), l1Phi(9999.),
+        chi2Norm(0.), l1Eta(9999.), l1Phi(9999.),Lxy(9999.),
+	vx(9999.),vy(9999.),vz(9999.),
         nAllMuons(0), theMuonBits(0) {}
   virtual ~MuonObj(){}
   void setBits(bool isGlobal, bool isTracker, bool isOuter, bool isCalo, bool isMatched) {
@@ -26,20 +27,27 @@ public:
   bool isOuter()   const { return  (theMuonBits>>2)&1 ;}  
   bool isCalo()    const { return  (theMuonBits>>1)&1 ;}  
   bool isMatched() const { return   theMuonBits&1 ;}  
-
-  bool isValid() const {return  (pt()>0.001 && charge()!=0); } 
+  /*float Lxy ()     const { return   Lxy ;}
+  float vx()       const { return   vx;}
+  float vy()       const { return   vy;}
+  float vz()       const { return   vz;}
+  */bool isValid() const {return  (pt()>0.001 && charge()!=0); } 
 public:
   unsigned int nRPCHits, nDTHits, nCSCHits, nTrackerHits, nMatchedStations;
   bool         isUnique, isLoose, isMedium, isTight;
   bool         isMatchedHlt, isMatchedIsoHlt;
   bool         isTkIsolated, isPFIsolated;
   float        chi2Norm;
-  float l1Eta, l1Phi;
+  float        l1Eta, l1Phi;
+  float        Lxy; 
+  float        vx;
+  float        vy;
+  float        vz;
   unsigned int nAllMuons;
 private:  
   unsigned int theMuonBits; 
 public:
-ClassDef(MuonObj,5)
+ClassDef(MuonObj,7)
 };
 
 

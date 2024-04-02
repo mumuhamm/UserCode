@@ -25,6 +25,9 @@
 #include "MuonAnalysis/MuonAssociators/interface/PropagateToMuon.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
 
+#include "TrackingTools/GeomPropagators/interface/Propagator.h"
+#include "TrackingTools/Records/interface/TrackingComponentsRecord.h"
+
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 
@@ -60,6 +63,7 @@ private:
   unsigned int theAllParticles;
   const reco::GenParticle* theGenPart;
   const edm::ESGetToken<MagneticField, IdealMagneticFieldRecord> theBFieldToken;
+  //const edm::ESGetToken<Propagator, TrackingComponentsRecord> thePropagatorAnyToken;
   const SimVertex theSimVertex;
   std::vector<GenObj> theGenObjs; 
 

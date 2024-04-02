@@ -6,14 +6,31 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "DataFormats/Common/interface/Handle.h"
 
-
 #include "UserCode/OmtfAnalysis/interface/Utilities.h"
+
 #include "DataFormats/GeometryVector/interface/GlobalPoint.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "TObjArray.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include <vector>
+#include "TrackingTools/GeomPropagators/interface/Propagator.h"
+#include "TrackingTools/PatternTools/interface/Trajectory.h"
+#include "TrackingTools/TrajectoryState/interface/TrajectoryStateOnSurface.h"
+#include "TrackingTools/TrajectoryState/interface/TrajectoryStateTransform.h"
+#include "TrackingTools/Records/interface/TrackingComponentsRecord.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/GeometrySurface/interface/BoundCylinder.h"
+#include "DataFormats/GeometrySurface/interface/SimpleCylinderBounds.h"
+#include "DataFormats/GeometrySurface/interface/BoundDisk.h"
+#include "DataFormats/GeometrySurface/interface/SimpleDiskBounds.h"
+
+#include "Geometry/CommonDetUnit/interface/GlobalTrackingGeometry.h"
+#include "Geometry/Records/interface/GlobalTrackingGeometryRecord.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
 
 #include "SimDataFormats/TrackingAnalysis/interface/TrackingParticle.h"
 
@@ -25,6 +42,7 @@ using namespace edm;
 GenParticlefinder::GenParticlefinder(const edm::ParameterSet& cfg, edm::ConsumesCollector&& cColl)
   : lastEvent(0), lastRun(0), theConfig(cfg), 
     theAllParticles(0), theGenPart(0),theBFieldToken(cColl.esConsumes()),
+    //thePropagatorAnyToken(cColl.esConsumes(edm::ESInputTag("","SteppingHelixPropagatorAny"))),
     muPropagatorSetup1st_(cfg.getParameter<edm::ParameterSet>("muProp1st"),  std::move(cColl)),//consumesCollector()),
     muPropagatorSetup2nd_(cfg.getParameter<edm::ParameterSet>("muProp2nd"),  std::move(cColl))//consumesCollector())
 { 
@@ -49,6 +67,10 @@ GenParticlefinder::GenParticlefinder(const edm::ParameterSet& cfg, edm::Consumes
 
 void GenParticlefinder::getGenParticles(const edm::Event &ev, const edm::EventSetup &es){
   //getHandles(ev, es);
+  float genPart_etaAtSt2 = -9999;
+  float genPart_phiAtSt2 = -9999;
+  int validEvents = 0;
+  int notValidEvents = 0;
   muPropagator1st_ = muPropagatorSetup1st_.init(es);
   muPropagator2nd_ = muPropagatorSetup2nd_.init(es);
   const MagneticField &theBField = es.getData(theBFieldToken);
@@ -61,21 +83,71 @@ void GenParticlefinder::getGenParticles(const edm::Event &ev, const edm::EventSe
   
   for (reco::GenParticleCollection::const_iterator im = genparticles->begin(); im != genparticles->end(); ++im) {
     int motherPdgId = im->numberOfMothers()>0 ? im->mother()->pdgId(): 0;
+    if (abs(im->pdgId()) != 13) continue; 
+    //double eta = im->eta();
+    //double theta = 2.*atan(exp(-eta));
+    //double rho   = 500.;
+    //double zet   = 1100.;
+    //if (fabs(eta) > 1.24) rho  = zet * tan(fabs(theta)); else zet = rho/tan(theta);
+    //GlobalPoint genglobalpoint( GlobalPoint::Polar(theta, im->phi(), sqrt( pow(rho,2)+pow(zet,2)) ) );
     GlobalPoint genglobalpoint(im->vx(), im->vy(), im->vz());
+    
+    //double threemom = fabs(im->px()*im->px() + im->py()*im->py() + im->pz()*im->pz());
+    //double thetamom = acos(im->pz()/threemom);
+    //double phimom   = atan(im->py()/im->px());
+    //GlobalVector genglobalmomvector(GlobalVector::Polar(thetamom, phimom, threemom));
     GlobalVector genglobalmomvector(im->px(), im->py(), im->pz());
+    
     FreeTrajectoryState ftrajstate(genglobalpoint, genglobalmomvector, im->charge(), theMagneticField);
     TrajectoryStateOnSurface stateAtMuSt1 = muPropagator1st_.extrapolate(ftrajstate);
     TrajectoryStateOnSurface stateAtMuSt2 = muPropagator2nd_.extrapolate(ftrajstate);
-    
-    if (stateAtMuSt1.isValid()&& stateAtMuSt2.isValid()) {
-            std::cout << "genPart_Propagatedeta_AtSt2 = " << stateAtMuSt2.globalPosition().eta() << std::endl;
-            std::cout << "genPart_Propagatedphi_AtSt2 = " << stateAtMuSt2.globalPosition().phi() << std::endl;
+    //auto const & propagator = es.getData(thePropagatorAnyToken);
+    //bool barrel = fabs(genglobalpoint.z()) < 700. ? true : false;
+
+    //ReferenceCountingPointer<Surface> surface = barrel ?
+     // ReferenceCountingPointer<Surface>( new  BoundCylinder( GlobalPoint(0.,0.,0.), TkRotation<float>(), SimpleCylinderBounds( genglobalpoint.perp(),  genglobalpoint.perp(), -780., 780. ) ))
+    //: ReferenceCountingPointer<Surface>( new  BoundDisk( GlobalPoint(0.,0.,genglobalpoint.z()), TkRotation<float>(), SimpleDiskBounds( 260., 810., -0.0001, 0.0001 ) ) );
+     //TrajectoryStateOnSurface propagatedTrajectory =  propagator.propagate(stateAtMuSt1, *surface);
+     //if(propagatedTrajectory.isValid()){ std::cout<< " take the eta of the propagated trajectory : "<< propagatedTrajectory.globalPosition().eta() << "\n";}
+
+    if (stateAtMuSt1.isValid()) {
+    float genPart_etaAtSt1 = stateAtMuSt1.globalPosition().eta();
+    float genPart_phiAtSt1 = stateAtMuSt1.globalPosition().phi();
+
+    if (!std::isnan(genPart_etaAtSt1) && !std::isnan(genPart_phiAtSt1)) {
+
+        if (stateAtMuSt2.isValid()) {
+            float genPart_etaAtSt2_temp = stateAtMuSt2.globalPosition().eta();
+            float genPart_phiAtSt2_temp = stateAtMuSt2.globalPosition().phi();
+
+            if (!std::isnan(genPart_etaAtSt2_temp) && !std::isnan(genPart_phiAtSt2_temp)) {
+	        validEvents++;
+                genPart_etaAtSt2 = genPart_etaAtSt2_temp;
+                genPart_phiAtSt2 = genPart_phiAtSt2_temp;
+                //std::cout << "genPart_Propagatedeta_AtSt2 = " << genPart_etaAtSt2 <<"\n";
+                //std::cout << "genPart_Propagatedphi_AtSt2 = " << genPart_phiAtSt2 <<"\n";
+
+	      } else {
+                notValidEvents++;  
+            }
+        } else {
+            notValidEvents++;  
+        }
+    } else {
+        notValidEvents++;  
+    }
+}
+
             GenObj genObj(im->charge(),im->pdgId(),im->status(),motherPdgId);
             genObj.setVertexXYZ(im->vx(),im->vy(),im->vz());
-            genObj.setPtEtaPhiM(im->pt(),stateAtMuSt2.globalPosition().eta(),stateAtMuSt2.globalPosition().phi(),im->mass());    
+            genObj.setPtEtaPhiM(im->pt(),genPart_etaAtSt2,genPart_phiAtSt2,im->mass());    
             theGenObjs.push_back(genObj);
-  }
- }  
+  
+ }
+            float fractionValid = static_cast<float>(validEvents) / (validEvents + notValidEvents);
+            float fractionNotValid = static_cast<float>(notValidEvents) / (validEvents + notValidEvents);
+            //std::cout << "Fraction of valid events: " << fractionValid << "\n";
+            //std::cout << "Fraction of not valid events: " << fractionNotValid << "\n";
 }
 
 void GenParticlefinder::getTrackingParticles(const edm::Event &ev){
