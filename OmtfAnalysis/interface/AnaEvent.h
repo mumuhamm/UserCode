@@ -8,7 +8,7 @@ namespace edm { class ParameterSet; }
 #include <map>
 #include <vector>
 #include <bitset>
-
+#include <cstdint>
 
 class AnaEvent {
 public:

@@ -76,9 +76,11 @@ TrajectoryStateOnSurface TrackAtSurface::atStation2(const reco::Muon* mu,const e
   // find muons TSOS at the end of tracker
   // 
   TrajectoryStateOnSurface theState = trajectoryStateTransform::outerStateOnSurface(*(mu->track()), globalGeometry, &magField);
-
+  //TrajectoryStateOnSurface theState = trajectoryStateTransform::outerStateOnSurface(*(mu->standAloneMuon()), globalGeometry, &magField);
+  
   double eta = mu->eta();
   double theta = 2.*atan(exp(-eta));
+  //std::cout<< " theta : "<< theta << "\n";
   double rho   = 500.;
   double zet   = 790.;
   if (fabs(eta) > 1.24) rho  = zet * tan(fabs(theta)); else zet = rho/tan(theta);

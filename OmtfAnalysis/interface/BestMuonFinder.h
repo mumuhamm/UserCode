@@ -36,7 +36,7 @@ public:
   bool isLoose() const { return theIsLoose; }
   bool isMedium() const { return theIsMedium; }
   bool isTight() const { return theIsTight; }
-
+  
 private:
   bool run(const edm::Event &ev, const edm::EventSetup &es);
 

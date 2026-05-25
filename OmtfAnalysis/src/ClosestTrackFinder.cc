@@ -41,6 +41,9 @@ reco::Track ClosestTrackFinder::result(const edm::Event &ev, const edm::EventSet
 //  std::cout <<"SIZE of tracks: " <<  tracks->size() << std::endl;
   double dRmin = 99.;
   for (const auto & track : *tracks) {
+	  if(!track.outerOk())continue;
+	  if(!track.innerOk())continue;
+    if (!track.recHitsOk())continue;
     if (track.pt() < 2.5) continue;
     double dR =  reco::deltaR( track.eta(), track.phi(),  eta, phi);
     if (dR < dRmin) {

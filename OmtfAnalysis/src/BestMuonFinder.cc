@@ -86,21 +86,18 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
   edm::InputTag beamSpot =  theConfig.getParameter<edm::InputTag>("beamSpot");
   edm::Handle<reco::BeamSpot> bsHandle;
   ev.getByLabel( beamSpot, bsHandle);
-  if(warnNoColl && !bsHandle.isValid()){
+  if(!bsHandle.isValid()){
     if (warnNoColl) std::cout <<"** WARNING - no collection labeled: "<< beamSpot <<std::endl; 
   }
   
-  math::XYZPoint reference =  (bsHandle.isValid())  ?  math::XYZPoint(bsHandle->x0(), bsHandle->y0(), bsHandle->z0())
-                                                    :  math::XYZPoint(0.,0.,0.);
+  math::XYZPoint reference =  (bsHandle.isValid())  ?  math::XYZPoint(bsHandle->x0(), bsHandle->y0(), bsHandle->z0()):  math::XYZPoint(0.,0.,0.);
+  (void)reference;
   float bsx = bsHandle->x0();
   float bsy = bsHandle->y0();
   float bsz = bsHandle->z0();
   float bsdxdz = bsHandle->dxdz();
   float bsdydz = bsHandle->dydz();
-  //std::cout<< " the x, y and z position from the beam spot "<< bsHandle->x0() << "\t" << bsHandle->y0() << "\t"<< bsHandle->z0()<< "\n";
-  //  std::cout<< " the dxdz and the dydz : "<< bsHandle->dxdz() << "\t"<< bsHandle->dydz() << "\n"; 
-	      
-         
+        
   //get Muon
   edm::Handle<reco::MuonCollection> muons;
   edm::InputTag muonColl =  theConfig.getParameter<edm::InputTag>("muonColl");
@@ -110,7 +107,6 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
     return false;
   }
   theAllMuons = muons->size();
-  //std::cout <<"SIZE of muons: " <<  muons->size() << std::endl;
   
   for (reco::MuonCollection::const_iterator im = muons->begin(); im != muons->end(); ++im) {
 
@@ -119,17 +115,15 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
               <<" isLoose: " << muon::isLooseMuon(*im)<<" isMedium: " << isMediumMuon(*im) << " isTight: " << isTightMuon(*im) 
               <<" is Stand Alone : "<< im->isStandAloneMuon()<< std::endl;
    */
-    //
     // set type of muon
-    //
     bool isLoose =  muon::isLooseMuon(*im);
     bool isMedium = isMediumMuon(*im);
     bool isTight = isTightMuon(*im);
-
     if ( fabs(im->bestTrack()->eta()) >  theConfig.getParameter<double>("maxAbsEta")) continue;
     if (im->bestTrack()->pt() < theConfig.getParameter<double>("minPt")) continue;
     if (im->numberOfMatchedStations() <  theConfig.getParameter<int>("minNumberOfMatchedStations")) continue;
     //if (theConfig.getParameter<bool>("requireLoose") && !muon::isLooseMuon(*im) ) continue;
+    
 
     if (    theConfig.getParameter<bool>("requireInnerTrack")) {
       if (!im->isTrackerMuon() || !im->innerTrack().isNonnull()) continue;
@@ -140,24 +134,34 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
       if (hMuChi2Tk) hMuChi2Tk->Fill(im->innerTrack()->normalizedChi2());
       if (hMuPtVsEta) hMuPtVsEta->Fill(im->innerTrack()->eta(), im->innerTrack()->pt());
     }
-    if (    theConfig.getParameter<bool>("requireOuterTrack")){ 
+    if (    theConfig.getParameter<bool>("requireOuterTrack")){
       if (!im->isStandAloneMuon() || !im->outerTrack().isNonnull())continue;
     }
+    /*if (    theConfig.getParameter<bool>("requireOuterTrack")){
+      if (!im->isStandAloneMuon() || !im->outerTrack().isNonnull())continue;
+      if (im->outerTrack()->dxy(reference) >  theConfig.getParameter<double>("maxTIP")) continue;
+      if (hMuonPt_BMF)   hMuonPt_BMF->Fill( im->outerTrack()->pt());
+      if (hMuonEta_BMF) hMuonEta_BMF->Fill( im->outerTrack()->eta());
+      if (hMuonPhi_BMF) hMuonPhi_BMF->Fill( im->outerTrack()->phi());
+      if (hMuChi2Tk) hMuChi2Tk->Fill(im->outerTrack()->normalizedChi2());
+      if (hMuPtVsEta) hMuPtVsEta->Fill(im->outerTrack()->eta(), im->innerTrack()->pt());
+
+    }*/
+
     if ( theConfig.getParameter<bool>("requireGlobalTrack")) { 
 	if (!im->isGlobalMuon() ||  !im->globalTrack().isNonnull()) continue;  
     }
-
     if (hMuChi2Gl && im->isGlobalMuon()) hMuChi2Gl->Fill(im->combinedMuon()->normalizedChi2());
 
-//
+
 // TMP TIGHT SELECTION FOR IVAN
-//  if (! im->isGlobalMuon()) continue;
-//  if (! (im->globalTrack()->normalizedChi2() < 10)) continue;
-//  if (! (im->globalTrack()->hitPattern().numberOfValidMuonHits() > 0)) continue;
-//  if (! (im->numberOfMatchedStations() > 1)) continue;
-//  if (! (fabs(im->innerTrack()->dxy(reference)) < 0.2)) continue; 
-//  if (! (im->track()->hitPattern().numberOfValidPixelHits() > 0)) continue;
-//  if (! (im->track()->hitPattern().numberOfValidTrackerHits() > 10)) continue;
+/*  if (! im->isGlobalMuon()) continue;
+  if (! (im->globalTrack()->normalizedChi2() < 10)) continue;
+  if (! (im->globalTrack()->hitPattern().numberOfValidMuonHits() > 0)) continue;
+  if (! (im->numberOfMatchedStations() > 1)) continue;
+  if (! (fabs(im->innerTrack()->dxy(reference)) < 0.2)) continue; 
+  if (! (im->track()->hitPattern().numberOfValidPixelHits() > 0)) continue;
+  if (! (im->track()->hitPattern().numberOfValidTrackerHits() > 10)) continue;*/
 // TMP END OF TIGHT MUON SELECTION FROM IVAN
 
     //remove muons without valid hits in tk and mu system
@@ -169,16 +173,15 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
     float vx =0; 
     float vy =0; 
     float vz =0;
+
     if (im->isGlobalMuon()) {
       vx = im->bestTrack()->vx();
       vy = im->bestTrack()->vy();
       vz = im->bestTrack()->vz();
-      //std::cout<<" x, y , z of the muon : " << im->bestTrack()->vx() << "\t"<< im->bestTrack()->vy() << "\t"<< im->bestTrack()->vz()<< "\n";
       GlobalPoint arbitraryTrackGP(im->bestTrack()->vx(), im->bestTrack()->vy(), im->bestTrack()->vz());
-      //std::cout <<" bsx and global point extraction :"<< bsx << "\t"<< arbitraryTrackGP.x()<<"\n";
       GlobalPoint displacementFromBeamspot( -1*((bsx -  arbitraryTrackGP.x()) +  (arbitraryTrackGP.z() - bsz) * bsdxdz),-1*((bsy - arbitraryTrackGP.y())+  (arbitraryTrackGP.z() - bsz) * bsdydz), 0);
       Lxy = displacementFromBeamspot.perp();
-      //std::cout <<" the corresponding displacement of the of the track : "<< Lxy << "\n"; 
+      //std::cout<< " the value of Lxy : "<< Lxy << "\n";
       const reco::HitPattern& hp = (im->combinedMuon())->hitPattern();
       nTrackerHits = hp.numberOfValidTrackerHits();
       nRPCHits = hp.numberOfValidMuonRPCHits();
@@ -188,25 +191,35 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
       if (nDTHits==0 && hMuHitsRPCvsCSC) hMuHitsRPCvsCSC->Fill(nCSCHits,nRPCHits);
       if (nCSCHits==0 && hMuHitsRPCvsDT) hMuHitsRPCvsDT->Fill(nDTHits,nRPCHits);
     } else {
-      if(im->isTrackerMuon()) {
+     if(im->isTrackerMuon()) {
         const reco::HitPattern& hp = (im->innerTrack())->hitPattern();
         nTrackerHits = hp.numberOfValidTrackerHits();
       }
       if (im->isStandAloneMuon()) {
+	 vx = im->bestTrack()->vx();
+         vy = im->bestTrack()->vy();
+         vz = im->bestTrack()->vz();
+         GlobalPoint arbitraryTrackGP(im->bestTrack()->vx(), im->bestTrack()->vy(), im->bestTrack()->vz());
+         GlobalPoint displacementFromBeamspot( -1*((bsx -  arbitraryTrackGP.x()) +  (arbitraryTrackGP.z() - bsz) * bsdxdz),-1*((bsy - arbitraryTrackGP.y())+  (arbitraryTrackGP.z() - bsz) * bsdydz), 0);
+         Lxy = displacementFromBeamspot.perp();
         const reco::HitPattern& hp = (im->standAloneMuon())->hitPattern();
+	nTrackerHits = hp.numberOfValidTrackerHits();
         nRPCHits = hp.numberOfValidMuonRPCHits();
         nDTHits = hp.numberOfValidMuonDTHits();
         nCSCHits = hp.numberOfValidMuonCSCHits();
+        if (hMuNHitsTk) hMuNHitsTk->Fill(fabs(nTrackerHits)+1.e-3);
+        if (nDTHits==0 && hMuHitsRPCvsCSC) hMuHitsRPCvsCSC->Fill(nCSCHits,nRPCHits);
+        if (nCSCHits==0 && hMuHitsRPCvsDT) hMuHitsRPCvsDT->Fill(nDTHits,nRPCHits);
+
       }
     }
 
-    if (nTrackerHits< theConfig.getParameter<int>("minNumberTrackerHits")) continue;
+    if (nTrackerHits < theConfig.getParameter<int>("minNumberTrackerHits")) continue;
     if ( nRPCHits < theConfig.getParameter<int>("minNumberRpcHits")) continue;
     if ( nDTHits + nCSCHits < theConfig.getParameter<int>("minNumberDtCscHits")  ) continue;
 
-    //
+    
     // check isolation
-    //
     bool isTkIsolated = false;
     if (im->isIsolationValid() && im->isolationR03().sumPt/im->pt() < theConfig.getParameter<double>("cutTkIsoRel") ) isTkIsolated = true;
     bool isPFIsolated = false;
@@ -217,9 +230,7 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
         ) isPFIsolated = true;
     
 
-    //
     // check if muon is unigue
-    //
     bool isUnique = true;
     double muonEta = im->bestTrack()->eta();
     double muonPhi = im->bestTrack()->phi();
@@ -232,19 +243,17 @@ bool BestMuonFinder::run(const edm::Event &ev, const edm::EventSetup &es)
       isUnique = false;
     }
 
-    //
+    
     // check muont at L1
-    //
 //    muAtSurface.prepare( &(*im), ev, es);
 //    TrajectoryStateOnSurface atStation2 = muAtSurface.atPoint(im->eta(), im->phi());
-    TrajectoryStateOnSurface atStation2 = muAtSurface.atStation2(&(*im), ev, es);
+      TrajectoryStateOnSurface atStation2 = muAtSurface.atStation2(&(*im), ev, es);
    
 /*
   std::cout <<"----------"<<std::endl;
   std::cout <<" ETA: "<< im->eta() <<" PHI : "<< im->phi()<< std::endl; // <<" rho: "<< rho << " z: "<< zet <<" Theta: "<< theta << std::endl;
 //  std::cout <<" eta: "<<point.eta() <<" phi : "<< point.phi() <<" rho: "<< point.perp()<<" z: " << point.z() << "theta : " << point.theta()<<" mag : " << point.mag()<< std::endl;
   if (atStation2.isValid()) { std::cout <<" eta: "<<atStation2.globalPosition().eta() <<" phi : "<< atStation2.globalPosition().phi() <<" r: "<< atStation2.globalPosition().perp() <<" z: " << atStation2.globalPosition().z() << std::endl << std::endl;; }
-   
 */
    
     MuonObj muonObj;

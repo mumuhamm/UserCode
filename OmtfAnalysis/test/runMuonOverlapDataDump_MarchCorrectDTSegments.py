@@ -71,8 +71,12 @@ if not verbose:
 
 """
 # import of standard configurations
-process.load('Configuration.Geometry.GeometryExtended2026D88Reco_cff')
-process.load('Configuration.Geometry.GeometryExtended2026D88_cff')
+
+#process.load('Configuration.Geometry.GeometryExtended2026D88Reco_cff')
+#process.load('Configuration.Geometry.GeometryDD4hepExtendedRun4D107Reco_cff.py')
+#process.load('Configuration.Geometry.GeometryExtended2026D88_cff')
+process.load('Configuration.Geometry.GeometryExtended2026D95Reco_cff')
+
 
 from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, '131X_mcRun3_2023_realistic_v10', '') 
@@ -92,29 +96,14 @@ skipEvents =  cms.untracked.uint32(0),
 )
 
 #samplefor Ch0 - pTbin(GeV) 0-10 10-100 100-1000
-#prefixPath = '/eos/user/a/akalinow/Data/SingleMu/13_1_0_12_02_2024/*/*/*/*'
-#prefixPath = '/eos/user/a/akalinow/Data/SingleMu/13_1_0_13_02_2024/*/*/*/*'
-#prefixPath1 ='/eos/user/a/akalinow/Data/SingleMu/13_1_0_03_01_2024/*/*/*/*'
-#prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/13_1_0_03_04_2024/SingleMu_ch0_OneOverPt_Run2029_13_1_0_03_04_2024/13_1_0_03_04_2024/240403_083618/0000'
-#prefixPath2 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/13_1_0_03_04_2024/SingleMu_ch2_OneOverPt_Run2029_13_1_0_03_04_2024/13_1_0_03_04_2024/240403_083731/0000'
-#prefixPath1 ='/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/MinBias_TuneCP5_14TeV-pythia8/crab_MinBias_TuneCP5_14TeV-pythia8_Phase2Spring23DIGIRECOMiniAOD-PU200/240304_104359/0000'
-#prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/MinBias_TuneCP5_14TeV-pythia8/crab_MinBias_TuneCP5_14TeV-pythia8_Phase2Spring23DIGIRECOMiniAOD-PU140/240227_004426/0000'
-#prefixPath1 = '/eos/user/a/akalinow/Data/SingleMu/Displaced_Dxy5m_pT0To1000_condRun3_131X_mcRun3_2023_realistic_v10/*/*/*/*'
-#prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/13_1_0_11_03_2024/*/*/*/*'
-#prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/13_1_0_07_03_2024/*/*/*/*'
-#prefixPath = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/13_1_0_11_03_2024/*/*/*/*'
-prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/Displaced_cTau5m_XTo2LLTo4Mu_condPhase2_GP2024/13_1_0_23_03_2024_XTo2LLPTo4Mu/240323_145610/*'
-#prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/JPsiToMuMu_Pt-0to100_TuneCP5-pythia8-gun/crab_JPsiToMuMu_Pt-0to100_TuneCP5-pythia8-gun_Phase2Spring23DIGIRECOMiniAOD-PU200/240302_140832/0000'
-#prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/ZprimeToMuMu_M-6000_TuneCP5_14TeV-pythia8/crab_ZprimeToMuMu_M-6000_TuneCP5_14TeV-pythia8_Phase2Spring23DIGIRECOMiniAOD-PU200/240301_120543/0000'
-#prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/DYToLL_M-50_TuneCP5_14TeV-pythia8/crab_DYToLL_M-50_TuneCP5_14TeV-pythia8_Phase2Spring23DIGIRECOMiniAOD-PU200/240302_012258/0000'
-#prefixPath1 ='/eos/user/a/akalinow/Data/SingleMu/Displaced_Dxy3m_pT0To1000_condPhase2_realistic/*/*/*/*'
+prefixPath1 = '/eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/PrivateProductionForOMTFStudy/Displaced_cTau5m_XTo2LLTo4Mu_condPhase2_GP2024/13_1_0_23_03_2024_XTo2LLPTo4Mu/240323_145610/0000'
 fileList1 = glob.glob(prefixPath1 + '/*.root')
 #fileList2 = glob.glob(prefixPath2 + '/*.root')
 #fileList = fileList1 + fileList2
 random.shuffle(fileList1)
 fileList_mix = ['file:' + aFile for aFile in fileList1]
 process.source.fileNames = fileList_mix
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200000))
 
 ####Event Setup Producer
 """
@@ -150,9 +139,14 @@ process.omtfParameter.configXMLFile = cms.FileInPath("L1Trigger/L1TMuon/data/omt
 
 
 
+
+import L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_cfi
+process.omtfEmulatorPhase2 = L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_cfi.simOmtfPhase2Digis.clone()
+
+
 #####OMTF phaseII EMulator
-import L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_extrapol_cfi
-process.omtfEmulatorPhase2=L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_extrapol_cfi.simOmtfPhase2Digis.clone()
+#import L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_extrapol_cfi
+#process.omtfEmulatorPhase2=L1Trigger.L1TMuonOverlapPhase2.simOmtfPhase2Digis_extrapol_cfi.simOmtfPhase2Digis.clone()
 
 process.omtfEmulatorPhase2.srcDTPh = cms.InputTag('simDtTriggerPrimitiveDigis')
 process.omtfEmulatorPhase2.srcDTTh = cms.InputTag('simDtTriggerPrimitiveDigis')
@@ -190,7 +184,7 @@ process.omtfEmulatorPhase2.usePhase2DTPrimitives = cms.bool(True)
 process.TFileService = cms.Service("TFileService", 
         fileName = cms.string(
             #"file:///eos/user/a/almuhamm/OMTF_UW/newTFRecord/SingleMu_" + version + ".root")
-            "file:///eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/May_15_24_PhIIExtraPol_Ntuples_ForTFRecord/SingleMu_" + version + ".root") 
+            "file:///eos/cms/store/group/dpg_trigger/comm_trigger/L1Trigger/OMTF/OMTFFlatNtuples/SingleMu_" + version + ".root") 
             #"file:///eos/user/a/almuhamm/OMTF_UW/AprilMay_2024_PIIExtraPolDTReprocessed_Ntuples_ForTFRecord/SingleMu_" + version + ".root") 
                                     )
       
